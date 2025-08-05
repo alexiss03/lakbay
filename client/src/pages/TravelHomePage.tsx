@@ -123,24 +123,26 @@ export const TravelHomePage = (): JSX.Element => {
             { title: "Private Mountain Trek", location: "Benguet", price: "₱8,500", image: "1464822759844-d150baec0494" },
             { title: "Private Cultural Tour", location: "Batanes", price: "₱12,000", image: "1441974231531-c6227db76b6e" }
           ].map((trip, i) => (
-            <Card key={i} className="overflow-hidden rounded-lg group cursor-pointer">
-              <div className="relative aspect-[4/3]">
-                <img 
-                  src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
-                  alt={trip.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-3 right-3">
-                  <span className="bg-[#D4AF37] text-black text-xs px-2 py-1 rounded">Private</span>
+            <Link key={i} href={i === 0 ? "/trip/bohol-nature" : `/trip/private-${i}`}>
+              <Card className="overflow-hidden rounded-lg group cursor-pointer">
+                <div className="relative aspect-[4/3]">
+                  <img 
+                    src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={trip.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute top-3 right-3">
+                    <span className="bg-[#D4AF37] text-black text-xs px-2 py-1 rounded">Private</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-3 left-3 text-white">
+                    <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
+                    <p className="text-xs opacity-90">{trip.location}</p>
+                    <p className="text-sm font-bold">{trip.price}</p>
+                  </div>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-3 left-3 text-white">
-                  <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
-                  <p className="text-xs opacity-90">{trip.location}</p>
-                  <p className="text-sm font-bold">{trip.price}</p>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </Link>
           ))}
 
           {activeTab === "Joiner" && [
@@ -148,24 +150,26 @@ export const TravelHomePage = (): JSX.Element => {
             { title: "Shared Hiking Experience", location: "Mt. Pulag", price: "₱2,800", image: "1449824913935-59a10b8d2000" },
             { title: "Group Cultural Tour", location: "Vigan", price: "₱4,200", image: "1464822759844-d150baec0494" }
           ].map((trip, i) => (
-            <Card key={i} className="overflow-hidden rounded-lg group cursor-pointer">
-              <div className="relative aspect-[4/3]">
-                <img 
-                  src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
-                  alt={trip.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-3 right-3">
-                  <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded">Joiner</span>
+            <Link key={i} href={`/trip/joiner-${i}`}>
+              <Card className="overflow-hidden rounded-lg group cursor-pointer">
+                <div className="relative aspect-[4/3]">
+                  <img 
+                    src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={trip.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute top-3 right-3">
+                    <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded">Joiner</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-3 left-3 text-white">
+                    <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
+                    <p className="text-xs opacity-90">{trip.location}</p>
+                    <p className="text-sm font-bold">{trip.price}</p>
+                  </div>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-3 left-3 text-white">
-                  <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
-                  <p className="text-xs opacity-90">{trip.location}</p>
-                  <p className="text-sm font-bold">{trip.price}</p>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </Link>
           ))}
 
           {activeTab === "Meetups" && [
@@ -173,24 +177,26 @@ export const TravelHomePage = (): JSX.Element => {
             { title: "Hiking Enthusiasts", location: "Mt. Apo", price: "₱2,200", image: "1464822759844-d150baec0494" },
             { title: "Food & Culture", location: "Ilocos", price: "₱1,500", image: "1506905925346-21bda4d32df4" }
           ].map((trip, i) => (
-            <Card key={i} className="overflow-hidden rounded-lg group cursor-pointer">
-              <div className="relative aspect-[4/3]">
-                <img 
-                  src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
-                  alt={trip.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-3 right-3">
-                  <span className="bg-green-500 text-white text-xs px-2 py-1 rounded">Meetup</span>
+            <Link key={i} href={`/trip/meetup-${i}`}>
+              <Card className="overflow-hidden rounded-lg group cursor-pointer">
+                <div className="relative aspect-[4/3]">
+                  <img 
+                    src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={trip.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute top-3 right-3">
+                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded">Meetup</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-3 left-3 text-white">
+                    <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
+                    <p className="text-xs opacity-90">{trip.location}</p>
+                    <p className="text-sm font-bold">{trip.price}</p>
+                  </div>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-3 left-3 text-white">
-                  <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
-                  <p className="text-xs opacity-90">{trip.location}</p>
-                  <p className="text-sm font-bold">{trip.price}</p>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </Link>
           ))}
 
           {activeTab === "Mystery" && [
@@ -198,24 +204,26 @@ export const TravelHomePage = (): JSX.Element => {
             { title: "Mystery Adventure", location: "Surprise!", price: "₱5,500", image: "1449824913935-59a10b8d2000" },
             { title: "Hidden Gems Tour", location: "TBA", price: "₱7,200", image: "1441974231531-c6227db76b6e" }
           ].map((trip, i) => (
-            <Card key={i} className="overflow-hidden rounded-lg group cursor-pointer">
-              <div className="relative aspect-[4/3]">
-                <img 
-                  src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
-                  alt={trip.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-3 right-3">
-                  <span className="bg-purple-500 text-white text-xs px-2 py-1 rounded">Mystery</span>
+            <Link key={i} href={`/trip/mystery-${i}`}>
+              <Card className="overflow-hidden rounded-lg group cursor-pointer">
+                <div className="relative aspect-[4/3]">
+                  <img 
+                    src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={trip.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute top-3 right-3">
+                    <span className="bg-purple-500 text-white text-xs px-2 py-1 rounded">Mystery</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-3 left-3 text-white">
+                    <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
+                    <p className="text-xs opacity-90">{trip.location}</p>
+                    <p className="text-sm font-bold">{trip.price}</p>
+                  </div>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-3 left-3 text-white">
-                  <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
-                  <p className="text-xs opacity-90">{trip.location}</p>
-                  <p className="text-sm font-bold">{trip.price}</p>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </Link>
           ))}
 
           {activeTab === "Events" && [
@@ -223,24 +231,26 @@ export const TravelHomePage = (): JSX.Element => {
             { title: "Concert & Travel", location: "Manila", price: "₱8,900", image: "1506905925346-21bda4d32df4" },
             { title: "Cultural Festival", location: "Davao", price: "₱5,200", image: "1507525428034-b723cf961d3e" }
           ].map((trip, i) => (
-            <Card key={i} className="overflow-hidden rounded-lg group cursor-pointer">
-              <div className="relative aspect-[4/3]">
-                <img 
-                  src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
-                  alt={trip.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-3 right-3">
-                  <span className="bg-red-500 text-white text-xs px-2 py-1 rounded">Event</span>
+            <Link key={i} href={`/trip/event-${i}`}>
+              <Card className="overflow-hidden rounded-lg group cursor-pointer">
+                <div className="relative aspect-[4/3]">
+                  <img 
+                    src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={trip.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute top-3 right-3">
+                    <span className="bg-red-500 text-white text-xs px-2 py-1 rounded">Event</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-3 left-3 text-white">
+                    <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
+                    <p className="text-xs opacity-90">{trip.location}</p>
+                    <p className="text-sm font-bold">{trip.price}</p>
+                  </div>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-3 left-3 text-white">
-                  <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
-                  <p className="text-xs opacity-90">{trip.location}</p>
-                  <p className="text-sm font-bold">{trip.price}</p>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </Link>
           ))}
 
           {activeTab === "Virtual" && [
@@ -248,24 +258,26 @@ export const TravelHomePage = (): JSX.Element => {
             { title: "360° Nature Experience", location: "Virtual", price: "₱650", image: "1449824913935-59a10b8d2000" },
             { title: "Cultural Workshop", location: "Zoom", price: "₱1,200", image: "1464822759844-d150baec0494" }
           ].map((trip, i) => (
-            <Card key={i} className="overflow-hidden rounded-lg group cursor-pointer">
-              <div className="relative aspect-[4/3]">
-                <img 
-                  src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
-                  alt={trip.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-3 right-3">
-                  <span className="bg-cyan-500 text-white text-xs px-2 py-1 rounded">Virtual</span>
+            <Link key={i} href={`/trip/virtual-${i}`}>
+              <Card className="overflow-hidden rounded-lg group cursor-pointer">
+                <div className="relative aspect-[4/3]">
+                  <img 
+                    src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={trip.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute top-3 right-3">
+                    <span className="bg-cyan-500 text-white text-xs px-2 py-1 rounded">Virtual</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-3 left-3 text-white">
+                    <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
+                    <p className="text-xs opacity-90">{trip.location}</p>
+                    <p className="text-sm font-bold">{trip.price}</p>
+                  </div>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-3 left-3 text-white">
-                  <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
-                  <p className="text-xs opacity-90">{trip.location}</p>
-                  <p className="text-sm font-bold">{trip.price}</p>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </Link>
           ))}
 
           {activeTab === "Shop" && [
