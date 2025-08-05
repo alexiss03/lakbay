@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Link } from "wouter";
 
 export const TravelHomePage = (): JSX.Element => {
   const [activeTab, setActiveTab] = useState("Private");
@@ -55,39 +56,43 @@ export const TravelHomePage = (): JSX.Element => {
         <h2 className="text-2xl font-bold text-gray-900 mb-8">Trending articles</h2>
         
         <div className="grid grid-cols-2 gap-6">
-          <Card className="overflow-hidden rounded-lg group cursor-pointer">
-            <div className="relative aspect-[16/10]">
-              <img 
-                src="https://images.unsplash.com/photo-1464822759844-d150baec0494?w=600&h=400&fit=crop&auto=format" 
-                alt="Hidden Gems"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              <div className="absolute bottom-4 left-4 text-white">
-                <span className="inline-block px-2 py-1 bg-[#D4AF37] text-black text-xs rounded mb-2">
-                  Lakbay Exclusive
-                </span>
-                <h3 className="text-lg font-semibold">Top 5 Hidden Gems in the Philippines</h3>
+          <Link href="/article/hidden-gems">
+            <Card className="overflow-hidden rounded-lg group cursor-pointer">
+              <div className="relative aspect-[16/10]">
+                <img 
+                  src="https://images.unsplash.com/photo-1464822759844-d150baec0494?w=600&h=400&fit=crop&auto=format" 
+                  alt="Hidden Gems"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-4 left-4 text-white">
+                  <span className="inline-block px-2 py-1 bg-[#D4AF37] text-black text-xs rounded mb-2">
+                    Lakbay Exclusive
+                  </span>
+                  <h3 className="text-lg font-semibold">Top 5 Hidden Gems in the Philippines</h3>
+                </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          </Link>
           
-          <Card className="overflow-hidden rounded-lg group cursor-pointer">
-            <div className="relative aspect-[16/10]">
-              <img 
-                src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop&auto=format" 
-                alt="Cultural Journey"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              <div className="absolute bottom-4 left-4 text-white">
-                <span className="inline-block px-2 py-1 bg-[#D4AF37] text-black text-xs rounded mb-2">
-                  Cultural Guide
-                </span>
-                <h3 className="text-lg font-semibold">Ancient Traditions of Mountain Tribes</h3>
+          <Link href="/article/mountain-tribes">
+            <Card className="overflow-hidden rounded-lg group cursor-pointer">
+              <div className="relative aspect-[16/10]">
+                <img 
+                  src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop&auto=format" 
+                  alt="Cultural Journey"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-4 left-4 text-white">
+                  <span className="inline-block px-2 py-1 bg-[#D4AF37] text-black text-xs rounded mb-2">
+                    Cultural Guide
+                  </span>
+                  <h3 className="text-lg font-semibold">Ancient Traditions of Mountain Tribes</h3>
+                </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          </Link>
         </div>
       </section>
 

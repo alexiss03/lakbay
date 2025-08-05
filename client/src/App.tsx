@@ -7,12 +7,14 @@ import NotFound from "@/pages/not-found";
 
 import { Box } from "@/pages/Box";
 import { TravelHomePage } from "@/pages/TravelHomePage";
+import { ArticlePage } from "@/pages/ArticlePage";
 
 function Router() {
   return (
     <Switch>
       {/* Add pages below */}
       <Route path="/" component={TravelHomePage} />
+      <Route path="/article/:slug" component={ArticlePage} />
       <Route path="/welcome" component={Box} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
