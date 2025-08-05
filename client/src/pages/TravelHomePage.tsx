@@ -5,145 +5,147 @@ import { Card } from "@/components/ui/card";
 export const TravelHomePage = (): JSX.Element => {
   return (
     <div className="min-h-screen bg-[#f3f1ec]">
-      {/* Header */}
-      <header className="bg-white px-6 py-3 border-b border-gray-200">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          {/* Logo placeholder */}
-          <div className="w-8 h-8 bg-gray-300 rounded"></div>
+      {/* Header - exact match */}
+      <header className="bg-white px-4 py-2 border-b border-gray-100">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          {/* Logo placeholder - small rounded square */}
+          <div className="w-6 h-6 bg-gray-400 rounded-sm"></div>
           
-          {/* Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <a href="#" className="text-gray-700 text-sm">Destinations</a>
-            <a href="#" className="text-gray-700 text-sm">Experiences</a>
-            <a href="#" className="text-gray-700 text-sm">Culture</a>
-            <a href="#" className="text-gray-700 text-sm">About</a>
-            <a href="#" className="text-gray-700 text-sm">Contact</a>
+          {/* Center navigation */}
+          <nav className="flex items-center space-x-6">
+            <a href="#" className="text-gray-600 text-xs font-medium">Destinations</a>
+            <a href="#" className="text-gray-600 text-xs font-medium">Experiences</a>
+            <a href="#" className="text-gray-600 text-xs font-medium">Culture</a>
+            <a href="#" className="text-gray-600 text-xs font-medium">About</a>
+            <a href="#" className="text-gray-600 text-xs font-medium">Contact</a>
           </nav>
           
-          {/* Right side buttons */}
-          <div className="flex items-center space-x-3">
-            <Button variant="outline" size="sm" className="text-xs px-3 py-1 h-8">
+          {/* Right side buttons - small and compact */}
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" className="text-xs px-2 py-1 h-6 border-gray-300">
               Sign In
             </Button>
-            <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-1 h-8">
+            <Button className="bg-amber-600 hover:bg-amber-700 text-white text-xs px-2 py-1 h-6">
               Sign Up
             </Button>
           </div>
         </div>
       </header>
 
-      <div className="px-6 py-8">
-        <div className="max-w-7xl mx-auto">
+      {/* Main content area */}
+      <div className="px-4 py-6">
+        <div className="max-w-6xl mx-auto">
           
-          {/* Hero Section */}
-          <div className="mb-12">
-            {/* Badge */}
-            <div className="mb-4">
-              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-amber-100 text-amber-800">
+          {/* Hero Section - left aligned */}
+          <div className="mb-8">
+            {/* Badge - small and minimal */}
+            <div className="mb-3">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] bg-amber-50 text-amber-700 border border-amber-200">
                 Discover • Explore • Adventure • Experience
               </span>
             </div>
             
-            {/* Main heading */}
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-4 max-w-lg">
+            {/* Main heading - smaller than before */}
+            <h1 className="text-3xl font-bold text-gray-900 leading-tight mb-3 max-w-md">
               Rediscover the world through<br />
               culture, with our nature and<br />
               culture trips.
             </h1>
             
-            {/* Subtext */}
-            <p className="text-lg text-gray-600 max-w-md">
+            {/* Subtext - smaller */}
+            <p className="text-sm text-gray-600 max-w-xs">
               Don't just travel. Uncover!
             </p>
           </div>
 
-          {/* Featured Destinations */}
-          <div className="mb-12">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Featured Destinations</h2>
+          {/* Featured Destinations - smaller heading */}
+          <div className="mb-6">
+            <h2 className="text-base font-semibold text-gray-900 mb-4">Featured Destinations</h2>
             
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
-              {/* Mountain landscape card */}
-              <Card className="overflow-hidden">
-                <div className="relative aspect-[4/3]">
+            {/* Two cards side by side - exact proportions */}
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              {/* Mountain landscape card - wider aspect ratio */}
+              <Card className="overflow-hidden rounded-lg">
+                <div className="relative aspect-[3/2]">
                   <img 
-                    src="https://images.unsplash.com/photo-1464822759844-d150baec0494?w=500&h=300&fit=crop&auto=format" 
+                    src="https://images.unsplash.com/photo-1464822759844-d150baec0494?w=400&h=250&fit=crop&auto=format" 
                     alt="Mountain landscape"
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-black/20" />
-                  <div className="absolute bottom-4 left-4 text-white">
-                    <h3 className="font-semibold">Iceland Adventure</h3>
+                  <div className="absolute inset-0 bg-black/10" />
+                  <div className="absolute bottom-2 left-2 text-white">
+                    <h3 className="text-sm font-medium">Iceland Adventure</h3>
                   </div>
                 </div>
               </Card>
               
-              {/* Circular image card */}
-              <Card className="overflow-hidden">
-                <div className="relative aspect-[4/3] bg-amber-100 flex items-center justify-center">
-                  <div className="w-32 h-32 rounded-full bg-amber-700 flex items-center justify-center">
-                    <span className="text-white text-4xl font-bold">G</span>
+              {/* Circular G card - matching aspect ratio */}
+              <Card className="overflow-hidden rounded-lg">
+                <div className="relative aspect-[3/2] bg-amber-50 flex items-center justify-center">
+                  <div className="w-20 h-20 rounded-full bg-amber-800 flex items-center justify-center shadow-lg">
+                    <span className="text-white text-2xl font-bold">G</span>
                   </div>
                 </div>
               </Card>
             </div>
           </div>
 
-          {/* Navigation Categories */}
-          <div className="mb-8">
-            <div className="flex justify-start space-x-8 mb-6 text-sm">
-              <a href="#" className="text-gray-700 hover:text-gray-900">Beaches</a>
-              <a href="#" className="text-gray-700 hover:text-gray-900">Cities</a>
-              <a href="#" className="text-gray-700 hover:text-gray-900">Heritage</a>
-              <a href="#" className="text-gray-700 hover:text-gray-900">History</a>
-              <a href="#" className="text-gray-700 hover:text-gray-900">Events</a>
-              <a href="#" className="text-gray-700 hover:text-gray-900">Virtual</a>
-              <a href="#" className="text-gray-700 hover:text-gray-900">Shop</a>
+          {/* Navigation Categories - exact spacing */}
+          <div className="mb-6">
+            <div className="flex space-x-6 mb-4 text-xs">
+              <a href="#" className="text-gray-600 hover:text-gray-900">Beaches</a>
+              <a href="#" className="text-gray-600 hover:text-gray-900">Cities</a>
+              <a href="#" className="text-gray-600 hover:text-gray-900">Heritage</a>
+              <a href="#" className="text-gray-600 hover:text-gray-900">History</a>
+              <a href="#" className="text-gray-600 hover:text-gray-900">Events</a>
+              <a href="#" className="text-gray-600 hover:text-gray-900">Virtual</a>
+              <a href="#" className="text-gray-600 hover:text-gray-900">Shop</a>
             </div>
 
-            {/* Yellow badge */}
-            <div className="mb-6">
-              <span className="inline-flex items-center px-2 py-1 rounded text-xs bg-amber-200 text-amber-800">
+            {/* Yellow badge with Go text */}
+            <div className="mb-4 flex items-center">
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] bg-amber-200 text-amber-900">
                 Featured Category
               </span>
-              <span className="ml-2 text-xs text-gray-500">Go</span>
+              <span className="ml-2 text-[10px] text-gray-400">Go</span>
             </div>
 
-            {/* Four landscape cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-              <Card className="overflow-hidden">
-                <div className="relative aspect-[16/10]">
+            {/* Four landscape cards - exact proportions */}
+            <div className="grid grid-cols-4 gap-2 mb-6">
+              <Card className="overflow-hidden rounded">
+                <div className="relative aspect-[4/3]">
                   <img 
-                    src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=250&h=150&fit=crop&auto=format" 
+                    src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=180&h=135&fit=crop&auto=format" 
                     alt="Landscape 1"
                     className="w-full h-full object-cover"
                   />
                 </div>
               </Card>
               
-              <Card className="overflow-hidden">
-                <div className="relative aspect-[16/10]">
+              <Card className="overflow-hidden rounded">
+                <div className="relative aspect-[4/3]">
                   <img 
-                    src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=250&h=150&fit=crop&auto=format" 
+                    src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=180&h=135&fit=crop&auto=format" 
                     alt="Landscape 2"
                     className="w-full h-full object-cover"
                   />
                 </div>
               </Card>
               
-              <Card className="overflow-hidden">
-                <div className="relative aspect-[16/10]">
+              <Card className="overflow-hidden rounded">
+                <div className="relative aspect-[4/3]">
                   <img 
-                    src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=250&h=150&fit=crop&auto=format" 
+                    src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=180&h=135&fit=crop&auto=format" 
                     alt="Landscape 3"
                     className="w-full h-full object-cover"
                   />
                 </div>
               </Card>
               
-              <Card className="overflow-hidden">
-                <div className="relative aspect-[16/10]">
+              <Card className="overflow-hidden rounded">
+                <div className="relative aspect-[4/3]">
                   <img 
-                    src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=250&h=150&fit=crop&auto=format" 
+                    src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=180&h=135&fit=crop&auto=format" 
                     alt="Landscape 4"
                     className="w-full h-full object-cover"
                   />
@@ -152,14 +154,14 @@ export const TravelHomePage = (): JSX.Element => {
             </div>
           </div>
 
-          {/* Best Deals */}
-          <div className="mb-16">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Best Deals</h2>
+          {/* Best Deals - small single card */}
+          <div className="mb-12">
+            <h2 className="text-base font-semibold text-gray-900 mb-4">Best Deals</h2>
             
-            <Card className="overflow-hidden max-w-xs">
+            <Card className="overflow-hidden rounded w-32">
               <div className="relative aspect-square">
                 <img 
-                  src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop&auto=format" 
+                  src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=150&h=150&fit=crop&auto=format" 
                   alt="Best deal"
                   className="w-full h-full object-cover"
                 />
@@ -169,37 +171,37 @@ export const TravelHomePage = (): JSX.Element => {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-black text-white px-6 py-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8">
+      {/* Footer - black with exact structure */}
+      <footer className="bg-black text-white px-4 py-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-4 gap-6 mb-4">
             <div>
-              <h3 className="font-semibold mb-3">Company</h3>
-              <div className="space-y-2 text-sm">
+              <h4 className="text-xs font-medium mb-2">Company</h4>
+              <div className="space-y-1 text-[10px] text-gray-300">
                 <div>About Us</div>
                 <div>Contact</div>
                 <div>Careers</div>
               </div>
             </div>
             <div>
-              <h3 className="font-semibold mb-3">Support</h3>
-              <div className="space-y-2 text-sm">
+              <h4 className="text-xs font-medium mb-2">Support</h4>
+              <div className="space-y-1 text-[10px] text-gray-300">
                 <div>Help Center</div>
                 <div>Safety</div>
                 <div>Cancellation</div>
               </div>
             </div>
             <div>
-              <h3 className="font-semibold mb-3">Community</h3>
-              <div className="space-y-2 text-sm">
+              <h4 className="text-xs font-medium mb-2">Community</h4>
+              <div className="space-y-1 text-[10px] text-gray-300">
                 <div>Blog</div>
                 <div>Forum</div>
                 <div>Events</div>
               </div>
             </div>
             <div>
-              <h3 className="font-semibold mb-3">Legal</h3>
-              <div className="space-y-2 text-sm">
+              <h4 className="text-xs font-medium mb-2">Legal</h4>
+              <div className="space-y-1 text-[10px] text-gray-300">
                 <div>Privacy</div>
                 <div>Terms</div>
                 <div>Cookies</div>
@@ -207,10 +209,10 @@ export const TravelHomePage = (): JSX.Element => {
             </div>
           </div>
           
-          <div className="mt-8 pt-4 border-t border-gray-700">
-            <div className="flex justify-between items-center text-sm">
+          <div className="pt-3 border-t border-gray-800">
+            <div className="flex justify-between items-center text-[10px] text-gray-400">
               <div>© 2025 Travel Company. All rights reserved.</div>
-              <div className="flex space-x-4">
+              <div className="flex space-x-3">
                 <span>English</span>
                 <span>USD</span>
               </div>
