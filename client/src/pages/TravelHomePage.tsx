@@ -269,25 +269,80 @@ export const TravelHomePage = (): JSX.Element => {
           ))}
 
           {activeTab === "Shop" && [
-            { title: "Travel Gear Bundle", location: "Delivery", price: "₱2,500", image: "1507525428034-b723cf961d3e" },
-            { title: "Adventure Kit", location: "Pickup", price: "₱3,800", image: "1506905925346-21bda4d32df4" },
-            { title: "Cultural Souvenirs", location: "Online", price: "₱1,800", image: "1441974231531-c6227db76b6e" }
-          ].map((trip, i) => (
-            <Card key={i} className="overflow-hidden rounded-lg group cursor-pointer">
-              <div className="relative aspect-[4/3]">
+            { 
+              title: "Premium Travel Backpack", 
+              originalPrice: "₱4,500", 
+              salePrice: "₱2,899", 
+              discount: "36%", 
+              rating: 4.8, 
+              reviews: 234, 
+              sold: "1.2k", 
+              image: "1553062407-98bf5cb7dcaa",
+              badge: "Best Seller"
+            },
+            { 
+              title: "Waterproof Camera Case", 
+              originalPrice: "₱1,800", 
+              salePrice: "₱1,299", 
+              discount: "28%", 
+              rating: 4.6, 
+              reviews: 156, 
+              sold: "892", 
+              image: "1526170375885-4d20c6a7b929",
+              badge: "Free Shipping"
+            },
+            { 
+              title: "Travel Electronics Organizer", 
+              originalPrice: "₱2,200", 
+              salePrice: "₱1,650", 
+              discount: "25%", 
+              rating: 4.9, 
+              reviews: 89, 
+              sold: "567", 
+              image: "1484704324500-e5c94c0abc87",
+              badge: "New Arrival"
+            }
+          ].map((product, i) => (
+            <Card key={i} className="overflow-hidden rounded-lg group cursor-pointer bg-white shadow-sm hover:shadow-md transition-shadow">
+              <div className="relative">
                 <img 
-                  src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
-                  alt={trip.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  src={`https://images.unsplash.com/photo-${product.image}?w=400&h=250&fit=crop&auto=format`}
+                  alt={product.title}
+                  className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                <div className="absolute top-3 right-3">
-                  <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded">Shop</span>
+                <div className="absolute top-2 left-2">
+                  <span className="bg-red-500 text-white text-xs px-2 py-1 rounded font-medium">-{product.discount}</span>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-3 left-3 text-white">
-                  <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
-                  <p className="text-xs opacity-90">{trip.location}</p>
-                  <p className="text-sm font-bold">{trip.price}</p>
+                <div className="absolute top-2 right-2">
+                  <span className="bg-[#D4AF37] text-black text-xs px-2 py-1 rounded font-medium">{product.badge}</span>
+                </div>
+              </div>
+              
+              <div className="p-3">
+                <h3 className="font-medium text-sm text-gray-800 mb-2 line-clamp-2 h-10">{product.title}</h3>
+                
+                <div className="flex items-center mb-2">
+                  <div className="flex items-center">
+                    {[...Array(5)].map((_, star) => (
+                      <span key={star} className={`text-xs ${star < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`}>★</span>
+                    ))}
+                    <span className="text-xs text-gray-600 ml-1">({product.reviews})</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-baseline space-x-1 mb-2">
+                  <span className="text-lg font-bold text-red-600">{product.salePrice}</span>
+                  <span className="text-xs text-gray-500 line-through">{product.originalPrice}</span>
+                </div>
+                
+                <div className="flex items-center justify-between text-xs text-gray-600">
+                  <span>{product.sold} sold</span>
+                  <div className="flex items-center space-x-1">
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                    </svg>
+                    <span>Manila</span>
+                  </div>
                 </div>
               </div>
             </Card>
