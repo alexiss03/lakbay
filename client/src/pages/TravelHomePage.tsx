@@ -57,16 +57,16 @@ export const TravelHomePage = (): JSX.Element => {
         
         <div className="grid grid-cols-2 gap-6">
           <Link href="/article/hidden-gems">
-            <Card className="overflow-hidden rounded-lg group cursor-pointer">
-              <div className="relative aspect-[16/5]">
+            <Card className="overflow-hidden rounded-xl group cursor-pointer shadow-sm">
+              <div className="relative aspect-[16/5] rounded-xl overflow-hidden">
                 <img 
                   src="https://images.unsplash.com/photo-1464822759844-d150baec0494?w=600&h=200&fit=crop&auto=format" 
                   alt="Hidden Gems"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 rounded-xl"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-xl" />
                 <div className="absolute bottom-3 left-3 text-white">
-                  <span className="inline-block px-2 py-1 bg-[#D4AF37] text-black text-xs rounded mb-1">
+                  <span className="inline-block px-2 py-1 bg-[#D4AF37] text-black text-xs rounded-md mb-1">
                     Lakbay Exclusive
                   </span>
                   <h3 className="text-base font-semibold">Top 5 Hidden Gems in the Philippines</h3>
@@ -76,16 +76,16 @@ export const TravelHomePage = (): JSX.Element => {
           </Link>
           
           <Link href="/article/mountain-tribes">
-            <Card className="overflow-hidden rounded-lg group cursor-pointer">
-              <div className="relative aspect-[16/5]">
+            <Card className="overflow-hidden rounded-xl group cursor-pointer shadow-sm">
+              <div className="relative aspect-[16/5] rounded-xl overflow-hidden">
                 <img 
                   src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=200&fit=crop&auto=format" 
                   alt="Cultural Journey"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 rounded-xl"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-xl" />
                 <div className="absolute bottom-3 left-3 text-white">
-                  <span className="inline-block px-2 py-1 bg-[#D4AF37] text-black text-xs rounded mb-1">
+                  <span className="inline-block px-2 py-1 bg-[#D4AF37] text-black text-xs rounded-md mb-1">
                     Cultural Guide
                   </span>
                   <h3 className="text-base font-semibold">Ancient Traditions of Mountain Tribes</h3>
