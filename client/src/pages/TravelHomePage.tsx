@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
 export const TravelHomePage = (): JSX.Element => {
+  const [activeTab, setActiveTab] = useState("Private");
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -95,18 +96,24 @@ export const TravelHomePage = (): JSX.Element => {
         <h2 className="text-2xl font-bold text-gray-900 mb-8">Trip Categories</h2>
         
         <div className="flex space-x-8 mb-8 border-b border-gray-200">
-          <button className="text-gray-900 font-medium pb-3 border-b-2 border-[#D4AF37]">Private</button>
-          <button className="text-gray-700 hover:text-gray-900 pb-3">Joiner</button>
-          <button className="text-gray-700 hover:text-gray-900 pb-3">Meetups</button>
-          <button className="text-gray-700 hover:text-gray-900 pb-3">Mystery</button>
-          <button className="text-gray-700 hover:text-gray-900 pb-3">Events</button>
-          <button className="text-gray-700 hover:text-gray-900 pb-3">Virtual</button>
-          <button className="text-gray-700 hover:text-gray-900 pb-3">Shop</button>
+          {["Private", "Joiner", "Meetups", "Mystery", "Events", "Virtual", "Shop"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`pb-3 transition-colors ${
+                activeTab === tab
+                  ? "text-gray-900 font-medium border-b-2 border-[#D4AF37]"
+                  : "text-gray-700 hover:text-gray-900"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
 
-        {/* Tab Content - Private trips */}
+        {/* Tab Content */}
         <div className="grid grid-cols-3 gap-6">
-          {[
+          {activeTab === "Private" && [
             { title: "Private Island Hopping", location: "Palawan", price: "₱15,000", image: "1506905925346-21bda4d32df4" },
             { title: "Private Mountain Trek", location: "Benguet", price: "₱8,500", image: "1464822759844-d150baec0494" },
             { title: "Private Cultural Tour", location: "Batanes", price: "₱12,000", image: "1441974231531-c6227db76b6e" }
@@ -120,6 +127,156 @@ export const TravelHomePage = (): JSX.Element => {
                 />
                 <div className="absolute top-3 right-3">
                   <span className="bg-[#D4AF37] text-black text-xs px-2 py-1 rounded">Private</span>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-3 left-3 text-white">
+                  <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
+                  <p className="text-xs opacity-90">{trip.location}</p>
+                  <p className="text-sm font-bold">{trip.price}</p>
+                </div>
+              </div>
+            </Card>
+          ))}
+
+          {activeTab === "Joiner" && [
+            { title: "Group Island Adventure", location: "Bohol", price: "₱3,500", image: "1507525428034-b723cf961d3e" },
+            { title: "Shared Hiking Experience", location: "Mt. Pulag", price: "₱2,800", image: "1449824913935-59a10b8d2000" },
+            { title: "Group Cultural Tour", location: "Vigan", price: "₱4,200", image: "1464822759844-d150baec0494" }
+          ].map((trip, i) => (
+            <Card key={i} className="overflow-hidden rounded-lg group cursor-pointer">
+              <div className="relative aspect-[4/3]">
+                <img 
+                  src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
+                  alt={trip.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute top-3 right-3">
+                  <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded">Joiner</span>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-3 left-3 text-white">
+                  <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
+                  <p className="text-xs opacity-90">{trip.location}</p>
+                  <p className="text-sm font-bold">{trip.price}</p>
+                </div>
+              </div>
+            </Card>
+          ))}
+
+          {activeTab === "Meetups" && [
+            { title: "Photography Meetup", location: "Sagada", price: "₱1,800", image: "1441974231531-c6227db76b6e" },
+            { title: "Hiking Enthusiasts", location: "Mt. Apo", price: "₱2,200", image: "1464822759844-d150baec0494" },
+            { title: "Food & Culture", location: "Ilocos", price: "₱1,500", image: "1506905925346-21bda4d32df4" }
+          ].map((trip, i) => (
+            <Card key={i} className="overflow-hidden rounded-lg group cursor-pointer">
+              <div className="relative aspect-[4/3]">
+                <img 
+                  src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
+                  alt={trip.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute top-3 right-3">
+                  <span className="bg-green-500 text-white text-xs px-2 py-1 rounded">Meetup</span>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-3 left-3 text-white">
+                  <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
+                  <p className="text-xs opacity-90">{trip.location}</p>
+                  <p className="text-sm font-bold">{trip.price}</p>
+                </div>
+              </div>
+            </Card>
+          ))}
+
+          {activeTab === "Mystery" && [
+            { title: "Secret Destination", location: "Unknown", price: "₱6,999", image: "1507525428034-b723cf961d3e" },
+            { title: "Mystery Adventure", location: "Surprise!", price: "₱5,500", image: "1449824913935-59a10b8d2000" },
+            { title: "Hidden Gems Tour", location: "TBA", price: "₱7,200", image: "1441974231531-c6227db76b6e" }
+          ].map((trip, i) => (
+            <Card key={i} className="overflow-hidden rounded-lg group cursor-pointer">
+              <div className="relative aspect-[4/3]">
+                <img 
+                  src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
+                  alt={trip.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute top-3 right-3">
+                  <span className="bg-purple-500 text-white text-xs px-2 py-1 rounded">Mystery</span>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-3 left-3 text-white">
+                  <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
+                  <p className="text-xs opacity-90">{trip.location}</p>
+                  <p className="text-sm font-bold">{trip.price}</p>
+                </div>
+              </div>
+            </Card>
+          ))}
+
+          {activeTab === "Events" && [
+            { title: "Festival Experience", location: "Cebu", price: "₱4,800", image: "1464822759844-d150baec0494" },
+            { title: "Concert & Travel", location: "Manila", price: "₱8,900", image: "1506905925346-21bda4d32df4" },
+            { title: "Cultural Festival", location: "Davao", price: "₱5,200", image: "1507525428034-b723cf961d3e" }
+          ].map((trip, i) => (
+            <Card key={i} className="overflow-hidden rounded-lg group cursor-pointer">
+              <div className="relative aspect-[4/3]">
+                <img 
+                  src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
+                  alt={trip.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute top-3 right-3">
+                  <span className="bg-red-500 text-white text-xs px-2 py-1 rounded">Event</span>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-3 left-3 text-white">
+                  <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
+                  <p className="text-xs opacity-90">{trip.location}</p>
+                  <p className="text-sm font-bold">{trip.price}</p>
+                </div>
+              </div>
+            </Card>
+          ))}
+
+          {activeTab === "Virtual" && [
+            { title: "Virtual Museum Tour", location: "Online", price: "₱800", image: "1441974231531-c6227db76b6e" },
+            { title: "360° Nature Experience", location: "Virtual", price: "₱650", image: "1449824913935-59a10b8d2000" },
+            { title: "Cultural Workshop", location: "Zoom", price: "₱1,200", image: "1464822759844-d150baec0494" }
+          ].map((trip, i) => (
+            <Card key={i} className="overflow-hidden rounded-lg group cursor-pointer">
+              <div className="relative aspect-[4/3]">
+                <img 
+                  src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
+                  alt={trip.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute top-3 right-3">
+                  <span className="bg-cyan-500 text-white text-xs px-2 py-1 rounded">Virtual</span>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-3 left-3 text-white">
+                  <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
+                  <p className="text-xs opacity-90">{trip.location}</p>
+                  <p className="text-sm font-bold">{trip.price}</p>
+                </div>
+              </div>
+            </Card>
+          ))}
+
+          {activeTab === "Shop" && [
+            { title: "Travel Gear Bundle", location: "Delivery", price: "₱2,500", image: "1507525428034-b723cf961d3e" },
+            { title: "Adventure Kit", location: "Pickup", price: "₱3,800", image: "1506905925346-21bda4d32df4" },
+            { title: "Cultural Souvenirs", location: "Online", price: "₱1,800", image: "1441974231531-c6227db76b6e" }
+          ].map((trip, i) => (
+            <Card key={i} className="overflow-hidden rounded-lg group cursor-pointer">
+              <div className="relative aspect-[4/3]">
+                <img 
+                  src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
+                  alt={trip.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute top-3 right-3">
+                  <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded">Shop</span>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-3 left-3 text-white">
