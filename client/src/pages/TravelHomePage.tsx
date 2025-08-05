@@ -92,14 +92,44 @@ export const TravelHomePage = (): JSX.Element => {
 
       {/* Trip Categories */}
       <section className="px-8 py-12 bg-gray-50">
+        <h2 className="text-2xl font-bold text-gray-900 mb-8">Trip Categories</h2>
+        
         <div className="flex space-x-8 mb-8 border-b border-gray-200">
-          <a href="#" className="text-gray-900 font-medium pb-3 border-b-2 border-[#D4AF37]">Private</a>
-          <a href="#" className="text-gray-700 hover:text-gray-900 pb-3">Joiner</a>
-          <a href="#" className="text-gray-700 hover:text-gray-900 pb-3">Meetups</a>
-          <a href="#" className="text-gray-700 hover:text-gray-900 pb-3">Mystery</a>
-          <a href="#" className="text-gray-700 hover:text-gray-900 pb-3">Events</a>
-          <a href="#" className="text-gray-700 hover:text-gray-900 pb-3">Virtual</a>
-          <a href="#" className="text-gray-700 hover:text-gray-900 pb-3">Shop</a>
+          <button className="text-gray-900 font-medium pb-3 border-b-2 border-[#D4AF37]">Private</button>
+          <button className="text-gray-700 hover:text-gray-900 pb-3">Joiner</button>
+          <button className="text-gray-700 hover:text-gray-900 pb-3">Meetups</button>
+          <button className="text-gray-700 hover:text-gray-900 pb-3">Mystery</button>
+          <button className="text-gray-700 hover:text-gray-900 pb-3">Events</button>
+          <button className="text-gray-700 hover:text-gray-900 pb-3">Virtual</button>
+          <button className="text-gray-700 hover:text-gray-900 pb-3">Shop</button>
+        </div>
+
+        {/* Tab Content - Private trips */}
+        <div className="grid grid-cols-3 gap-6">
+          {[
+            { title: "Private Island Hopping", location: "Palawan", price: "₱15,000", image: "1506905925346-21bda4d32df4" },
+            { title: "Private Mountain Trek", location: "Benguet", price: "₱8,500", image: "1464822759844-d150baec0494" },
+            { title: "Private Cultural Tour", location: "Batanes", price: "₱12,000", image: "1441974231531-c6227db76b6e" }
+          ].map((trip, i) => (
+            <Card key={i} className="overflow-hidden rounded-lg group cursor-pointer">
+              <div className="relative aspect-[4/3]">
+                <img 
+                  src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
+                  alt={trip.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute top-3 right-3">
+                  <span className="bg-[#D4AF37] text-black text-xs px-2 py-1 rounded">Private</span>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-3 left-3 text-white">
+                  <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
+                  <p className="text-xs opacity-90">{trip.location}</p>
+                  <p className="text-sm font-bold">{trip.price}</p>
+                </div>
+              </div>
+            </Card>
+          ))}
         </div>
       </section>
 
