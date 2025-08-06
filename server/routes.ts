@@ -118,6 +118,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Google Maps API Key endpoint
+  app.get('/api/config/google-maps-key', (req, res) => {
+    const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Google Maps API key not configured' 
+      });
+    }
+    res.json({ 
+      success: true, 
+      apiKey: apiKey 
+    });
+  });
+
   // PayMongo Webhook handler
   app.post('/api/paymongo-webhook', async (req, res) => {
     try {

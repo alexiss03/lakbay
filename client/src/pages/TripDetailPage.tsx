@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { ChatWidget } from "@/components/ChatWidget";
+import { TrailMap } from "@/components/TrailMap";
 import { MapPin, Star, Clock, Users, Calendar, Shield, AlertTriangle, CheckCircle2, Mountain, TrendingUp, MapIcon } from "lucide-react";
 
 interface TripDetailPageProps {
@@ -178,12 +179,48 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
           startElevation: 1722,
           peakElevation: 2922,
           trailPoints: [
-            { name: "Babadak Ranger Station", elevation: 1722, lat: 16.5964, lng: 120.8897, type: "trailhead" },
-            { name: "Eddet River Crossing", elevation: 1856, lat: 16.5985, lng: 120.8923, type: "checkpoint" },
-            { name: "Camp 1 - Bamboo Forest", elevation: 2134, lat: 16.6012, lng: 120.8967, type: "campsite" },
-            { name: "Saddle Camp", elevation: 2387, lat: 16.6043, lng: 120.9015, type: "campsite" },
-            { name: "Camp 2 - Grassland", elevation: 2654, lat: 16.6067, lng: 120.9052, type: "campsite" },
-            { name: "Mount Pulag Summit", elevation: 2922, lat: 16.6089, lng: 120.9089, type: "summit" }
+            { 
+              name: "Babadak Ranger Station", 
+              elevation: "1,722m", 
+              type: "trailhead" as const,
+              coordinates: { lat: 16.5964, lng: 120.8897 },
+              description: "Starting point and registration area for Mount Pulag trek"
+            },
+            { 
+              name: "Eddet River Crossing", 
+              elevation: "1,856m", 
+              type: "checkpoint" as const,
+              coordinates: { lat: 16.5985, lng: 120.8923 },
+              description: "First major checkpoint with river crossing"
+            },
+            { 
+              name: "Camp 1 - Bamboo Forest", 
+              elevation: "2,134m", 
+              type: "campsite" as const,
+              coordinates: { lat: 16.6012, lng: 120.8967 },
+              description: "First camping area surrounded by bamboo groves"
+            },
+            { 
+              name: "Saddle Camp", 
+              elevation: "2,387m", 
+              type: "campsite" as const,
+              coordinates: { lat: 16.6043, lng: 120.9015 },
+              description: "Popular overnight camping spot before final ascent"
+            },
+            { 
+              name: "Camp 2 - Grassland", 
+              elevation: "2,654m", 
+              type: "campsite" as const,
+              coordinates: { lat: 16.6067, lng: 120.9052 },
+              description: "High-altitude grassland camping area near summit"
+            },
+            { 
+              name: "Mount Pulag Summit", 
+              elevation: "2,922m", 
+              type: "summit" as const,
+              coordinates: { lat: 16.6089, lng: 120.9089 },
+              description: "Luzon's highest peak with panoramic views and sea of clouds"
+            }
           ]
         },
         accommodation: {
@@ -791,75 +828,37 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                     </div>
                   </div>
 
-                  {/* 3D Trail Visualization */}
+                  {/* Google Maps Satellite Trail Visualization */}
                   <div className="mb-6">
                     <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
                       <MapIcon className="w-4 h-4 mr-2" />
-                      3D Trail Map
+                      Trail Map - Satellite View
                     </h3>
-                    <div className="w-full h-96 bg-gradient-to-b from-blue-100 to-green-100 rounded-lg relative overflow-hidden">
-                      <div className="absolute inset-0 p-4">
-                        {/* 3D Mountain Visualization */}
-                        <div className="w-full h-full relative">
-                          {/* Mountain Peaks */}
-                          <div 
-                            className="absolute w-32 h-32 bg-gradient-to-t from-gray-600 to-gray-300 transform rotate-45 translate-x-32 translate-y-16"
-                            style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}
-                          ></div>
-                          <div 
-                            className="absolute w-40 h-40 bg-gradient-to-t from-gray-700 to-gray-400 transform rotate-45 translate-x-48 translate-y-8"
-                            style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}
-                          ></div>
-                          
-                          {/* Trail Path */}
-                          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300">
-                            <path 
-                              d="M 50,250 Q 100,230 150,200 Q 200,180 250,150 Q 300,130 350,100" 
-                              stroke="#D4AF37" 
-                              strokeWidth="4" 
-                              strokeDasharray="5,5"
-                              fill="none"
-                              className="animate-pulse"
-                            />
-                          </svg>
-                          
-                          {/* Trail Points */}
-                          {trip.trail.trailPoints.map((point, index) => (
-                            <div 
-                              key={index}
-                              className={`absolute w-3 h-3 rounded-full border-2 border-white shadow-lg ${
-                                point.type === 'trailhead' ? 'bg-green-500' :
-                                point.type === 'campsite' ? 'bg-orange-500' :
-                                point.type === 'summit' ? 'bg-red-500' :
-                                'bg-blue-500'
-                              }`}
-                              style={{
-                                left: `${20 + (index * 60)}px`,
-                                top: `${280 - (index * 30)}px`
-                              }}
-                              title={`${point.name} - ${point.elevation}m`}
-                            />
-                          ))}
-                          
-                          {/* Floating Labels */}
-                          <div className="absolute top-4 left-4 bg-white bg-opacity-90 p-2 rounded text-xs">
-                            <div className="flex items-center space-x-2 mb-1">
-                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                              <span>Trailhead</span>
-                            </div>
-                            <div className="flex items-center space-x-2 mb-1">
-                              <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                              <span>Camping Sites</span>
-                            </div>
-                            <div className="flex items-center space-x-2 mb-1">
-                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                              <span>Checkpoints</span>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                              <span>Summit</span>
-                            </div>
-                          </div>
+                    <TrailMap 
+                      trailPoints={trip.trail.trailPoints}
+                      center={trip.mapCenter}
+                      zoom={14}
+                    />
+                    
+                    {/* Legend */}
+                    <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                      <h4 className="font-medium text-gray-900 mb-3">Trail Markers</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg">🚀</span>
+                          <span className="text-gray-700">Trailhead</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg">⛺</span>
+                          <span className="text-gray-700">Camping Sites</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg">🏁</span>
+                          <span className="text-gray-700">Checkpoints</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg">🏔️</span>
+                          <span className="text-gray-700">Summit</span>
                         </div>
                       </div>
                     </div>
@@ -884,11 +883,11 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                             <div className="flex items-center space-x-4 text-sm text-gray-600">
                               <span className="flex items-center">
                                 <TrendingUp className="w-3 h-3 mr-1" />
-                                {point.elevation}m elevation
+                                {point.elevation} elevation
                               </span>
                               <span className="flex items-center">
                                 <MapPin className="w-3 h-3 mr-1" />
-                                {point.lat.toFixed(4)}, {point.lng.toFixed(4)}
+                                {point.coordinates.lat.toFixed(4)}, {point.coordinates.lng.toFixed(4)}
                               </span>
                             </div>
                           </div>
