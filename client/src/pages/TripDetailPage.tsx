@@ -285,11 +285,41 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
           startElevation: 754,
           peakElevation: 2954,
           trailPoints: [
-            { name: "Kapatagan DENR Station", elevation: 754, lat: 7.0167, lng: 125.2733, type: "trailhead" },
-            { name: "Mainit Hot Springs", elevation: 1200, lat: 7.0189, lng: 125.2698, type: "checkpoint" },
-            { name: "Lake Venado Camp", elevation: 1845, lat: 7.0212, lng: 125.2654, type: "campsite" },
-            { name: "Boulder Face Camp", elevation: 2456, lat: 7.0234, lng: 125.2623, type: "campsite" },
-            { name: "Mount Apo Summit", elevation: 2954, lat: 7.0245, lng: 125.2611, type: "summit" }
+            { 
+              name: "Kapatagan DENR Station", 
+              elevation: "754m", 
+              type: "trailhead" as const,
+              coordinates: { lat: 7.0167, lng: 125.2733 },
+              description: "Registration point and trail start in Digos City"
+            },
+            { 
+              name: "Mainit Hot Springs", 
+              elevation: "1,200m", 
+              type: "checkpoint" as const,
+              coordinates: { lat: 7.0189, lng: 125.2698 },
+              description: "Natural hot springs checkpoint for rest and relaxation"
+            },
+            { 
+              name: "Lake Venado Camp", 
+              elevation: "1,845m", 
+              type: "campsite" as const,
+              coordinates: { lat: 7.0212, lng: 125.2654 },
+              description: "Scenic lake camping area with freshwater source"
+            },
+            { 
+              name: "Boulder Face Camp", 
+              elevation: "2,456m", 
+              type: "campsite" as const,
+              coordinates: { lat: 7.0234, lng: 125.2623 },
+              description: "High-altitude camping before final summit push"
+            },
+            { 
+              name: "Mount Apo Summit", 
+              elevation: "2,954m", 
+              type: "summit" as const,
+              coordinates: { lat: 7.0245, lng: 125.2611 },
+              description: "Philippines' highest peak with panoramic Mindanao views"
+            }
           ]
         },
         accommodation: {
@@ -906,28 +936,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                     </div>
                   </div>
 
-                  {/* Additional Trail Info */}
-                  <div className="grid md:grid-cols-2 gap-6 mt-6">
-                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                      <h4 className="font-medium text-blue-800 mb-2">Trail Conditions</h4>
-                      <ul className="space-y-1 text-sm text-blue-700">
-                        <li>• Best season: October to February</li>
-                        <li>• Weather: Cool temperatures, possible frost</li>
-                        <li>• Trail surface: Rocky, grassy sections</li>
-                        <li>• Water sources: Available at camps</li>
-                      </ul>
-                    </div>
 
-                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                      <h4 className="font-medium text-green-800 mb-2">Safety Information</h4>
-                      <ul className="space-y-1 text-sm text-green-700">
-                        <li>• Altitude sickness possible above 2,500m</li>
-                        <li>• Weather changes rapidly</li>
-                        <li>• GPS recommended for navigation</li>
-                        <li>• Emergency shelter at Camp 2</li>
-                      </ul>
-                    </div>
-                  </div>
                 </Card>
               </TabsContent>
             )}

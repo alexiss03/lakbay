@@ -28,11 +28,15 @@ This is a full-stack JavaScript application migrated from Figma to Replit enviro
 - (To be updated as user preferences are discovered)
 
 ## Recent Changes
-- **August 6, 2025**: Implemented comprehensive trip categories system
+- **August 6, 2025**: Implemented comprehensive trip categories system and Google Maps integration
 - Added 8 major trip categories with authentic Philippine travel data
-- Created Trail tab with 3D visualization for hiking category trips
+- Replaced custom 3D trail visualization with Google Maps satellite view for hiking trips
+- Integrated Google Maps JavaScript API with markers for Trailhead, Camping Sites, Checkpoints, and Summit locations
+- Added authentic Mount Pulag trail coordinates and interactive trail path visualization
+- Created TrailMap component with satellite imagery and marker-based trail mapping
 - Expanded trip database with 10+ different trip types including hiking, island hopping, cultural tours, adventure sports, wellness retreats, culinary tours, wildlife tours, and diving experiences
 - Updated homepage with category grid and filtered trip listings
 - Added Mount Pulag, Mount Apo, Siargao, Vigan, Bohol Tarsier, Cagayan Whitewater, Tagaytay Wellness, and Iloilo Culinary experiences
 - Enhanced user interface with category-specific badges and organized navigation
 - All trip data includes authentic destinations, pricing, itineraries, and accommodations
+- Removed Trail Conditions and Safety Information sections from trail visualization
