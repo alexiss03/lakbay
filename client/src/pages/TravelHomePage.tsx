@@ -18,7 +18,8 @@ export const TravelHomePage = (): JSX.Element => {
           
           {/* Center: Navigation */}
           <nav className="flex items-center space-x-8">
-            <a href="#" className="text-gray-900 font-medium">Home</a>
+            <Link href="/" className="text-gray-900 font-medium">Home</Link>
+            <Link href="/chats" className="text-gray-700 hover:text-gray-900">Chats</Link>
             <a href="#" className="text-gray-700 hover:text-gray-900">Trails</a>
             <a href="#" className="text-gray-700 hover:text-gray-900">Story</a>
             <a href="#" className="text-gray-700 hover:text-gray-900">Shop</a>

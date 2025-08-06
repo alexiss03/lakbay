@@ -9,12 +9,14 @@ import { Box } from "@/pages/Box";
 import { TravelHomePage } from "@/pages/TravelHomePage";
 import { ArticlePage } from "@/pages/ArticlePage";
 import { TripDetailPage } from "@/pages/TripDetailPage";
+import { ChatPage } from "@/pages/ChatPage";
 
 function Router() {
   return (
     <Switch>
       {/* Add pages below */}
       <Route path="/" component={TravelHomePage} />
+      <Route path="/chats" component={ChatPage} />
       <Route path="/article/:slug" component={ArticlePage} />
       <Route path="/trip/:id" component={TripDetailPage} />
       <Route path="/welcome" component={Box} />
