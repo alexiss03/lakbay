@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link, useLocation } from "wouter";
+import { useToast } from "@/hooks/use-toast";
 
 interface TripDetailPageProps {
   params?: {
@@ -16,6 +17,117 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
   const [guests, setGuests] = useState("1 guest");
   const [checkIn, setCheckIn] = useState("09/14/2025");
   const [checkOut, setCheckOut] = useState("09/16/2025");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const { toast } = useToast();
+
+  // Check for payment status in URL
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get('payment');
+    
+    if (paymentStatus === 'success') {
+      toast({
+        title: "Payment Successful!",
+        description: "Your booking has been confirmed. Check your email for details.",
+      });
+    } else if (paymentStatus === 'cancelled') {
+      toast({
+        title: "Payment Cancelled",
+        description: "Your payment was cancelled. You can try again anytime.",
+        variant: "destructive",
+      });
+    }
+  }, [toast]);
+
+  const handlePayMongoPayment = async () => {
+    setIsProcessing(true);
+    
+    try {
+      // Calculate total amount
+      const guestCount = parseInt(guests.split(" ")[0]);
+      const basePrice = parseInt(trip.price.replace(/[^\d]/g, ""));
+      const totalAmount = basePrice * guestCount * 100; // PayMongo expects amount in centavos
+      
+      // Create PayMongo payment intent
+      const response = await fetch('/api/create-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: totalAmount,
+          currency: 'PHP',
+          description: `${trip.title} - ${guests}`,
+          statement_descriptor: 'Lakbay Travel',
+          metadata: {
+            trip_id: location.split('/')[2],
+            check_in: checkIn,
+            check_out: checkOut,
+            guests: guestCount
+          }
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Redirect to PayMongo checkout
+        window.location.href = data.checkout_url;
+      } else {
+        throw new Error(data.error || 'Payment creation failed');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast({
+        title: "Payment Error",
+        description: "Unable to process payment. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleReservation = async () => {
+    setIsProcessing(true);
+    
+    try {
+      // Create reservation without payment
+      const response = await fetch('/api/create-reservation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          trip_id: location.split('/')[2],
+          check_in: checkIn,
+          check_out: checkOut,
+          guests: parseInt(guests.split(" ")[0]),
+          status: 'reserved'
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast({
+          title: "Reservation Confirmed",
+          description: "Your trip has been reserved. Complete payment within 24 hours.",
+        });
+      } else {
+        throw new Error(data.error || 'Reservation failed');
+      }
+    } catch (error) {
+      console.error('Reservation error:', error);
+      toast({
+        title: "Reservation Error", 
+        description: "Unable to create reservation. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   // Sample trip data based on route
   const getTripData = () => {
@@ -251,14 +363,53 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                   <Input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} />
                 </div>
               </div>
+
+              {/* Price Breakdown */}
+              <div className="border-t pt-3 space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>{trip.price} x {guests}</span>
+                  <span>₱{(parseInt(trip.price.replace(/[^\d]/g, "")) * parseInt(guests.split(" ")[0])).toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between font-semibold">
+                  <span>Total</span>
+                  <span>₱{(parseInt(trip.price.replace(/[^\d]/g, "")) * parseInt(guests.split(" ")[0])).toLocaleString()}</span>
+                </div>
+              </div>
               
-              <Button className="w-full bg-[#D4AF37] hover:bg-[#B8941F] text-black font-medium">
-                Reserve
+              <Button 
+                onClick={handleReservation}
+                disabled={isProcessing}
+                className="w-full bg-[#D4AF37] hover:bg-[#B8941F] text-black font-medium"
+              >
+                {isProcessing ? "Processing..." : "Reserve (24h hold)"}
               </Button>
               
-              <Button className="w-full bg-gray-900 hover:bg-gray-800 text-white font-medium">
-                Book Now
+              <Button 
+                onClick={handlePayMongoPayment}
+                disabled={isProcessing}
+                className="w-full bg-gray-900 hover:bg-gray-800 text-white font-medium"
+              >
+                {isProcessing ? "Processing..." : "Book Now with PayMongo"}
               </Button>
+
+              <div className="text-center">
+                <p className="text-xs text-gray-500 mb-2">Secure payment powered by</p>
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="bg-[#1a56db] text-white px-3 py-1 rounded text-xs font-semibold">
+                    PayMongo
+                  </div>
+                  <span className="text-xs text-gray-400">SSL Encrypted</span>
+                </div>
+                <div className="flex items-center justify-center space-x-3 mt-2">
+                  <span className="text-xs text-gray-500">Accepts:</span>
+                  <div className="flex space-x-1">
+                    <div className="bg-blue-600 text-white px-2 py-1 rounded text-xs">GCash</div>
+                    <div className="bg-green-600 text-white px-2 py-1 rounded text-xs">Maya</div>
+                    <div className="bg-purple-600 text-white px-2 py-1 rounded text-xs">Cards</div>
+                    <div className="bg-orange-600 text-white px-2 py-1 rounded text-xs">GrabPay</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </Card>
 
