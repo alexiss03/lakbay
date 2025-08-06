@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Link } from "wouter";
 import { ChatWidget } from "@/components/ChatWidget";
 import { TrendingArticlesSection } from "@/components/TrendingArticlesSection";
+import { RecommendedSection } from "@/components/RecommendedSection";
 
 export const TravelHomePage = (): JSX.Element => {
   const [activeTab, setActiveTab] = useState("Private");
@@ -335,6 +336,9 @@ export const TravelHomePage = (): JSX.Element => {
           ))}
         </div>
       </section>
+
+      {/* Recommended Section - Only for logged in users */}
+      <RecommendedSection />
 
       {/* Trending Articles Section - Only for logged in users */}
       <TrendingArticlesSection />
