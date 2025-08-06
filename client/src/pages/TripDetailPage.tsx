@@ -23,7 +23,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
   const [checkIn, setCheckIn] = useState("09/14/2025");
   const [checkOut, setCheckOut] = useState("09/16/2025");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [activeTab, setActiveTab] = useState("itinerary");
+  const [activeTab, setActiveTab] = useState("Event details");
   const { toast } = useToast();
 
   // Check for payment status in URL
@@ -771,20 +771,16 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
         {/* Trip Details */}
         <div className="lg:col-span-2">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className={`grid w-full h-auto p-1 ${trip.category === 'hiking' ? 'grid-cols-8' : 'grid-cols-7'}`}>
-              <TabsTrigger value="itinerary" className="text-xs px-2 py-2">Itinerary</TabsTrigger>
-              {trip.category === 'hiking' && (
-                <TabsTrigger value="trail" className="text-xs px-2 py-2">Trail</TabsTrigger>
-              )}
-              <TabsTrigger value="inclusions" className="text-xs px-2 py-2">Inclusions</TabsTrigger>
-              <TabsTrigger value="accommodation" className="text-xs px-2 py-2">Accommodation</TabsTrigger>
-              <TabsTrigger value="reviews" className="text-xs px-2 py-2">Reviews</TabsTrigger>
-              <TabsTrigger value="bring" className="text-xs px-2 py-2">Things to bring</TabsTrigger>
-              <TabsTrigger value="reminders" className="text-xs px-2 py-2">Reminders</TabsTrigger>
-              <TabsTrigger value="cancellation" className="text-xs px-2 py-2">Cancellation</TabsTrigger>
+            <TabsList className="grid w-full h-auto p-1 grid-cols-6">
+              <TabsTrigger value="Event details" className="text-xs px-2 py-2">Event details</TabsTrigger>
+              <TabsTrigger value="Inclusions" className="text-xs px-2 py-2">Inclusions</TabsTrigger>
+              <TabsTrigger value="Reviews" className="text-xs px-2 py-2">Reviews</TabsTrigger>
+              <TabsTrigger value="Things to bring" className="text-xs px-2 py-2">Things to bring</TabsTrigger>
+              <TabsTrigger value="Reminders" className="text-xs px-2 py-2">Reminders</TabsTrigger>
+              <TabsTrigger value="Cancellation" className="text-xs px-2 py-2">Cancellation</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="itinerary" className="space-y-6">
+            <TabsContent value="Event details" className="space-y-6">
               {trip.itinerary.map((day, index) => (
                 <Card key={index} className="p-6">
                   <div className="flex space-x-4">
@@ -941,7 +937,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
               </TabsContent>
             )}
 
-            <TabsContent value="inclusions" className="space-y-6">
+            <TabsContent value="Inclusions" className="space-y-6">
               <Card className="p-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
                   <CheckCircle2 className="w-5 h-5 mr-2 text-green-600" />
@@ -1045,7 +1041,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
               </Card>
             </TabsContent>
 
-            <TabsContent value="accommodation" className="space-y-6">
+            <TabsContent value="Accommodation" className="space-y-6">
               <Card className="p-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-6">Accommodation Details</h2>
                 
@@ -1126,7 +1122,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
               </Card>
             </TabsContent>
 
-            <TabsContent value="reviews" className="space-y-6">
+            <TabsContent value="Reviews" className="space-y-6">
               <Card className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-semibold text-gray-900">Guest Reviews</h2>
@@ -1300,7 +1296,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
               </Card>
             </TabsContent>
 
-            <TabsContent value="bring" className="space-y-6">
+            <TabsContent value="Things to bring" className="space-y-6">
               <Card className="p-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-6">What to Bring</h2>
                 
@@ -1417,7 +1413,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
               </Card>
             </TabsContent>
 
-            <TabsContent value="reminders" className="space-y-6">
+            <TabsContent value="Reminders" className="space-y-6">
               <Card className="p-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
                   <AlertTriangle className="w-5 h-5 mr-2 text-[#D4AF37]" />
@@ -1506,7 +1502,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
               </Card>
             </TabsContent>
 
-            <TabsContent value="cancellation" className="space-y-6">
+            <TabsContent value="Cancellation" className="space-y-6">
               <Card className="p-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-6">Cancellation Policy</h2>
                 

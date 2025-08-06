@@ -112,7 +112,7 @@ export const TravelHomePage = (): JSX.Element => {
             { name: "Mystery Adventures", icon: "❓", description: "Secret destinations revealed", count: "6 events" },
             { name: "Festival Events", icon: "🎉", description: "Cultural celebrations", count: "10 events" },
             { name: "Virtual Experiences", icon: "💻", description: "Online tours & workshops", count: "20 events" },
-            { name: "Day Trips", icon: "🌅", description: "Quick getaway adventures", count: "18 events" },
+            { name: "Online Quizzes", icon: "🧠", description: "Interactive knowledge challenges", count: "25 quizzes" },
             { name: "Weekend Escapes", icon: "🏕️", description: "Multi-day expeditions", count: "9 events" }
           ].map((category, index) => (
             <Card key={index} className="p-4 hover:shadow-lg transition-shadow cursor-pointer group">
@@ -127,7 +127,7 @@ export const TravelHomePage = (): JSX.Element => {
         </div>
         
         <div className="flex space-x-8 mb-8 border-b border-gray-200">
-          {["Private", "Joiner", "Meetups", "Mystery", "Events", "Virtual"].map((tab) => (
+          {["Private", "Joiner", "Meetups", "Mystery", "Events", "Virtual", "Online Quizzes"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -294,6 +294,33 @@ export const TravelHomePage = (): JSX.Element => {
                   />
                   <div className="absolute top-3 right-3">
                     <span className="bg-red-500 text-white text-xs px-2 py-1 rounded">Virtual</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-3 left-3 text-white">
+                    <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
+                    <p className="text-xs opacity-90">{trip.location}</p>
+                    <p className="text-sm font-bold">{trip.price}</p>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+          ))}
+
+          {activeTab === "Online Quizzes" && [
+            { title: "Philippine Geography Quiz Challenge", location: "Online Platform", price: "₱99", image: "1609137144813-7d9921338f24", link: "/trip/geography-quiz" },
+            { title: "Cultural Heritage Trivia Contest", location: "Interactive Quiz", price: "₱149", image: "1556909114-f6e7ad7d3136", link: "/trip/culture-quiz" },
+            { title: "Adventure Travel Knowledge Test", location: "Digital Experience", price: "₱79", image: "1441974231531-c6227db76b6e", link: "/trip/adventure-quiz" }
+          ].map((trip, i) => (
+            <Link key={i} href={trip.link}>
+              <Card className="overflow-hidden rounded-lg group cursor-pointer">
+                <div className="relative aspect-[4/3]">
+                  <img 
+                    src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={trip.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute top-3 right-3">
+                    <span className="bg-indigo-500 text-white text-xs px-2 py-1 rounded">Quiz</span>
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-3 left-3 text-white">

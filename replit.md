@@ -29,9 +29,11 @@ This is a full-stack JavaScript application migrated from Figma to Replit enviro
 
 ## Recent Changes
 - **August 6, 2025**: Major category transformation from travel-focused to event-focused platform
-- Updated categories from travel types (Hiking, Island Hopping, Cultural, etc.) to event types (Private, Joiner, Meetups, Mystery, Events, Virtual)
-- Modified category grid to show event-focused options: Private Events, Joiner Trips, Community Meetups, Mystery Adventures, Festival Events, Virtual Experiences, Day Trips, Weekend Escapes
-- Updated tab navigation to use new event categories: Private, Joiner, Meetups, Mystery, Events, Virtual
+- Added "Online Quizzes" as seventh category tab with interactive knowledge challenges
+- Updated event detail page structure with new tab organization: Event details, Inclusions, Reviews, Things to bring, Reminders, Cancellation
+- Modified category grid to include Online Quizzes category with brain icon and quiz count
+- Updated tab navigation to include all seven categories: Private, Joiner, Meetups, Mystery, Events, Virtual, Online Quizzes
+- Restructured trip detail pages to use event-focused terminology and section organization
 - Fixed cart validation error by converting price from number to string format for backend compatibility
 - Resolved LSP diagnostic issues with proper iteration syntax
 - Enhanced e-commerce functionality with complete ShopPage and ProductDetailPage integration
