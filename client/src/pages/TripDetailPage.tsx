@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { ChatWidget } from "@/components/ChatWidget";
-import { MapPin, Star, Clock, Users, Calendar, Shield, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { MapPin, Star, Clock, Users, Calendar, Shield, AlertTriangle, CheckCircle2, Mountain, TrendingUp, MapIcon } from "lucide-react";
 
 interface TripDetailPageProps {
   params?: {
@@ -136,11 +136,76 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
 
   // Sample trip data based on route
   const getTripData = () => {
+    if (location.includes("mount-pulag")) {
+      return {
+        title: "Mount Pulag Sunrise Trek",
+        duration: "April 12-15, 2025",
+        price: "PHP 8500 per person",
+        category: "hiking",
+        heroImage: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=1200&h=400&fit=crop&auto=format",
+        host: {
+          name: "Miguel Santos", 
+          avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&auto=format",
+          bio: "Mountain guide and outdoor enthusiast with 10+ years experience in Luzon's highest peaks."
+        },
+        itinerary: [
+          {
+            day: 1,
+            title: "Base Camp Setup and Acclimatization",
+            description: "Arrive at Babadak Ranger Station and set up base camp. Acclimatization hike to nearby viewpoints and equipment check.",
+            image: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 2,
+            title: "Summit Assault - Sea of Clouds",
+            description: "Early morning trek to the summit of Mount Pulag (2,922m). Experience the famous sea of clouds and panoramic views of Northern Luzon.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 3,
+            title: "Descent and Departure",
+            description: "Gradual descent through mossy forests and grasslands. Final camp breakdown and transfer back to jump-off point.",
+            image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=200&fit=crop&auto=format"
+          }
+        ],
+        trail: {
+          name: "Mount Pulag Summit Trail",
+          difficulty: "Moderate to Difficult",
+          distance: "8.2 km",
+          duration: "6-8 hours",
+          elevationGain: "1,200m",
+          startElevation: 1722,
+          peakElevation: 2922,
+          trailPoints: [
+            { name: "Babadak Ranger Station", elevation: 1722, lat: 16.5964, lng: 120.8897, type: "trailhead" },
+            { name: "Eddet River Crossing", elevation: 1856, lat: 16.5985, lng: 120.8923, type: "checkpoint" },
+            { name: "Camp 1 - Bamboo Forest", elevation: 2134, lat: 16.6012, lng: 120.8967, type: "campsite" },
+            { name: "Saddle Camp", elevation: 2387, lat: 16.6043, lng: 120.9015, type: "campsite" },
+            { name: "Camp 2 - Grassland", elevation: 2654, lat: 16.6067, lng: 120.9052, type: "campsite" },
+            { name: "Mount Pulag Summit", elevation: 2922, lat: 16.6089, lng: 120.9089, type: "summit" }
+          ]
+        },
+        accommodation: {
+          title: "Mountain Camping Experience",
+          images: [
+            "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+          ],
+          description: "Multi-day camping experience with provided tents, sleeping bags, and mountain cooking equipment."
+        },
+        meetingPlace: "Babadak Ranger Station, Kabayan, Benguet",
+        mapCenter: { lat: 16.5964, lng: 120.8897 }
+      };
+    }
+    
     if (location.includes("bohol-nature")) {
       return {
         title: "Nature dive in Bohol for 3 days",
         duration: "August 14-16, 2025",
         price: "PHP 2204 per person",
+        category: "island",
         heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=400&fit=crop&auto=format",
         host: {
           name: "Maria Santos",
@@ -187,6 +252,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
       title: "Private Island Adventure in Palawan",
       duration: "September 20-23, 2025",
       price: "PHP 15000 per person",
+      category: "island",
       heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=400&fit=crop&auto=format",
       host: {
         name: "Juan Dela Cruz",
@@ -274,8 +340,11 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
         {/* Trip Details */}
         <div className="lg:col-span-2">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-7 h-auto p-1">
+            <TabsList className={`grid w-full h-auto p-1 ${trip.category === 'hiking' ? 'grid-cols-8' : 'grid-cols-7'}`}>
               <TabsTrigger value="itinerary" className="text-xs px-2 py-2">Itinerary</TabsTrigger>
+              {trip.category === 'hiking' && (
+                <TabsTrigger value="trail" className="text-xs px-2 py-2">Trail</TabsTrigger>
+              )}
               <TabsTrigger value="inclusions" className="text-xs px-2 py-2">Inclusions</TabsTrigger>
               <TabsTrigger value="accommodation" className="text-xs px-2 py-2">Accommodation</TabsTrigger>
               <TabsTrigger value="reviews" className="text-xs px-2 py-2">Reviews</TabsTrigger>
@@ -306,6 +375,199 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                 </Card>
               ))}
             </TabsContent>
+
+            {trip.category === 'hiking' && trip.trail && (
+              <TabsContent value="trail" className="space-y-6">
+                <Card className="p-6">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                    <Mountain className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                    3D Trail Visualization
+                  </h2>
+                  
+                  {/* Trail Overview */}
+                  <div className="grid md:grid-cols-2 gap-6 mb-6">
+                    <div className="space-y-4">
+                      <h3 className="font-semibold text-gray-900">{trip.trail.name}</h3>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-600">Difficulty:</span>
+                          <p className="font-medium text-gray-900">{trip.trail.difficulty}</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Distance:</span>
+                          <p className="font-medium text-gray-900">{trip.trail.distance}</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Duration:</span>
+                          <p className="font-medium text-gray-900">{trip.trail.duration}</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Elevation Gain:</span>
+                          <p className="font-medium text-gray-900">{trip.trail.elevationGain}</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-gray-900 mb-2">Elevation Profile</h4>
+                      <div className="w-full h-32 bg-gradient-to-r from-green-200 via-yellow-200 to-red-200 rounded relative">
+                        <div className="absolute inset-0 flex items-end justify-between px-2 pb-2 text-xs">
+                          <span className="bg-white px-1 rounded">{trip.trail.startElevation}m</span>
+                          <span className="bg-white px-1 rounded">{trip.trail.peakElevation}m</span>
+                        </div>
+                        <svg className="w-full h-full" viewBox="0 0 300 100" preserveAspectRatio="none">
+                          <path 
+                            d="M 10,80 Q 50,70 80,60 Q 120,45 150,35 Q 180,30 220,25 Q 260,20 290,15" 
+                            stroke="#D4AF37" 
+                            strokeWidth="2" 
+                            fill="none"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 3D Trail Visualization */}
+                  <div className="mb-6">
+                    <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+                      <MapIcon className="w-4 h-4 mr-2" />
+                      3D Trail Map
+                    </h3>
+                    <div className="w-full h-96 bg-gradient-to-b from-blue-100 to-green-100 rounded-lg relative overflow-hidden">
+                      <div className="absolute inset-0 p-4">
+                        {/* 3D Mountain Visualization */}
+                        <div className="w-full h-full relative">
+                          {/* Mountain Peaks */}
+                          <div 
+                            className="absolute w-32 h-32 bg-gradient-to-t from-gray-600 to-gray-300 transform rotate-45 translate-x-32 translate-y-16"
+                            style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}
+                          ></div>
+                          <div 
+                            className="absolute w-40 h-40 bg-gradient-to-t from-gray-700 to-gray-400 transform rotate-45 translate-x-48 translate-y-8"
+                            style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}
+                          ></div>
+                          
+                          {/* Trail Path */}
+                          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300">
+                            <path 
+                              d="M 50,250 Q 100,230 150,200 Q 200,180 250,150 Q 300,130 350,100" 
+                              stroke="#D4AF37" 
+                              strokeWidth="4" 
+                              strokeDasharray="5,5"
+                              fill="none"
+                              className="animate-pulse"
+                            />
+                          </svg>
+                          
+                          {/* Trail Points */}
+                          {trip.trail.trailPoints.map((point, index) => (
+                            <div 
+                              key={index}
+                              className={`absolute w-3 h-3 rounded-full border-2 border-white shadow-lg ${
+                                point.type === 'trailhead' ? 'bg-green-500' :
+                                point.type === 'campsite' ? 'bg-orange-500' :
+                                point.type === 'summit' ? 'bg-red-500' :
+                                'bg-blue-500'
+                              }`}
+                              style={{
+                                left: `${20 + (index * 60)}px`,
+                                top: `${280 - (index * 30)}px`
+                              }}
+                              title={`${point.name} - ${point.elevation}m`}
+                            />
+                          ))}
+                          
+                          {/* Floating Labels */}
+                          <div className="absolute top-4 left-4 bg-white bg-opacity-90 p-2 rounded text-xs">
+                            <div className="flex items-center space-x-2 mb-1">
+                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                              <span>Trailhead</span>
+                            </div>
+                            <div className="flex items-center space-x-2 mb-1">
+                              <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                              <span>Camping Sites</span>
+                            </div>
+                            <div className="flex items-center space-x-2 mb-1">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <span>Checkpoints</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                              <span>Summit</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Trail Points Details */}
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-4">Trail Points & Camping Sites</h3>
+                    <div className="space-y-4">
+                      {trip.trail.trailPoints.map((point, index) => (
+                        <div key={index} className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${
+                            point.type === 'trailhead' ? 'bg-green-500' :
+                            point.type === 'campsite' ? 'bg-orange-500' :
+                            point.type === 'summit' ? 'bg-red-500' :
+                            'bg-blue-500'
+                          }`}>
+                            {index + 1}
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-medium text-gray-900">{point.name}</h4>
+                            <div className="flex items-center space-x-4 text-sm text-gray-600">
+                              <span className="flex items-center">
+                                <TrendingUp className="w-3 h-3 mr-1" />
+                                {point.elevation}m elevation
+                              </span>
+                              <span className="flex items-center">
+                                <MapPin className="w-3 h-3 mr-1" />
+                                {point.lat.toFixed(4)}, {point.lng.toFixed(4)}
+                              </span>
+                            </div>
+                          </div>
+                          {point.type === 'campsite' && (
+                            <Badge variant="outline" className="text-orange-600 border-orange-600">
+                              Camping Available
+                            </Badge>
+                          )}
+                          {point.type === 'summit' && (
+                            <Badge className="bg-red-500 text-white">
+                              Peak
+                            </Badge>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Additional Trail Info */}
+                  <div className="grid md:grid-cols-2 gap-6 mt-6">
+                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <h4 className="font-medium text-blue-800 mb-2">Trail Conditions</h4>
+                      <ul className="space-y-1 text-sm text-blue-700">
+                        <li>• Best season: October to February</li>
+                        <li>• Weather: Cool temperatures, possible frost</li>
+                        <li>• Trail surface: Rocky, grassy sections</li>
+                        <li>• Water sources: Available at camps</li>
+                      </ul>
+                    </div>
+
+                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                      <h4 className="font-medium text-green-800 mb-2">Safety Information</h4>
+                      <ul className="space-y-1 text-sm text-green-700">
+                        <li>• Altitude sickness possible above 2,500m</li>
+                        <li>• Weather changes rapidly</li>
+                        <li>• GPS recommended for navigation</li>
+                        <li>• Emergency shelter at Camp 2</li>
+                      </ul>
+                    </div>
+                  </div>
+                </Card>
+              </TabsContent>
+            )}
 
             <TabsContent value="inclusions" className="space-y-6">
               <Card className="p-6">
