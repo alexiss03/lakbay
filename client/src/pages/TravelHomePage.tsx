@@ -7,7 +7,7 @@ import { Link } from "wouter";
 import { ChatWidget } from "@/components/ChatWidget";
 
 export const TravelHomePage = (): JSX.Element => {
-  const [activeTab, setActiveTab] = useState("Featured Trips");
+  const [activeTab, setActiveTab] = useState("Private");
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -100,20 +100,20 @@ export const TravelHomePage = (): JSX.Element => {
 
       {/* Trip Categories */}
       <section className="px-8 py-12 bg-gray-50">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8">Discover Your Adventure</h2>
-        <p className="text-gray-600 mb-8">Choose from our diverse range of authentic Philippine travel experiences</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-8">Explore Event Categories</h2>
+        <p className="text-gray-600 mb-8">Join exciting events, meet fellow adventurers, and create unforgettable memories</p>
         
         {/* Categories Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
           {[
-            { name: "Hiking & Trekking", icon: "🏔️", description: "Mountain peaks and trails", count: "12 trips" },
-            { name: "Island Hopping", icon: "🏝️", description: "Tropical islands and beaches", count: "8 trips" },
-            { name: "Cultural Tours", icon: "🏛️", description: "Heritage and traditions", count: "6 trips" },
-            { name: "Wildlife & Nature", icon: "🦋", description: "Endemic species and conservation", count: "5 trips" },
-            { name: "Adventure Sports", icon: "🚣", description: "Thrilling outdoor activities", count: "7 trips" },
-            { name: "Wellness Retreats", icon: "🧘", description: "Mindfulness and relaxation", count: "4 trips" },
-            { name: "Culinary Tours", icon: "🍲", description: "Local cuisine and cooking", count: "5 trips" },
-            { name: "Diving & Marine", icon: "🤿", description: "Underwater adventures", count: "6 trips" }
+            { name: "Private Events", icon: "👑", description: "Exclusive VIP experiences", count: "8 events" },
+            { name: "Joiner Trips", icon: "👥", description: "Meet new adventurers", count: "15 events" },
+            { name: "Community Meetups", icon: "🤝", description: "Local gatherings & activities", count: "12 events" },
+            { name: "Mystery Adventures", icon: "❓", description: "Secret destinations revealed", count: "6 events" },
+            { name: "Festival Events", icon: "🎉", description: "Cultural celebrations", count: "10 events" },
+            { name: "Virtual Experiences", icon: "💻", description: "Online tours & workshops", count: "20 events" },
+            { name: "Day Trips", icon: "🌅", description: "Quick getaway adventures", count: "18 events" },
+            { name: "Weekend Escapes", icon: "🏕️", description: "Multi-day expeditions", count: "9 events" }
           ].map((category, index) => (
             <Card key={index} className="p-4 hover:shadow-lg transition-shadow cursor-pointer group">
               <div className="text-center">
@@ -127,7 +127,7 @@ export const TravelHomePage = (): JSX.Element => {
         </div>
         
         <div className="flex space-x-8 mb-8 border-b border-gray-200">
-          {["Featured Trips", "Hiking Adventures", "Island Escapes", "Cultural Heritage", "Wildlife Tours"].map((tab) => (
+          {["Private", "Joiner", "Meetups", "Mystery", "Events", "Virtual"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -144,10 +144,10 @@ export const TravelHomePage = (): JSX.Element => {
 
         {/* Tab Content */}
         <div className="grid grid-cols-3 gap-6">
-          {activeTab === "Featured Trips" && [
-            { title: "Mount Pulag Sunrise Trek", location: "Benguet", price: "₱8,500", image: "1464822759844-d150baec0494", link: "/trip/mount-pulag", category: "hiking" },
-            { title: "Bohol Nature Discovery", location: "Bohol", price: "₱2,204", image: "1506905925346-21bda4d32df4", link: "/trip/bohol-nature", category: "island" },
-            { title: "Vigan Heritage Tour", location: "Ilocos Sur", price: "₱6,500", image: "1609137144813-7d9921338f24", link: "/trip/vigan-heritage", category: "cultural" }
+          {activeTab === "Private" && [
+            { title: "Exclusive Mount Pulag VIP Trek", location: "Benguet", price: "₱25,000", image: "1464822759844-d150baec0494", link: "/trip/mount-pulag-private", category: "private" },
+            { title: "Private Bohol Island Tour", location: "Bohol", price: "₱18,000", image: "1506905925346-21bda4d32df4", link: "/trip/bohol-private", category: "private" },
+            { title: "Luxury Vigan Heritage Experience", location: "Ilocos Sur", price: "₱22,000", image: "1609137144813-7d9921338f24", link: "/trip/vigan-private", category: "private" }
           ].map((trip, i) => (
             <Link key={i} href={trip.link}>
               <Card className="overflow-hidden rounded-lg group cursor-pointer">
@@ -171,10 +171,10 @@ export const TravelHomePage = (): JSX.Element => {
             </Link>
           ))}
 
-          {activeTab === "Hiking Adventures" && [
-            { title: "Mount Pulag Sunrise Trek", location: "Benguet", price: "₱8,500", image: "1464822759844-d150baec0494", link: "/trip/mount-pulag" },
-            { title: "Mount Apo Peak Expedition", location: "Davao", price: "₱12,500", image: "1506905925346-21bda4d32df4", link: "/trip/mount-apo" },
-            { title: "Annapurna Circuit Trek", location: "Cordillera", price: "₱15,000", image: "1441974231531-c6227db76b6e", link: "/trip/annapurna-trek" }
+          {activeTab === "Joiner" && [
+            { title: "Mount Pulag Group Trek", location: "Benguet", price: "₱3,500", image: "1464822759844-d150baec0494", link: "/trip/mount-pulag-joiner" },
+            { title: "Siargao Surf Camp", location: "Siargao", price: "₱4,800", image: "1544551763-46a013bb70d5", link: "/trip/siargao-joiner" },
+            { title: "Palawan Island Hopping", location: "Palawan", price: "₱5,200", image: "1507525428034-b723cf961d3e", link: "/trip/palawan-joiner" }
           ].map((trip, i) => (
             <Link key={i} href={trip.link}>
               <Card className="overflow-hidden rounded-lg group cursor-pointer">
@@ -185,7 +185,7 @@ export const TravelHomePage = (): JSX.Element => {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-3 right-3">
-                    <span className="bg-green-600 text-white text-xs px-2 py-1 rounded">Hiking</span>
+                    <span className="bg-green-600 text-white text-xs px-2 py-1 rounded">Joiner</span>
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-3 left-3 text-white">
@@ -198,10 +198,10 @@ export const TravelHomePage = (): JSX.Element => {
             </Link>
           ))}
 
-          {activeTab === "Island Escapes" && [
-            { title: "Siargao Surfing Adventure", location: "Siargao", price: "₱9,800", image: "1544551763-46a013bb70d5", link: "/trip/siargao-surfing" },
-            { title: "Bohol Nature Discovery", location: "Bohol", price: "₱2,204", image: "1506905925346-21bda4d32df4", link: "/trip/bohol-nature" },
-            { title: "Palawan Island Hopping", location: "Palawan", price: "₱7,500", image: "1507525428034-b723cf961d3e", link: "/trip/palawan-hopping" }
+          {activeTab === "Meetups" && [
+            { title: "Manila Hiking Meetup", location: "Metro Manila", price: "₱500", image: "1441974231531-c6227db76b6e", link: "/trip/manila-meetup" },
+            { title: "Cebu Photography Walk", location: "Cebu City", price: "₱300", image: "1506905925346-21bda4d32df4", link: "/trip/cebu-meetup" },
+            { title: "Baguio Coffee Tour", location: "Baguio", price: "₱800", image: "1609137144813-7d9921338f24", link: "/trip/baguio-meetup" }
           ].map((trip, i) => (
             <Link key={i} href={trip.link}>
               <Card className="overflow-hidden rounded-lg group cursor-pointer">
@@ -212,7 +212,7 @@ export const TravelHomePage = (): JSX.Element => {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-3 right-3">
-                    <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded">Island</span>
+                    <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded">Meetup</span>
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-3 left-3 text-white">
@@ -225,10 +225,10 @@ export const TravelHomePage = (): JSX.Element => {
             </Link>
           ))}
 
-          {activeTab === "Cultural Heritage" && [
-            { title: "Vigan Heritage Tour", location: "Ilocos Sur", price: "₱6,500", image: "1609137144813-7d9921338f24", link: "/trip/vigan-heritage" },
-            { title: "Batanes Cultural Experience", location: "Batanes", price: "₱8,800", image: "1441974231531-c6227db76b6e", link: "/trip/batanes-culture" },
-            { title: "Iloilo Culinary Heritage", location: "Iloilo", price: "₱5,800", image: "1556909114-f6e7ad7d3136", link: "/trip/iloilo-culinary" }
+          {activeTab === "Mystery" && [
+            { title: "Secret Island Adventure", location: "??? Philippines", price: "₱12,000", image: "1507525428034-b723cf961d3e", link: "/trip/mystery-island" },
+            { title: "Hidden Waterfalls Quest", location: "??? Luzon", price: "₱8,500", image: "1441974231531-c6227db76b6e", link: "/trip/mystery-waterfalls" },
+            { title: "Underground Cave Expedition", location: "??? Mindanao", price: "₱15,000", image: "1544551763-46a013bb70d5", link: "/trip/mystery-caves" }
           ].map((trip, i) => (
             <Link key={i} href={trip.link}>
               <Card className="overflow-hidden rounded-lg group cursor-pointer">
@@ -239,7 +239,7 @@ export const TravelHomePage = (): JSX.Element => {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-3 right-3">
-                    <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded">Cultural</span>
+                    <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded">Mystery</span>
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-3 left-3 text-white">
@@ -252,10 +252,10 @@ export const TravelHomePage = (): JSX.Element => {
             </Link>
           ))}
 
-          {activeTab === "Wildlife Tours" && [
-            { title: "Bohol Tarsier Conservation", location: "Bohol", price: "₱7,200", image: "1441974231531-c6227db76b6e", link: "/trip/bohol-tarsier" },
-            { title: "Donsol Whale Shark Tour", location: "Sorsogon", price: "₱6,800", image: "1544551763-46a013bb70d5", link: "/trip/donsol-whalesharks" },
-            { title: "Tubbataha Reef Diving", location: "Palawan", price: "₱18,500", image: "1507525428034-b723cf961d3e", link: "/trip/tubbataha-diving" }
+          {activeTab === "Events" && [
+            { title: "Sinulog Festival Experience", location: "Cebu", price: "₱6,500", image: "1556909114-f6e7ad7d3136", link: "/trip/sinulog-festival" },
+            { title: "Ati-Atihan Cultural Festival", location: "Aklan", price: "₱7,200", image: "1609137144813-7d9921338f24", link: "/trip/ati-atihan" },
+            { title: "Masskara Festival Tour", location: "Bacolod", price: "₱5,800", image: "1506905925346-21bda4d32df4", link: "/trip/masskara" }
           ].map((trip, i) => (
             <Link key={i} href={trip.link}>
               <Card className="overflow-hidden rounded-lg group cursor-pointer">
@@ -266,7 +266,34 @@ export const TravelHomePage = (): JSX.Element => {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-3 right-3">
-                    <span className="bg-purple-500 text-white text-xs px-2 py-1 rounded">Wildlife</span>
+                    <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded">Event</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-3 left-3 text-white">
+                    <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
+                    <p className="text-xs opacity-90">{trip.location}</p>
+                    <p className="text-sm font-bold">{trip.price}</p>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+          ))}
+
+          {activeTab === "Virtual" && [
+            { title: "360° Banaue Rice Terraces Tour", location: "Virtual Experience", price: "₱299", image: "1441974231531-c6227db76b6e", link: "/trip/virtual-banaue" },
+            { title: "VR Underwater Tubbataha Reef", location: "Virtual Diving", price: "₱199", image: "1507525428034-b723cf961d3e", link: "/trip/virtual-tubbataha" },
+            { title: "Online Manila Heritage Walk", location: "Virtual Tour", price: "₱150", image: "1609137144813-7d9921338f24", link: "/trip/virtual-manila" }
+          ].map((trip, i) => (
+            <Link key={i} href={trip.link}>
+              <Card className="overflow-hidden rounded-lg group cursor-pointer">
+                <div className="relative aspect-[4/3]">
+                  <img 
+                    src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={trip.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute top-3 right-3">
+                    <span className="bg-red-500 text-white text-xs px-2 py-1 rounded">Virtual</span>
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-3 left-3 text-white">

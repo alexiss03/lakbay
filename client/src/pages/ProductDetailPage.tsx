@@ -155,7 +155,7 @@ export default function ProductDetailPage() {
       productId: productData.id,
       variantId: selectedVariant?.id,
       quantity,
-      price: getCurrentPrice(),
+      price: getCurrentPrice().toString(),
     });
   };
 
