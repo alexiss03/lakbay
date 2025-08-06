@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Link } from "wouter";
+import { ChatWidget } from "@/components/ChatWidget";
 
 export const TravelHomePage = (): JSX.Element => {
   const [activeTab, setActiveTab] = useState("Private");
@@ -477,6 +478,9 @@ export const TravelHomePage = (): JSX.Element => {
           </div>
         </div>
       </footer>
+
+      {/* Chat Widget */}
+      <ChatWidget />
     </div>
   );
 };

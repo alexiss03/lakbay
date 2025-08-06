@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
+import { ChatWidget } from "@/components/ChatWidget";
 
 interface TripDetailPageProps {
   params?: {
@@ -439,6 +440,9 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
           </Card>
         </div>
       </div>
+
+      {/* Chat Widget */}
+      <ChatWidget />
     </div>
   );
 };

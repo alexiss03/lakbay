@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { useLocation, Link } from "wouter";
+import { ChatWidget } from "@/components/ChatWidget";
 
 interface ArticlePageProps {
   params?: {
@@ -286,6 +287,9 @@ export const ArticlePage = ({ params }: ArticlePageProps): JSX.Element => {
           </div>
         </div>
       </section>
+
+      {/* Chat Widget */}
+      <ChatWidget />
     </div>
   );
 };
