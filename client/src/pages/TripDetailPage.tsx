@@ -134,8 +134,9 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
     }
   };
 
-  // Sample trip data based on route
+  // Comprehensive trip data based on route and category
   const getTripData = () => {
+    // HIKING CATEGORY
     if (location.includes("mount-pulag")) {
       return {
         title: "Mount Pulag Sunrise Trek",
@@ -199,7 +200,77 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
         mapCenter: { lat: 16.5964, lng: 120.8897 }
       };
     }
-    
+
+    if (location.includes("mount-apo")) {
+      return {
+        title: "Mount Apo Peak Expedition",
+        duration: "May 20-24, 2025",
+        price: "PHP 12500 per person",
+        category: "hiking",
+        heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=400&fit=crop&auto=format",
+        host: {
+          name: "Carlos Mendoza",
+          avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&auto=format",
+          bio: "Certified mountain guide specializing in Mindanao's highest peaks and biodiversity conservation."
+        },
+        itinerary: [
+          {
+            day: 1,
+            title: "Kapatagan Registration and Trek Start",
+            description: "Register at DENR office, meet local guides, and begin trek through farmlands and primary forest towards Lake Venado.",
+            image: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 2,
+            title: "Lake Venado to Boulder Face",
+            description: "Trek through mossy forest, cross streams, and reach the challenging boulder face section leading to higher elevations.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 3,
+            title: "Summit Day - Philippines' Highest Peak",
+            description: "Early morning summit assault to Mount Apo's peak (2,954m). Experience panoramic views of Mindanao and Davao Gulf.",
+            image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 4,
+            title: "Descent and Departure",
+            description: "Safe descent through different trail route, wildlife spotting, and departure from jump-off point.",
+            image: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=300&h=200&fit=crop&auto=format"
+          }
+        ],
+        trail: {
+          name: "Mount Apo Kapatagan Trail",
+          difficulty: "Difficult",
+          distance: "16.5 km",
+          duration: "3-4 days",
+          elevationGain: "2,200m",
+          startElevation: 754,
+          peakElevation: 2954,
+          trailPoints: [
+            { name: "Kapatagan DENR Station", elevation: 754, lat: 7.0167, lng: 125.2733, type: "trailhead" },
+            { name: "Mainit Hot Springs", elevation: 1200, lat: 7.0189, lng: 125.2698, type: "checkpoint" },
+            { name: "Lake Venado Camp", elevation: 1845, lat: 7.0212, lng: 125.2654, type: "campsite" },
+            { name: "Boulder Face Camp", elevation: 2456, lat: 7.0234, lng: 125.2623, type: "campsite" },
+            { name: "Mount Apo Summit", elevation: 2954, lat: 7.0245, lng: 125.2611, type: "summit" }
+          ]
+        },
+        accommodation: {
+          title: "Wilderness Camping",
+          images: [
+            "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+          ],
+          description: "Multi-day camping in designated areas with porter support and mountain cooking facilities."
+        },
+        meetingPlace: "Kapatagan DENR Station, Digos City",
+        mapCenter: { lat: 7.0167, lng: 125.2733 }
+      };
+    }
+
+    // ISLAND HOPPING CATEGORY  
     if (location.includes("bohol-nature")) {
       return {
         title: "Nature dive in Bohol for 3 days",
@@ -244,6 +315,299 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
         },
         meetingPlace: "Alona Beach, Panglao Island",
         mapCenter: { lat: 9.5340, lng: 123.7675 }
+      };
+    }
+
+    if (location.includes("siargao-surfing")) {
+      return {
+        title: "Siargao Surfing & Island Experience",
+        duration: "June 10-14, 2025",
+        price: "PHP 9800 per person",
+        category: "island",
+        heroImage: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1200&h=400&fit=crop&auto=format",
+        host: {
+          name: "Rico Valdez",
+          avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&auto=format",
+          bio: "Professional surfer and island guide with extensive knowledge of Siargao's waves and hidden spots."
+        },
+        itinerary: [
+          {
+            day: 1,
+            title: "Cloud 9 Surfing Introduction",
+            description: "Arrive in General Luna, check-in, and afternoon surf session at the world-famous Cloud 9 break. Perfect for all skill levels.",
+            image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 2,
+            title: "Island Hopping Adventure",
+            description: "Explore Naked Island, Daku Island, and Guyam Island. Snorkeling, beach time, and local seafood lunch.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 3,
+            title: "Magpupungko Rock Pools",
+            description: "Visit the famous rock pools during low tide, explore Sugba Lagoon for kayaking and paddleboarding.",
+            image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 4,
+            title: "Advanced Surfing & Departure",
+            description: "Final surf session at different breaks, visit local markets, and departure preparations.",
+            image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=300&h=200&fit=crop&auto=format"
+          }
+        ],
+        accommodation: {
+          title: "Beachfront Surf Resort",
+          images: [
+            "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+          ],
+          description: "Oceanfront accommodation with surfboard storage, beach access, and tropical garden setting."
+        },
+        meetingPlace: "Sayak Airport, General Luna",
+        mapCenter: { lat: 9.8349, lng: 126.0392 }
+      };
+    }
+
+    // CULTURAL CATEGORY
+    if (location.includes("vigan-heritage")) {
+      return {
+        title: "Vigan Heritage & Cultural Immersion",
+        duration: "July 8-11, 2025",
+        price: "PHP 6500 per person",
+        category: "cultural",
+        heroImage: "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=1200&h=400&fit=crop&auto=format",
+        host: {
+          name: "Elena Rodrigues",
+          avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b789?w=100&h=100&fit=crop&auto=format",
+          bio: "Cultural heritage specialist and historian with deep knowledge of Ilocano traditions and Spanish colonial history."
+        },
+        itinerary: [
+          {
+            day: 1,
+            title: "Spanish Colonial Architecture Tour",
+            description: "Explore UNESCO World Heritage cobblestone streets, ancestral houses, and historic churches of Vigan City.",
+            image: "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 2,
+            title: "Traditional Crafts Workshop",
+            description: "Learn pottery making, weaving, and wood carving from local artisans. Visit traditional workshops and markets.",
+            image: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 3,
+            title: "Ilocano Cuisine Experience",
+            description: "Cooking class featuring authentic Ilocano dishes, visit local farms, and traditional food preparation methods.",
+            image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=200&fit=crop&auto=format"
+          }
+        ],
+        accommodation: {
+          title: "Heritage Hotel in Ancestral House",
+          images: [
+            "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+          ],
+          description: "Stay in a restored Spanish colonial house with period furniture and traditional architecture."
+        },
+        meetingPlace: "Vigan City Plaza, Ilocos Sur",
+        mapCenter: { lat: 17.5748, lng: 120.3875 }
+      };
+    }
+
+    // WILDLIFE CATEGORY
+    if (location.includes("bohol-tarsier")) {
+      return {
+        title: "Bohol Wildlife & Conservation Tour",
+        duration: "August 5-8, 2025",
+        price: "PHP 7200 per person",
+        category: "wildlife",
+        heroImage: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=400&fit=crop&auto=format",
+        host: {
+          name: "Dr. Jose Martinez",
+          avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&auto=format",
+          bio: "Marine biologist and wildlife conservationist specializing in Philippine endemic species and coral reef ecosystems."
+        },
+        itinerary: [
+          {
+            day: 1,
+            title: "Tarsier Sanctuary Visit",
+            description: "Meet the world's smallest primates at the Philippine Tarsier Sanctuary. Learn about conservation efforts and habitat protection.",
+            image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 2,
+            title: "Dolphin Watching & Marine Life",
+            description: "Early morning dolphin watching tour, visit coral gardens for snorkeling, and marine conservation presentation.",
+            image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 3,
+            title: "Butterfly Garden & Forest Trek",
+            description: "Explore native butterfly species, guided forest walk to spot endemic birds and wildlife photography session.",
+            image: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=300&h=200&fit=crop&auto=format"
+          }
+        ],
+        accommodation: {
+          title: "Eco-Resort near Tarsier Sanctuary",
+          images: [
+            "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+          ],
+          description: "Sustainable eco-resort supporting local conservation efforts with nature-integrated accommodations."
+        },
+        meetingPlace: "Corella Tarsier Sanctuary, Bohol",
+        mapCenter: { lat: 9.6340, lng: 123.9015 }
+      };
+    }
+
+    // ADVENTURE CATEGORY
+    if (location.includes("cagayan-whitewater")) {
+      return {
+        title: "Cagayan Whitewater Rafting Adventure",
+        duration: "September 15-18, 2025",
+        price: "PHP 8900 per person",
+        category: "adventure",
+        heroImage: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1200&h=400&fit=crop&auto=format",
+        host: {
+          name: "Mark Lim",
+          avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&auto=format",
+          bio: "Professional rafting guide and adventure sports instructor with 15 years experience in Northern Luzon rivers."
+        },
+        itinerary: [
+          {
+            day: 1,
+            title: "River Safety Training",
+            description: "Comprehensive safety briefing, equipment fitting, and practice sessions on calm water sections of Chico River.",
+            image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 2,
+            title: "Class III Rapids Challenge",
+            description: "Navigate exciting Class III rapids through scenic gorges and pristine wilderness areas of Cagayan Valley.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 3,
+            title: "Multi-Day River Expedition",
+            description: "Overnight camping by the river, continue rafting through more challenging sections and remote wilderness areas.",
+            image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=300&h=200&fit=crop&auto=format"
+          }
+        ],
+        accommodation: {
+          title: "Riverside Adventure Camp",
+          images: [
+            "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+          ],
+          description: "Riverside camping with comfortable tents, outdoor cooking facilities, and campfire areas."
+        },
+        meetingPlace: "Chico River Rafting Center, Kalinga",
+        mapCenter: { lat: 17.2463, lng: 121.1232 }
+      };
+    }
+
+    // WELLNESS CATEGORY
+    if (location.includes("tagaytay-wellness")) {
+      return {
+        title: "Tagaytay Wellness & Meditation Retreat",
+        duration: "October 22-25, 2025",
+        price: "PHP 11500 per person",
+        category: "wellness",
+        heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=400&fit=crop&auto=format",
+        host: {
+          name: "Maya Chen",
+          avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b789?w=100&h=100&fit=crop&auto=format",
+          bio: "Certified yoga instructor and wellness coach specializing in mindfulness, meditation, and holistic healing practices."
+        },
+        itinerary: [
+          {
+            day: 1,
+            title: "Arrival & Mindfulness Introduction",
+            description: "Welcome ceremony, mindfulness orientation, gentle yoga session overlooking Taal Lake, and healthy farm-to-table dinner.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 2,
+            title: "Meditation & Spa Treatments",
+            description: "Morning meditation, therapeutic massage sessions, organic garden tour, and cooking class with healthy local ingredients.",
+            image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 3,
+            title: "Yoga & Nature Connection",
+            description: "Sunrise yoga, nature walk in cool mountain air, sound healing therapy, and wellness workshop sessions.",
+            image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=300&h=200&fit=crop&auto=format"
+          }
+        ],
+        accommodation: {
+          title: "Mountain Wellness Resort",
+          images: [
+            "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+          ],
+          description: "Tranquil mountain resort with spa facilities, yoga pavilions, and panoramic views of Taal Lake."
+        },
+        meetingPlace: "Sky Ranch, Tagaytay City",
+        mapCenter: { lat: 14.1127, lng: 120.9601 }
+      };
+    }
+
+    // CULINARY CATEGORY
+    if (location.includes("iloilo-culinary")) {
+      return {
+        title: "Iloilo Culinary Heritage Tour",
+        duration: "November 12-15, 2025",
+        price: "PHP 5800 per person",
+        category: "culinary",
+        heroImage: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1200&h=400&fit=crop&auto=format",
+        host: {
+          name: "Chef Roberto Santos",
+          avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&auto=format",
+          bio: "Award-winning chef and culinary historian specializing in Ilonggo cuisine and traditional cooking methods."
+        },
+        itinerary: [
+          {
+            day: 1,
+            title: "Market Tour & Cooking Class",
+            description: "Explore Iloilo Central Market, learn about local ingredients, and hands-on cooking class for traditional Ilonggo dishes.",
+            image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 2,
+            title: "Street Food Adventure",
+            description: "Guided street food tour, visit famous food stalls, learn about regional specialties and food preparation techniques.",
+            image: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=200&fit=crop&auto=format"
+          },
+          {
+            day: 3,
+            title: "Farm-to-Table Experience",
+            description: "Visit organic farms, harvest fresh ingredients, and prepare meals using traditional cooking methods and recipes.",
+            image: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=300&h=200&fit=crop&auto=format"
+          }
+        ],
+        accommodation: {
+          title: "Boutique Hotel in City Center",
+          images: [
+            "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+            "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+          ],
+          description: "Centrally located boutique hotel with easy access to markets, restaurants, and cultural sites."
+        },
+        meetingPlace: "Iloilo Central Market, Iloilo City",
+        mapCenter: { lat: 10.7202, lng: 122.5621 }
       };
     }
     
