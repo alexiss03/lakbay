@@ -285,140 +285,26 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
             </TabsList>
 
             <TabsContent value="itinerary" className="space-y-6">
-              <Card className="p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-                  <Calendar className="w-5 h-5 mr-2 text-[#D4AF37]" />
-                  3-Day Palawan Island Hopping Itinerary
-                </h2>
-                
-                <div className="space-y-6">
-                  {/* Day 1 */}
-                  <div className="border-l-4 border-[#D4AF37] pl-4">
-                    <div className="flex items-center mb-2">
-                      <Badge className="bg-[#D4AF37] text-black mr-2">Day 1</Badge>
-                      <h3 className="font-semibold text-gray-900">El Nido Arrival & Sunset Tour</h3>
+              {trip.itinerary.map((day, index) => (
+                <Card key={index} className="p-6">
+                  <div className="flex space-x-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-8 h-8 bg-[#D4AF37] text-black rounded-full flex items-center justify-center font-bold text-sm">
+                        {day.day}
+                      </div>
                     </div>
-                    <div className="space-y-3 text-sm text-gray-700">
-                      <div className="flex items-start space-x-2">
-                        <Clock className="w-4 h-4 mt-0.5 text-gray-400" />
-                        <div>
-                          <span className="font-medium">8:00 AM</span> - Airport pickup and transfer to accommodation
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <Clock className="w-4 h-4 mt-0.5 text-gray-400" />
-                        <div>
-                          <span className="font-medium">10:00 AM</span> - Check-in and welcome briefing
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <Clock className="w-4 h-4 mt-0.5 text-gray-400" />
-                        <div>
-                          <span className="font-medium">2:00 PM</span> - Island hopping tour (Small Lagoon, Big Lagoon)
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <Clock className="w-4 h-4 mt-0.5 text-gray-400" />
-                        <div>
-                          <span className="font-medium">6:00 PM</span> - Sunset viewing at Las Cabanas Beach
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <Clock className="w-4 h-4 mt-0.5 text-gray-400" />
-                        <div>
-                          <span className="font-medium">8:00 PM</span> - Welcome dinner at local restaurant
-                        </div>
-                      </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg text-gray-900 mb-2">{day.title}</h3>
+                      <p className="text-gray-700 mb-4">{day.description}</p>
+                      <img 
+                        src={day.image}
+                        alt={day.title}
+                        className="w-full h-48 object-cover rounded-lg"
+                      />
                     </div>
                   </div>
-
-                  {/* Day 2 */}
-                  <div className="border-l-4 border-[#D4AF37] pl-4">
-                    <div className="flex items-center mb-2">
-                      <Badge className="bg-[#D4AF37] text-black mr-2">Day 2</Badge>
-                      <h3 className="font-semibold text-gray-900">Hidden Beaches & Snorkeling</h3>
-                    </div>
-                    <div className="space-y-3 text-sm text-gray-700">
-                      <div className="flex items-start space-x-2">
-                        <Clock className="w-4 h-4 mt-0.5 text-gray-400" />
-                        <div>
-                          <span className="font-medium">7:00 AM</span> - Breakfast and gear preparation
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <Clock className="w-4 h-4 mt-0.5 text-gray-400" />
-                        <div>
-                          <span className="font-medium">8:30 AM</span> - Secret Beach exploration
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <Clock className="w-4 h-4 mt-0.5 text-gray-400" />
-                        <div>
-                          <span className="font-medium">11:00 AM</span> - Snorkeling at coral gardens
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <Clock className="w-4 h-4 mt-0.5 text-gray-400" />
-                        <div>
-                          <span className="font-medium">1:00 PM</span> - Beach picnic lunch
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <Clock className="w-4 h-4 mt-0.5 text-gray-400" />
-                        <div>
-                          <span className="font-medium">3:00 PM</span> - Visit to local fishing village
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <Clock className="w-4 h-4 mt-0.5 text-gray-400" />
-                        <div>
-                          <span className="font-medium">6:00 PM</span> - Return to accommodation
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Day 3 */}
-                  <div className="border-l-4 border-[#D4AF37] pl-4">
-                    <div className="flex items-center mb-2">
-                      <Badge className="bg-[#D4AF37] text-black mr-2">Day 3</Badge>
-                      <h3 className="font-semibold text-gray-900">Underground River & Departure</h3>
-                    </div>
-                    <div className="space-y-3 text-sm text-gray-700">
-                      <div className="flex items-start space-x-2">
-                        <Clock className="w-4 h-4 mt-0.5 text-gray-400" />
-                        <div>
-                          <span className="font-medium">6:00 AM</span> - Early breakfast and checkout
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <Clock className="w-4 h-4 mt-0.5 text-gray-400" />
-                        <div>
-                          <span className="font-medium">7:00 AM</span> - Transfer to Puerto Princesa
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <Clock className="w-4 h-4 mt-0.5 text-gray-400" />
-                        <div>
-                          <span className="font-medium">10:00 AM</span> - Underground River tour
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <Clock className="w-4 h-4 mt-0.5 text-gray-400" />
-                        <div>
-                          <span className="font-medium">1:00 PM</span> - Farewell lunch
-                        </div>
-                      </div>
-                      <div className="flex items-start space-x-2">
-                        <Clock className="w-4 h-4 mt-0.5 text-gray-400" />
-                        <div>
-                          <span className="font-medium">3:00 PM</span> - Airport transfer for departure
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Card>
+                </Card>
+              ))}
             </TabsContent>
 
             <TabsContent value="inclusions" className="space-y-6">
