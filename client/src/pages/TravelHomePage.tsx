@@ -22,7 +22,7 @@ export const TravelHomePage = (): JSX.Element => {
             <Link href="/chats" className="text-gray-700 hover:text-gray-900">Chats</Link>
             <a href="#" className="text-gray-700 hover:text-gray-900">Trails</a>
             <a href="#" className="text-gray-700 hover:text-gray-900">Story</a>
-            <a href="#" className="text-gray-700 hover:text-gray-900">Shop</a>
+            <Link href="/shop" className="text-gray-700 hover:text-gray-900">Shop</Link>
             <a href="#" className="text-gray-700 hover:text-gray-900">Corporate</a>
             <a href="#" className="text-gray-700 hover:text-gray-900">Explore</a>
           </nav>

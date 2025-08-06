@@ -1,12 +1,336 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import Stripe from "stripe";
+import { 
+  insertCategorySchema, insertProductSchema, insertCartItemSchema, 
+  insertOrderSchema, insertReviewSchema, insertWishlistItemSchema,
+  type Category, type Product, type CartItem 
+} from "@shared/schema";
+import { z } from "zod";
 
 // PayMongo API configuration
 const PAYMONGO_SECRET_KEY = process.env.PAYMONGO_SECRET_KEY;
 const PAYMONGO_BASE_URL = 'https://api.paymongo.com/v1';
 
+// Stripe configuration
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2025-01-27.acacia",
+});
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // ============ E-COMMERCE API ROUTES ============
+  
+  // Categories
+  app.get('/api/categories', async (req, res) => {
+    try {
+      const categories = await storage.getCategories();
+      res.json(categories);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      res.status(500).json({ error: 'Failed to fetch categories' });
+    }
+  });
+
+  app.get('/api/categories/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const category = await storage.getCategory(id);
+      if (!category) {
+        return res.status(404).json({ error: 'Category not found' });
+      }
+      res.json(category);
+    } catch (error) {
+      console.error('Error fetching category:', error);
+      res.status(500).json({ error: 'Failed to fetch category' });
+    }
+  });
+
+  app.post('/api/categories', async (req, res) => {
+    try {
+      const validatedData = insertCategorySchema.parse(req.body);
+      const category = await storage.createCategory(validatedData);
+      res.status(201).json(category);
+    } catch (error) {
+      console.error('Error creating category:', error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: 'Invalid category data', details: error.errors });
+      }
+      res.status(500).json({ error: 'Failed to create category' });
+    }
+  });
+
+  // Products
+  app.get('/api/products', async (req, res) => {
+    try {
+      const { category, featured, limit = 20, offset = 0 } = req.query;
+      
+      let products;
+      if (featured === 'true') {
+        products = await storage.getFeaturedProducts(parseInt(limit as string));
+      } else {
+        const categoryId = category ? parseInt(category as string) : undefined;
+        products = await storage.getProducts(categoryId, parseInt(limit as string), parseInt(offset as string));
+      }
+      
+      res.json(products);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      res.status(500).json({ error: 'Failed to fetch products' });
+    }
+  });
+
+  app.get('/api/products/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const product = await storage.getProduct(id);
+      if (!product) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
+      
+      // Get product variants and reviews
+      const [variants, reviews] = await Promise.all([
+        storage.getProductVariants(id),
+        storage.getProductReviews(id)
+      ]);
+      
+      res.json({ ...product, variants, reviews });
+    } catch (error) {
+      console.error('Error fetching product:', error);
+      res.status(500).json({ error: 'Failed to fetch product' });
+    }
+  });
+
+  app.get('/api/products/slug/:slug', async (req, res) => {
+    try {
+      const product = await storage.getProductBySlug(req.params.slug);
+      if (!product) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
+      
+      const [variants, reviews] = await Promise.all([
+        storage.getProductVariants(product.id),
+        storage.getProductReviews(product.id)
+      ]);
+      
+      res.json({ ...product, variants, reviews });
+    } catch (error) {
+      console.error('Error fetching product by slug:', error);
+      res.status(500).json({ error: 'Failed to fetch product' });
+    }
+  });
+
+  app.post('/api/products', async (req, res) => {
+    try {
+      const validatedData = insertProductSchema.parse(req.body);
+      const product = await storage.createProduct(validatedData);
+      res.status(201).json(product);
+    } catch (error) {
+      console.error('Error creating product:', error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: 'Invalid product data', details: error.errors });
+      }
+      res.status(500).json({ error: 'Failed to create product' });
+    }
+  });
+
+  // Shopping Cart
+  app.get('/api/cart/:userId', async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const cartItems = await storage.getCartItems(userId);
+      res.json(cartItems);
+    } catch (error) {
+      console.error('Error fetching cart:', error);
+      res.status(500).json({ error: 'Failed to fetch cart' });
+    }
+  });
+
+  app.post('/api/cart', async (req, res) => {
+    try {
+      const validatedData = insertCartItemSchema.parse(req.body);
+      const cartItem = await storage.addToCart(validatedData);
+      res.status(201).json(cartItem);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: 'Invalid cart item data', details: error.errors });
+      }
+      res.status(500).json({ error: 'Failed to add to cart' });
+    }
+  });
+
+  app.put('/api/cart/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { quantity } = req.body;
+      const cartItem = await storage.updateCartItem(id, quantity);
+      res.json(cartItem);
+    } catch (error) {
+      console.error('Error updating cart item:', error);
+      res.status(500).json({ error: 'Failed to update cart item' });
+    }
+  });
+
+  app.delete('/api/cart/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.removeFromCart(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error removing from cart:', error);
+      res.status(500).json({ error: 'Failed to remove from cart' });
+    }
+  });
+
+  app.delete('/api/cart/clear/:userId', async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      await storage.clearCart(userId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+      res.status(500).json({ error: 'Failed to clear cart' });
+    }
+  });
+
+  // Stripe Payment Intent
+  app.post('/api/create-payment-intent', async (req, res) => {
+    try {
+      const { amount, currency = 'php', metadata = {} } = req.body;
+      
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(amount * 100), // Convert to centavos/cents
+        currency: currency.toLowerCase(),
+        metadata,
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
+
+      res.json({
+        clientSecret: paymentIntent.client_secret,
+        paymentIntentId: paymentIntent.id
+      });
+    } catch (error) {
+      console.error('Error creating payment intent:', error);
+      res.status(500).json({ error: 'Failed to create payment intent' });
+    }
+  });
+
+  // Orders
+  app.get('/api/orders/:userId', async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const orders = await storage.getOrders(userId);
+      res.json(orders);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      res.status(500).json({ error: 'Failed to fetch orders' });
+    }
+  });
+
+  app.get('/api/order/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const [order, orderItems] = await Promise.all([
+        storage.getOrder(id),
+        storage.getOrderItems(id)
+      ]);
+      
+      if (!order) {
+        return res.status(404).json({ error: 'Order not found' });
+      }
+      
+      res.json({ ...order, items: orderItems });
+    } catch (error) {
+      console.error('Error fetching order:', error);
+      res.status(500).json({ error: 'Failed to fetch order' });
+    }
+  });
+
+  app.post('/api/orders', async (req, res) => {
+    try {
+      const validatedData = insertOrderSchema.parse(req.body);
+      // Generate order number
+      validatedData.orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
+      
+      const order = await storage.createOrder(validatedData);
+      res.status(201).json(order);
+    } catch (error) {
+      console.error('Error creating order:', error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: 'Invalid order data', details: error.errors });
+      }
+      res.status(500).json({ error: 'Failed to create order' });
+    }
+  });
+
+  // Reviews
+  app.get('/api/products/:productId/reviews', async (req, res) => {
+    try {
+      const productId = parseInt(req.params.productId);
+      const reviews = await storage.getProductReviews(productId);
+      res.json(reviews);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      res.status(500).json({ error: 'Failed to fetch reviews' });
+    }
+  });
+
+  app.post('/api/reviews', async (req, res) => {
+    try {
+      const validatedData = insertReviewSchema.parse(req.body);
+      const review = await storage.createReview(validatedData);
+      res.status(201).json(review);
+    } catch (error) {
+      console.error('Error creating review:', error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: 'Invalid review data', details: error.errors });
+      }
+      res.status(500).json({ error: 'Failed to create review' });
+    }
+  });
+
+  // Wishlist
+  app.get('/api/wishlist/:userId', async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const wishlistItems = await storage.getWishlistItems(userId);
+      res.json(wishlistItems);
+    } catch (error) {
+      console.error('Error fetching wishlist:', error);
+      res.status(500).json({ error: 'Failed to fetch wishlist' });
+    }
+  });
+
+  app.post('/api/wishlist', async (req, res) => {
+    try {
+      const validatedData = insertWishlistItemSchema.parse(req.body);
+      const wishlistItem = await storage.addToWishlist(validatedData);
+      res.status(201).json(wishlistItem);
+    } catch (error) {
+      console.error('Error adding to wishlist:', error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: 'Invalid wishlist item data', details: error.errors });
+      }
+      res.status(500).json({ error: 'Failed to add to wishlist' });
+    }
+  });
+
+  app.delete('/api/wishlist/:userId/:productId', async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const productId = parseInt(req.params.productId);
+      await storage.removeFromWishlist(userId, productId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error removing from wishlist:', error);
+      res.status(500).json({ error: 'Failed to remove from wishlist' });
+    }
+  });
+
+  // ============ EXISTING TRAVEL BOOKING ROUTES ============
   // PayMongo Payment Routes
   app.post('/api/create-payment', async (req, res) => {
     try {
