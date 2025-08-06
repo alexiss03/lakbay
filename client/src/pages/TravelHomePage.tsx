@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Link } from "wouter";
 import { ChatWidget } from "@/components/ChatWidget";
+import { TrendingArticlesSection } from "@/components/TrendingArticlesSection";
 
 export const TravelHomePage = (): JSX.Element => {
   const [activeTab, setActiveTab] = useState("Private");
@@ -334,6 +335,9 @@ export const TravelHomePage = (): JSX.Element => {
           ))}
         </div>
       </section>
+
+      {/* Trending Articles Section - Only for logged in users */}
+      <TrendingArticlesSection />
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white px-8 py-12">

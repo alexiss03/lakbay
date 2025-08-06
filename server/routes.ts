@@ -15,7 +15,7 @@ const PAYMONGO_BASE_URL = 'https://api.paymongo.com/v1';
 
 // Stripe configuration
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-01-27.acacia",
+  apiVersion: "2025-07-30.basil",
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
