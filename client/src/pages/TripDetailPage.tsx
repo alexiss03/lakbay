@@ -972,87 +972,12 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                   What's Included
                 </h2>
                 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
-                      <MapPin className="w-4 h-4 mr-2 text-[#D4AF37]" />
-                      Transportation
-                    </h3>
-                    <ul className="space-y-2 text-sm text-gray-700">
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span>Airport pickup and drop-off</span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span>Private boat for island hopping</span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span>Land transfers between locations</span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
-                      <Users className="w-4 h-4 mr-2 text-[#D4AF37]" />
-                      Guide & Support
-                    </h3>
-                    <ul className="space-y-2 text-sm text-gray-700">
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span>Professional English-speaking guide</span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span>24/7 support during the trip</span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span>Local cultural experiences</span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-3">Meals & Refreshments</h3>
-                    <ul className="space-y-2 text-sm text-gray-700">
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span>Daily breakfast</span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span>Welcome and farewell dinners</span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span>Beach picnic lunch (Day 2)</span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span>Fresh drinking water during tours</span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-3">Equipment & Gear</h3>
-                    <ul className="space-y-2 text-sm text-gray-700">
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span>Snorkeling equipment</span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span>Life jackets and safety gear</span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span>Waterproof bags for belongings</span>
-                      </li>
-                    </ul>
+                <div className="space-y-4">
+                  <div className="text-sm text-gray-700 leading-relaxed">
+                    <span className="font-semibold text-gray-900">Transportation:</span> Airport pickup and drop-off, Private boat for island hopping, Land transfers between locations •
+                    <span className="font-semibold text-gray-900 ml-2">Guide & Support:</span> Professional English-speaking guide, 24/7 support during the trip, Local cultural experiences •
+                    <span className="font-semibold text-gray-900 ml-2">Meals & Refreshments:</span> Daily breakfast, Welcome and farewell dinners, Beach picnic lunch (Day 2), Fresh drinking water during tours •
+                    <span className="font-semibold text-gray-900 ml-2">Equipment & Gear:</span> Snorkeling equipment, Life jackets and safety gear, Waterproof bags for belongings
                   </div>
                 </div>
 
