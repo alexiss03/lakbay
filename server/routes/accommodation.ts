@@ -5,6 +5,31 @@ import { eq, desc, count, sum, and, gte, lte, sql } from "drizzle-orm";
 
 const router = Router();
 
+// Create new accommodation property
+router.post("/properties", async (req, res) => {
+  try {
+    const accommodationData = req.body;
+    
+    // For demo purposes, create a mock response with a new ID
+    const newAccommodation = {
+      id: `prop_${Date.now()}`,
+      ...accommodationData,
+      occupancyRate: Math.floor(Math.random() * 30 + 50), // Random occupancy between 50-80%
+      averageRating: (Math.random() * 1.5 + 3.5).toFixed(1), // Random rating between 3.5-5.0
+      monthlyRevenue: Math.floor(Math.random() * 100000 + 50000), // Random revenue
+      status: 'active',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    console.log('Created new accommodation:', newAccommodation);
+    res.status(201).json(newAccommodation);
+  } catch (error) {
+    console.error("Error creating accommodation:", error);
+    res.status(500).json({ error: "Failed to create accommodation" });
+  }
+});
+
 // Get accommodation dashboard analytics
 router.get("/analytics/:hostId", async (req, res) => {
   try {

@@ -29,6 +29,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 interface AccommodationStats {
   totalProperties: number;
@@ -88,6 +91,19 @@ interface Booking {
 const AccommodationDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [showAddPropertyModal, setShowAddPropertyModal] = useState(false);
+  const [newProperty, setNewProperty] = useState({
+    name: '',
+    type: 'hotel',
+    address: '',
+    city: '',
+    province: '',
+    country: 'Philippines',
+    totalRooms: '',
+    email: '',
+    phone: '',
+    heroImage: ''
+  });
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -143,6 +159,19 @@ const AccommodationDashboard = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/accommodation/properties'] });
       queryClient.invalidateQueries({ queryKey: ['/api/accommodation/analytics'] });
+      setShowAddPropertyModal(false);
+      setNewProperty({
+        name: '',
+        type: 'hotel',
+        address: '',
+        city: '',
+        province: '',
+        country: 'Philippines',
+        totalRooms: '',
+        email: '',
+        phone: '',
+        heroImage: ''
+      });
       toast({
         title: "Success",
         description: "Property created successfully",
@@ -156,6 +185,29 @@ const AccommodationDashboard = () => {
       });
     }
   });
+
+  // Handle form submission
+  const handleAddProperty = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!newProperty.name || !newProperty.address || !newProperty.city || !newProperty.totalRooms) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const propertyData = {
+      ...newProperty,
+      hostId: currentHostId,
+      totalRooms: parseInt(newProperty.totalRooms),
+      status: 'active'
+    };
+
+    createPropertyMutation.mutate(propertyData);
+  };
 
   const updatePropertyMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) =>
@@ -481,10 +533,152 @@ const AccommodationDashboard = () => {
                       <SelectItem value="villa">Villas</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Property
-                  </Button>
+                  <Dialog open={showAddPropertyModal} onOpenChange={setShowAddPropertyModal}>
+                    <DialogTrigger asChild>
+                      <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Property
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle className="text-xl font-medium text-gray-900">Add New Property</DialogTitle>
+                      </DialogHeader>
+                      
+                      <form onSubmit={handleAddProperty} className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="name">Property Name *</Label>
+                            <Input
+                              id="name"
+                              value={newProperty.name}
+                              onChange={(e) => setNewProperty({...newProperty, name: e.target.value})}
+                              placeholder="e.g. Paradise Beach Resort"
+                              required
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="type">Property Type *</Label>
+                            <Select value={newProperty.type} onValueChange={(value) => setNewProperty({...newProperty, type: value})}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select property type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="hotel">Hotel</SelectItem>
+                                <SelectItem value="resort">Resort</SelectItem>
+                                <SelectItem value="hostel">Hostel</SelectItem>
+                                <SelectItem value="lodge">Lodge</SelectItem>
+                                <SelectItem value="guesthouse">Guesthouse</SelectItem>
+                                <SelectItem value="villa">Villa</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="address">Address *</Label>
+                          <Input
+                            id="address"
+                            value={newProperty.address}
+                            onChange={(e) => setNewProperty({...newProperty, address: e.target.value})}
+                            placeholder="e.g. 123 Beach Road, Barangay Centro"
+                            required
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="city">City *</Label>
+                            <Input
+                              id="city"
+                              value={newProperty.city}
+                              onChange={(e) => setNewProperty({...newProperty, city: e.target.value})}
+                              placeholder="e.g. El Nido"
+                              required
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="province">Province</Label>
+                            <Input
+                              id="province"
+                              value={newProperty.province}
+                              onChange={(e) => setNewProperty({...newProperty, province: e.target.value})}
+                              placeholder="e.g. Palawan"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="totalRooms">Total Rooms *</Label>
+                            <Input
+                              id="totalRooms"
+                              type="number"
+                              min="1"
+                              value={newProperty.totalRooms}
+                              onChange={(e) => setNewProperty({...newProperty, totalRooms: e.target.value})}
+                              placeholder="e.g. 45"
+                              required
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="heroImage">Property Image URL</Label>
+                            <Input
+                              id="heroImage"
+                              type="url"
+                              value={newProperty.heroImage}
+                              onChange={(e) => setNewProperty({...newProperty, heroImage: e.target.value})}
+                              placeholder="https://example.com/image.jpg"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="email">Contact Email</Label>
+                            <Input
+                              id="email"
+                              type="email"
+                              value={newProperty.email}
+                              onChange={(e) => setNewProperty({...newProperty, email: e.target.value})}
+                              placeholder="reservations@property.com"
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="phone">Contact Phone</Label>
+                            <Input
+                              id="phone"
+                              value={newProperty.phone}
+                              onChange={(e) => setNewProperty({...newProperty, phone: e.target.value})}
+                              placeholder="+63 917 123 4567"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-end space-x-4 pt-4">
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            onClick={() => setShowAddPropertyModal(false)}
+                            disabled={createPropertyMutation.isPending}
+                          >
+                            Cancel
+                          </Button>
+                          <Button 
+                            type="submit" 
+                            className="bg-[#D4AF37] hover:bg-[#B8941F] text-black"
+                            disabled={createPropertyMutation.isPending}
+                          >
+                            {createPropertyMutation.isPending ? 'Adding...' : 'Add Property'}
+                          </Button>
+                        </div>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </div>
             </div>
