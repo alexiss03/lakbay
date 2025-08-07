@@ -1729,7 +1729,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                           <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
                           <span><strong>Sunscreen (SPF 50+)</strong> - Tropical sun is intense</span>
                         </div>
-                        <Link href="/shop-manager">
+                        <Link href="/shop">
                           <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
                             <ShoppingCart className="w-3 h-3 mr-1" />
                             Shop
@@ -1741,7 +1741,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                           <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
                           <span><strong>Insect repellent</strong> - DEET-based recommended</span>
                         </div>
-                        <Link href="/shop-manager">
+                        <Link href="/shop">
                           <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
                             <ShoppingCart className="w-3 h-3 mr-1" />
                             Shop
@@ -1759,7 +1759,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                           <CheckCircle2 className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />
                           <span><strong>Swimwear</strong> - 2-3 sets recommended</span>
                         </div>
-                        <Link href="/shop-manager">
+                        <Link href="/shop">
                           <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
                             <ShoppingCart className="w-3 h-3 mr-1" />
                             Shop
@@ -1771,7 +1771,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                           <CheckCircle2 className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />
                           <span><strong>Quick-dry shirts</strong> - Lightweight materials</span>
                         </div>
-                        <Link href="/shop-manager">
+                        <Link href="/shop">
                           <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
                             <ShoppingCart className="w-3 h-3 mr-1" />
                             Shop
@@ -1783,7 +1783,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                           <CheckCircle2 className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />
                           <span><strong>Shorts and light pants</strong> - Cotton or synthetic</span>
                         </div>
-                        <Link href="/shop-manager">
+                        <Link href="/shop">
                           <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
                             <ShoppingCart className="w-3 h-3 mr-1" />
                             Shop
@@ -1795,7 +1795,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                           <CheckCircle2 className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />
                           <span><strong>Water shoes</strong> - For rocky beaches</span>
                         </div>
-                        <Link href="/shop-manager">
+                        <Link href="/shop">
                           <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
                             <ShoppingCart className="w-3 h-3 mr-1" />
                             Shop
@@ -1807,7 +1807,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                           <CheckCircle2 className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />
                           <span><strong>Hat and sunglasses</strong> - UV protection essential</span>
                         </div>
-                        <Link href="/shop-manager">
+                        <Link href="/shop">
                           <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
                             <ShoppingCart className="w-3 h-3 mr-1" />
                             Shop
@@ -1825,7 +1825,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                           <CheckCircle2 className="w-4 h-4 mt-0.5 text-purple-600 flex-shrink-0" />
                           <span><strong>Waterproof phone case</strong> - For underwater photos</span>
                         </div>
-                        <Link href="/shop-manager">
+                        <Link href="/shop">
                           <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
                             <ShoppingCart className="w-3 h-3 mr-1" />
                             Shop
@@ -1837,7 +1837,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                           <CheckCircle2 className="w-4 h-4 mt-0.5 text-purple-600 flex-shrink-0" />
                           <span><strong>Power bank</strong> - Limited charging opportunities</span>
                         </div>
-                        <Link href="/shop-manager">
+                        <Link href="/shop">
                           <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
                             <ShoppingCart className="w-3 h-3 mr-1" />
                             Shop
@@ -1849,7 +1849,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                           <CheckCircle2 className="w-4 h-4 mt-0.5 text-purple-600 flex-shrink-0" />
                           <span><strong>Camera</strong> - GoPro or underwater camera</span>
                         </div>
-                        <Link href="/shop-manager">
+                        <Link href="/shop">
                           <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
                             <ShoppingCart className="w-3 h-3 mr-1" />
                             Shop
@@ -1861,7 +1861,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                           <CheckCircle2 className="w-4 h-4 mt-0.5 text-purple-600 flex-shrink-0" />
                           <span><strong>Universal adapter</strong> - Type A, B, C plugs</span>
                         </div>
-                        <Link href="/shop-manager">
+                        <Link href="/shop">
                           <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
                             <ShoppingCart className="w-3 h-3 mr-1" />
                             Shop
@@ -1879,7 +1879,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                           <CheckCircle2 className="w-4 h-4 mt-0.5 text-orange-600 flex-shrink-0" />
                           <span><strong>Snorkeling mask</strong> - Personal fit preference</span>
                         </div>
-                        <Link href="/shop-manager">
+                        <Link href="/shop">
                           <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
                             <ShoppingCart className="w-3 h-3 mr-1" />
                             Shop
@@ -1891,7 +1891,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                           <CheckCircle2 className="w-4 h-4 mt-0.5 text-orange-600 flex-shrink-0" />
                           <span><strong>Reef-safe sunscreen</strong> - Protect marine life</span>
                         </div>
-                        <Link href="/shop-manager">
+                        <Link href="/shop">
                           <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
                             <ShoppingCart className="w-3 h-3 mr-1" />
                             Shop
@@ -1903,7 +1903,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                           <CheckCircle2 className="w-4 h-4 mt-0.5 text-orange-600 flex-shrink-0" />
                           <span><strong>Dry bag</strong> - Extra protection for valuables</span>
                         </div>
-                        <Link href="/shop-manager">
+                        <Link href="/shop">
                           <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
                             <ShoppingCart className="w-3 h-3 mr-1" />
                             Shop
@@ -1915,7 +1915,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                           <CheckCircle2 className="w-4 h-4 mt-0.5 text-orange-600 flex-shrink-0" />
                           <span><strong>First aid kit</strong> - Basic medical supplies</span>
                         </div>
-                        <Link href="/shop-manager">
+                        <Link href="/shop">
                           <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
                             <ShoppingCart className="w-3 h-3 mr-1" />
                             Shop
