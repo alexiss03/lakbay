@@ -82,7 +82,6 @@ This is a full-stack JavaScript application migrated from Figma to Replit enviro
 - Integrated stock management system with movement tracking, low-stock alerts, and bulk operations
 - Added order processing with shipping capabilities including tracking numbers and carrier selection
 - Created real-time analytics dashboard with revenue tracking, sales metrics, and inventory alerts
-- **Shop Integration with Trip Planning**: Added "Shop" buttons to "Things to bring" section in trip detail pages
-- Connected travel preparation items with available shop products for seamless shopping experience
-- Integrated travel gear shopping (swimwear, electronics, clothing, outdoor equipment) with trip recommendations
-- Created streamlined user flow from trip planning to product purchasing with direct shop links
+- **Shop Integration Removed**: Reverted shop integration from trip detail pages by removing all "Shop" buttons from "Things to bring" section
+- Restored simple item lists without shopping integration to previous clean state
+- Maintained standalone shop functionality while removing cross-platform integration

@@ -1891,29 +1891,13 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                         <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
                         <span><strong>Personal medications</strong> - Bring extra supplies</span>
                       </li>
-                      <li className="flex items-start justify-between">
-                        <div className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                          <span><strong>Sunscreen (SPF 50+)</strong> - Tropical sun is intense</span>
-                        </div>
-                        <Link href="/shop">
-                          <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
-                            <ShoppingCart className="w-3 h-3 mr-1" />
-                            Shop
-                          </Button>
-                        </Link>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
+                        <span><strong>Sunscreen (SPF 50+)</strong> - Tropical sun is intense</span>
                       </li>
-                      <li className="flex items-start justify-between">
-                        <div className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                          <span><strong>Insect repellent</strong> - DEET-based recommended</span>
-                        </div>
-                        <Link href="/shop">
-                          <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
-                            <ShoppingCart className="w-3 h-3 mr-1" />
-                            Shop
-                          </Button>
-                        </Link>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
+                        <span><strong>Insect repellent</strong> - DEET-based recommended</span>
                       </li>
                     </ul>
                   </div>
@@ -1921,65 +1905,25 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-4 text-blue-700">Clothing & Gear</h3>
                     <ul className="space-y-2 text-sm">
-                      <li className="flex items-start justify-between">
-                        <div className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />
-                          <span><strong>Swimwear</strong> - 2-3 sets recommended</span>
-                        </div>
-                        <Link href="/shop">
-                          <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
-                            <ShoppingCart className="w-3 h-3 mr-1" />
-                            Shop
-                          </Button>
-                        </Link>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />
+                        <span><strong>Swimwear</strong> - 2-3 sets recommended</span>
                       </li>
-                      <li className="flex items-start justify-between">
-                        <div className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />
-                          <span><strong>Quick-dry shirts</strong> - Lightweight materials</span>
-                        </div>
-                        <Link href="/shop">
-                          <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
-                            <ShoppingCart className="w-3 h-3 mr-1" />
-                            Shop
-                          </Button>
-                        </Link>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />
+                        <span><strong>Quick-dry shirts</strong> - Lightweight materials</span>
                       </li>
-                      <li className="flex items-start justify-between">
-                        <div className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />
-                          <span><strong>Shorts and light pants</strong> - Cotton or synthetic</span>
-                        </div>
-                        <Link href="/shop">
-                          <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
-                            <ShoppingCart className="w-3 h-3 mr-1" />
-                            Shop
-                          </Button>
-                        </Link>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />
+                        <span><strong>Shorts and light pants</strong> - Cotton or synthetic</span>
                       </li>
-                      <li className="flex items-start justify-between">
-                        <div className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />
-                          <span><strong>Water shoes</strong> - For rocky beaches</span>
-                        </div>
-                        <Link href="/shop">
-                          <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
-                            <ShoppingCart className="w-3 h-3 mr-1" />
-                            Shop
-                          </Button>
-                        </Link>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />
+                        <span><strong>Water shoes</strong> - For rocky beaches</span>
                       </li>
-                      <li className="flex items-start justify-between">
-                        <div className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />
-                          <span><strong>Hat and sunglasses</strong> - UV protection essential</span>
-                        </div>
-                        <Link href="/shop">
-                          <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
-                            <ShoppingCart className="w-3 h-3 mr-1" />
-                            Shop
-                          </Button>
-                        </Link>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />
+                        <span><strong>Hat and sunglasses</strong> - UV protection essential</span>
                       </li>
                     </ul>
                   </div>
@@ -1987,53 +1931,21 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-4 text-purple-700">Electronics & Tech</h3>
                     <ul className="space-y-2 text-sm">
-                      <li className="flex items-start justify-between">
-                        <div className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 text-purple-600 flex-shrink-0" />
-                          <span><strong>Waterproof phone case</strong> - For underwater photos</span>
-                        </div>
-                        <Link href="/shop">
-                          <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
-                            <ShoppingCart className="w-3 h-3 mr-1" />
-                            Shop
-                          </Button>
-                        </Link>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-purple-600 flex-shrink-0" />
+                        <span><strong>Waterproof phone case</strong> - For underwater photos</span>
                       </li>
-                      <li className="flex items-start justify-between">
-                        <div className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 text-purple-600 flex-shrink-0" />
-                          <span><strong>Power bank</strong> - Limited charging opportunities</span>
-                        </div>
-                        <Link href="/shop">
-                          <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
-                            <ShoppingCart className="w-3 h-3 mr-1" />
-                            Shop
-                          </Button>
-                        </Link>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-purple-600 flex-shrink-0" />
+                        <span><strong>Power bank</strong> - Limited charging opportunities</span>
                       </li>
-                      <li className="flex items-start justify-between">
-                        <div className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 text-purple-600 flex-shrink-0" />
-                          <span><strong>Camera</strong> - GoPro or underwater camera</span>
-                        </div>
-                        <Link href="/shop">
-                          <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
-                            <ShoppingCart className="w-3 h-3 mr-1" />
-                            Shop
-                          </Button>
-                        </Link>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-purple-600 flex-shrink-0" />
+                        <span><strong>Camera</strong> - GoPro or underwater camera</span>
                       </li>
-                      <li className="flex items-start justify-between">
-                        <div className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 text-purple-600 flex-shrink-0" />
-                          <span><strong>Universal adapter</strong> - Type A, B, C plugs</span>
-                        </div>
-                        <Link href="/shop">
-                          <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
-                            <ShoppingCart className="w-3 h-3 mr-1" />
-                            Shop
-                          </Button>
-                        </Link>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-purple-600 flex-shrink-0" />
+                        <span><strong>Universal adapter</strong> - Type A, B, C plugs</span>
                       </li>
                     </ul>
                   </div>
@@ -2041,53 +1953,21 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-4 text-orange-700">Optional Items</h3>
                     <ul className="space-y-2 text-sm">
-                      <li className="flex items-start justify-between">
-                        <div className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 text-orange-600 flex-shrink-0" />
-                          <span><strong>Snorkeling mask</strong> - Personal fit preference</span>
-                        </div>
-                        <Link href="/shop">
-                          <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
-                            <ShoppingCart className="w-3 h-3 mr-1" />
-                            Shop
-                          </Button>
-                        </Link>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-orange-600 flex-shrink-0" />
+                        <span><strong>Snorkeling mask</strong> - Personal fit preference</span>
                       </li>
-                      <li className="flex items-start justify-between">
-                        <div className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 text-orange-600 flex-shrink-0" />
-                          <span><strong>Reef-safe sunscreen</strong> - Protect marine life</span>
-                        </div>
-                        <Link href="/shop">
-                          <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
-                            <ShoppingCart className="w-3 h-3 mr-1" />
-                            Shop
-                          </Button>
-                        </Link>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-orange-600 flex-shrink-0" />
+                        <span><strong>Reef-safe sunscreen</strong> - Protect marine life</span>
                       </li>
-                      <li className="flex items-start justify-between">
-                        <div className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 text-orange-600 flex-shrink-0" />
-                          <span><strong>Dry bag</strong> - Extra protection for valuables</span>
-                        </div>
-                        <Link href="/shop">
-                          <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
-                            <ShoppingCart className="w-3 h-3 mr-1" />
-                            Shop
-                          </Button>
-                        </Link>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-orange-600 flex-shrink-0" />
+                        <span><strong>Dry bag</strong> - Extra protection for valuables</span>
                       </li>
-                      <li className="flex items-start justify-between">
-                        <div className="flex items-start space-x-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 text-orange-600 flex-shrink-0" />
-                          <span><strong>First aid kit</strong> - Basic medical supplies</span>
-                        </div>
-                        <Link href="/shop">
-                          <Button size="sm" variant="outline" className="ml-2 h-6 px-2 text-xs">
-                            <ShoppingCart className="w-3 h-3 mr-1" />
-                            Shop
-                          </Button>
-                        </Link>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-orange-600 flex-shrink-0" />
+                        <span><strong>First aid kit</strong> - Basic medical supplies</span>
                       </li>
                     </ul>
                   </div>

@@ -42,6 +42,7 @@ export default function ProductDetailPage() {
   const product = (products as Product[]).find((p: Product) => p.id === id);
 
   const handleAddToCart = () => {
+    if (!product) return;
     toast({
       title: "Added to Cart",
       description: `${quantity} × ${product.name} added to your cart`,
