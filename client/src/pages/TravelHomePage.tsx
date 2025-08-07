@@ -562,29 +562,41 @@ export const TravelHomePage = (): JSX.Element => {
           ))}
 
           {activeTab === "Online Quizzes" && [
-            { title: "Philippine Geography Quiz Challenge", location: "Online Platform", price: "₱99", image: "1609137144813-7d9921338f24", link: "/trip/geography-quiz" },
-            { title: "Cultural Heritage Trivia Contest", location: "Interactive Quiz", price: "₱149", image: "1556909114-f6e7ad7d3136", link: "/trip/culture-quiz" },
-            { title: "Adventure Travel Knowledge Test", location: "Digital Experience", price: "₱79", image: "1441974231531-c6227db76b6e", link: "/trip/adventure-quiz" }
-          ].map((trip, i) => (
-            <Link key={i} href={trip.link}>
-              <Card className="overflow-hidden rounded-lg group cursor-pointer">
+            { title: "Philippines Geography & Culture Quiz", location: "5 minutes • 5 questions", price: "FREE", image: "1506905925346-21bda4d32df4", link: "/trip/philippines-geography-quiz", difficulty: "Beginner", passingScore: "70%" },
+            { title: "Filipino Heritage & Traditions", location: "7 minutes • 8 questions", price: "FREE", image: "1609137144813-7d9921338f24", link: "/trip/heritage-quiz", difficulty: "Intermediate", passingScore: "75%" },
+            { title: "Adventure Travel Safety Quiz", location: "10 minutes • 12 questions", price: "FREE", image: "1441974231531-c6227db76b6e", link: "/trip/safety-quiz", difficulty: "Advanced", passingScore: "80%" }
+          ].map((quiz, i) => (
+            <Link key={i} href={quiz.link}>
+              <div className="prada-card overflow-hidden group cursor-pointer">
                 <div className="relative aspect-[4/3]">
                   <img 
-                    src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
-                    alt={trip.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    src={`https://images.unsplash.com/photo-${quiz.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={quiz.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                   />
-                  <div className="absolute top-3 right-3">
-                    <span className="bg-indigo-500 text-white text-xs px-2 py-1 rounded">Quiz</span>
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-[#D4AF37] text-black text-xs px-3 py-1 font-light tracking-wider prada-corner-radius">QUIZ</span>
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute bottom-3 left-3 text-white">
-                    <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
-                    <p className="text-xs opacity-90">{trip.location}</p>
-                    <p className="text-sm font-bold">{trip.price}</p>
+                  <div className="absolute top-4 left-4">
+                    <span className={`text-xs px-2 py-1 prada-corner-radius font-light ${
+                      quiz.difficulty === 'Beginner' ? 'bg-green-100 text-green-800' :
+                      quiz.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {quiz.difficulty.toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h3 className="font-light text-sm mb-1 tracking-wide">{quiz.title}</h3>
+                    <p className="text-xs opacity-90 font-light">{quiz.location}</p>
+                    <div className="flex items-center justify-between mt-2">
+                      <p className="text-sm font-light tracking-wider text-[#D4AF37]">{quiz.price}</p>
+                      <span className="text-xs opacity-75">Pass: {quiz.passingScore}</span>
+                    </div>
                   </div>
                 </div>
-              </Card>
+              </div>
             </Link>
           ))}
         </div>

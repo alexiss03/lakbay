@@ -9,7 +9,7 @@ import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { ChatWidget } from "@/components/ChatWidget";
 import { TrailMap } from "@/components/TrailMap";
-import { MapPin, Star, Clock, Users, Calendar, Shield, AlertTriangle, CheckCircle2, Mountain, TrendingUp, MapIcon, Headphones, Play, Pause, Download, Volume2, Utensils, Package } from "lucide-react";
+import { MapPin, Star, Clock, Users, Calendar, Shield, AlertTriangle, CheckCircle2, Mountain, TrendingUp, MapIcon, Headphones, Play, Pause, Download, Volume2, Utensils, Package, Brain, Award, Timer, Target } from "lucide-react";
 
 interface TripDetailPageProps {
   params?: {
@@ -27,7 +27,32 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
   const [isBooked, setIsBooked] = useState(false); // Trip booking status
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentAudioTrack, setCurrentAudioTrack] = useState<number | null>(null);
+  
+  // Quiz state
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
+  const [showResults, setShowResults] = useState(false);
+  const [quizStarted, setQuizStarted] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
+  
   const { toast } = useToast();
+
+  // Timer effect for quiz
+  React.useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (quizStarted && !showResults && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            setShowResults(true);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [quizStarted, showResults, timeLeft]);
 
   // Check for payment status in URL
   React.useEffect(() => {
@@ -751,6 +776,93 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
       meetingPlace: "El Nido Airport",
       mapCenter: { lat: 11.1854, lng: 119.4094 }
     };
+  }
+  
+  // ONLINE QUIZ CATEGORY
+  if (location.includes("philippines-geography-quiz") || location.includes("quiz")) {
+    return {
+      title: "Philippines Geography & Culture Quiz",
+      duration: "5 minutes",
+      price: "FREE",
+      category: "online-quiz",
+      heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=400&fit=crop&auto=format",
+      host: {
+        name: "Lakbay Education Team", 
+        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&auto=format",
+        bio: "Educational content creators specializing in Philippine geography, culture, and tourism."
+      },
+      quiz: {
+        title: "Test Your Philippines Knowledge",
+        description: "Challenge yourself with questions about Philippine geography, culture, history, and tourism destinations.",
+        totalQuestions: 10,
+        timeLimit: 300, // 5 minutes
+        passingScore: 70,
+        questions: [
+          {
+            id: 1,
+            question: "What is the highest mountain in the Philippines?",
+            options: [
+              "Mount Mayon",
+              "Mount Apo",
+              "Mount Pulag",
+              "Mount Makiling"
+            ],
+            correct: 1,
+            explanation: "Mount Apo in Davao is the highest peak in the Philippines at 2,954 meters above sea level."
+          },
+          {
+            id: 2,
+            question: "Which island group contains the most islands in the Philippines?",
+            options: [
+              "Luzon",
+              "Visayas", 
+              "Mindanao",
+              "Sulu Archipelago"
+            ],
+            correct: 1,
+            explanation: "The Visayas region contains over 6,000 islands and islets, making it the most island-dense region."
+          },
+          {
+            id: 3,
+            question: "Banaue Rice Terraces are located in which province?",
+            options: [
+              "Baguio",
+              "Ifugao",
+              "Mountain Province",
+              "Benguet"
+            ],
+            correct: 1,
+            explanation: "The famous Banaue Rice Terraces are located in Ifugao province and are considered the 8th Wonder of the World."
+          },
+          {
+            id: 4,
+            question: "What is the traditional Filipino bamboo dance called?",
+            options: [
+              "Singkil",
+              "Tinikling",
+              "Pandanggo",
+              "Carinosa"
+            ],
+            correct: 1,
+            explanation: "Tinikling is the traditional Filipino folk dance that mimics the movements of tikling birds."
+          },
+          {
+            id: 5,
+            question: "Which city is known as the 'Summer Capital of the Philippines'?",
+            options: [
+              "Tagaytay",
+              "Baguio",
+              "Sagada",
+              "La Trinidad"
+            ],
+            correct: 1,
+            explanation: "Baguio City is known as the Summer Capital due to its cool climate and mountainous location."
+          }
+        ]
+      },
+      meetingPlace: "Online Platform",
+      mapCenter: { lat: 12.8797, lng: 121.7740 }
+    };
   };
 
   const trip = getTripData();
@@ -796,20 +908,210 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
       </div>
 
       <div className="max-w-7xl mx-auto px-8 py-8 grid lg:grid-cols-3 gap-8">
-        {/* Trip Details */}
-        <div className="lg:col-span-2">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid w-full h-auto p-1 grid-cols-6">
-              <TabsTrigger value="Event details" className="text-xs px-2 py-2">Event details</TabsTrigger>
-              <TabsTrigger value="Inclusions" className="text-xs px-2 py-2">Inclusions</TabsTrigger>
-              <TabsTrigger value="Reviews" className="text-xs px-2 py-2">Reviews</TabsTrigger>
-              <TabsTrigger value="Things to bring" className="text-xs px-2 py-2">Things to bring</TabsTrigger>
-              <TabsTrigger value="Reminders" className="text-xs px-2 py-2">Reminders</TabsTrigger>
-              <TabsTrigger value="Cancellation" className="text-xs px-2 py-2">Cancellation</TabsTrigger>
-            </TabsList>
+        {/* Quiz Interface for Online Quiz Category */}
+        {trip.category === "online-quiz" && trip.quiz ? (
+          <div className="lg:col-span-2">
+            <Card className="prada-card p-8">
+              {!quizStarted ? (
+                // Quiz Introduction
+                <div className="text-center space-y-6">
+                  <div className="flex justify-center">
+                    <Brain className="w-16 h-16 text-[#D4AF37]" />
+                  </div>
+                  <h2 className="prada-heading text-3xl font-light">{trip.quiz.title}</h2>
+                  <p className="text-gray-600 font-light leading-relaxed max-w-2xl mx-auto">
+                    {trip.quiz.description}
+                  </p>
+                  
+                  <div className="grid grid-cols-3 gap-6 max-w-md mx-auto">
+                    <div className="text-center">
+                      <div className="flex justify-center mb-2">
+                        <Target className="w-8 h-8 text-[#D4AF37]" />
+                      </div>
+                      <p className="text-sm text-gray-600 font-light">Questions</p>
+                      <p className="text-lg font-medium">{trip.quiz.totalQuestions}</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex justify-center mb-2">
+                        <Timer className="w-8 h-8 text-[#D4AF37]" />
+                      </div>
+                      <p className="text-sm text-gray-600 font-light">Time Limit</p>
+                      <p className="text-lg font-medium">{Math.floor(trip.quiz.timeLimit / 60)} min</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex justify-center mb-2">
+                        <Award className="w-8 h-8 text-[#D4AF37]" />
+                      </div>
+                      <p className="text-sm text-gray-600 font-light">Pass Score</p>
+                      <p className="text-lg font-medium">{trip.quiz.passingScore}%</p>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    onClick={() => setQuizStarted(true)}
+                    className="bg-[#D4AF37] hover:bg-[#B8941F] text-black font-light tracking-wider text-sm px-8 py-3"
+                  >
+                    START QUIZ
+                  </Button>
+                </div>
+              ) : !showResults ? (
+                // Quiz Questions
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center space-x-4">
+                      <h3 className="prada-heading text-xl font-light">
+                        Question {currentQuestion + 1} of {trip.quiz.questions.length}
+                      </h3>
+                      <Badge variant="outline" className="text-xs">
+                        {Math.round(((currentQuestion + 1) / trip.quiz.questions.length) * 100)}% Complete
+                      </Badge>
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                      <Clock className="w-4 h-4" />
+                      <span>{Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-50 p-6 prada-corner-radius">
+                    <h4 className="text-lg font-medium mb-4">
+                      {trip.quiz.questions[currentQuestion]?.question}
+                    </h4>
+                    
+                    <div className="space-y-3">
+                      {trip.quiz.questions[currentQuestion]?.options.map((option, index) => (
+                        <button
+                          key={index}
+                          onClick={() => {
+                            const newAnswers = [...selectedAnswers];
+                            newAnswers[currentQuestion] = index;
+                            setSelectedAnswers(newAnswers);
+                          }}
+                          className={`w-full text-left p-4 prada-corner-radius border transition-colors ${
+                            selectedAnswers[currentQuestion] === index
+                              ? 'border-[#D4AF37] bg-yellow-50'
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-4 h-4 rounded-full border-2 ${
+                              selectedAnswers[currentQuestion] === index
+                                ? 'border-[#D4AF37] bg-[#D4AF37]'
+                                : 'border-gray-300'
+                            }`}>
+                              {selectedAnswers[currentQuestion] === index && (
+                                <div className="w-2 h-2 bg-white rounded-full mx-auto mt-1" />
+                              )}
+                            </div>
+                            <span className="font-light">{option}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between">
+                    <Button
+                      variant="outline"
+                      onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
+                      disabled={currentQuestion === 0}
+                      className="font-light"
+                    >
+                      Previous
+                    </Button>
+                    
+                    {currentQuestion === trip.quiz.questions.length - 1 ? (
+                      <Button
+                        onClick={() => setShowResults(true)}
+                        disabled={selectedAnswers[currentQuestion] === undefined}
+                        className="bg-[#D4AF37] hover:bg-[#B8941F] text-black font-light"
+                      >
+                        Finish Quiz
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => setCurrentQuestion(currentQuestion + 1)}
+                        disabled={selectedAnswers[currentQuestion] === undefined}
+                        className="bg-[#D4AF37] hover:bg-[#B8941F] text-black font-light"
+                      >
+                        Next
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                // Quiz Results
+                <div className="text-center space-y-6">
+                  <div className="flex justify-center">
+                    <Award className="w-16 h-16 text-[#D4AF37]" />
+                  </div>
+                  <h2 className="prada-heading text-3xl font-light">Quiz Complete!</h2>
+                  
+                  {(() => {
+                    const correctAnswers = selectedAnswers.reduce((count, answer, index) => {
+                      return answer === trip.quiz.questions[index]?.correct ? count + 1 : count;
+                    }, 0);
+                    const percentage = Math.round((correctAnswers / trip.quiz.questions.length) * 100);
+                    const passed = percentage >= trip.quiz.passingScore;
+                    
+                    return (
+                      <div className="space-y-4">
+                        <div className={`text-6xl font-light ${passed ? 'text-green-600' : 'text-red-500'}`}>
+                          {percentage}%
+                        </div>
+                        <p className="text-lg font-light">
+                          You got {correctAnswers} out of {trip.quiz.questions.length} questions correct
+                        </p>
+                        <div className={`inline-flex items-center space-x-2 px-4 py-2 prada-corner-radius ${
+                          passed ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {passed ? <CheckCircle2 className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
+                          <span className="font-light">
+                            {passed ? 'Congratulations! You passed!' : 'Try again to improve your score'}
+                          </span>
+                        </div>
+                        
+                        <div className="flex justify-center space-x-4 mt-8">
+                          <Button
+                            onClick={() => {
+                              setQuizStarted(false);
+                              setCurrentQuestion(0);
+                              setSelectedAnswers([]);
+                              setShowResults(false);
+                              setTimeLeft(trip.quiz.timeLimit);
+                            }}
+                            variant="outline"
+                            className="font-light"
+                          >
+                            Retake Quiz
+                          </Button>
+                          <Link href="/">
+                            <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black font-light">
+                              Back to Home
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+            </Card>
+          </div>
+        ) : (
+          // Regular Trip Details
+          <div className="lg:col-span-2">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+              <TabsList className="grid w-full h-auto p-1 grid-cols-6">
+                <TabsTrigger value="Event details" className="text-xs px-2 py-2">Event details</TabsTrigger>
+                <TabsTrigger value="Inclusions" className="text-xs px-2 py-2">Inclusions</TabsTrigger>
+                <TabsTrigger value="Reviews" className="text-xs px-2 py-2">Reviews</TabsTrigger>
+                <TabsTrigger value="Things to bring" className="text-xs px-2 py-2">Things to bring</TabsTrigger>
+                <TabsTrigger value="Reminders" className="text-xs px-2 py-2">Reminders</TabsTrigger>
+                <TabsTrigger value="Cancellation" className="text-xs px-2 py-2">Cancellation</TabsTrigger>
+              </TabsList>
 
-            <TabsContent value="Event details" className="space-y-6">
-              {trip.itinerary.map((day, index) => (
+              <TabsContent value="Event details" className="space-y-6">
+                {trip.itinerary && trip.itinerary.map((day, index) => (
                 <Card key={index} className="p-6">
                   <div className="flex space-x-4">
                     <div className="flex-shrink-0">
@@ -1646,6 +1948,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
             </TabsContent>
           </Tabs>
         </div>
+        )}
 
         {/* Booking Sidebar or Audio Book Section */}
         <div className="space-y-6">
