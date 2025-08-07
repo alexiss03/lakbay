@@ -1704,6 +1704,15 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                 >
                   {isProcessing ? "Processing..." : "Book Now with PayMongo"}
                 </Button>
+                
+                {/* Demo button to test audio book feature */}
+                <Button 
+                  onClick={() => setIsBooked(true)}
+                  variant="outline"
+                  className="w-full text-sm text-gray-600 border-dashed"
+                >
+                  🎧 Demo: Show Audio Book
+                </Button>
 
                 <div className="text-center">
                   <p className="text-xs text-gray-500 mb-2">Secure payment powered by</p>

@@ -1,0 +1,241 @@
+import { useState } from "react";
+import { Link, useLocation } from "wouter";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
+import { FaFacebook, FaGoogle } from "react-icons/fa";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+
+export const LoginPage = (): JSX.Element => {
+  const [, setLocation] = useLocation();
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginData, setLoginData] = useState({
+    usernameOrEmail: "",
+    password: ""
+  });
+  const { toast } = useToast();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setLoginData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      // Simulate login API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      toast({
+        title: "Login Successful",
+        description: "Welcome back to Lakbay!",
+      });
+      
+      setLocation("/");
+    } catch (error) {
+      toast({
+        title: "Login Failed",
+        description: "Invalid credentials. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSocialLogin = async (provider: 'facebook' | 'google') => {
+    setIsLoading(true);
+    
+    try {
+      // In a real app, this would redirect to the OAuth provider
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      toast({
+        title: `${provider === 'facebook' ? 'Facebook' : 'Google'} Login`,
+        description: `Successfully logged in with ${provider === 'facebook' ? 'Facebook' : 'Google'}!`,
+      });
+      
+      setLocation("/");
+    } catch (error) {
+      toast({
+        title: "Social Login Failed",
+        description: `Unable to login with ${provider === 'facebook' ? 'Facebook' : 'Google'}. Please try again.`,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Back Button */}
+        <div className="mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => setLocation("/")}
+            className="flex items-center text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Lakbay
+          </Button>
+        </div>
+
+        {/* Login Card */}
+        <Card className="p-8 shadow-lg border-0">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+            <p className="text-gray-600">Sign in to your Lakbay account</p>
+          </div>
+
+          {/* Social Login Buttons */}
+          <div className="space-y-3 mb-6">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full h-12 flex items-center justify-center space-x-3 hover:bg-blue-50 border-gray-300"
+              onClick={() => handleSocialLogin('google')}
+              disabled={isLoading}
+            >
+              <FaGoogle className="w-5 h-5 text-red-500" />
+              <span className="font-medium">Continue with Google</span>
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full h-12 flex items-center justify-center space-x-3 hover:bg-blue-50 border-gray-300"
+              onClick={() => handleSocialLogin('facebook')}
+              disabled={isLoading}
+            >
+              <FaFacebook className="w-5 h-5 text-blue-600" />
+              <span className="font-medium">Continue with Facebook</span>
+            </Button>
+          </div>
+
+          {/* Separator */}
+          <div className="relative my-6">
+            <Separator />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="bg-white px-4 text-sm text-gray-500">or</span>
+            </div>
+          </div>
+
+          {/* Login Form */}
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <Label htmlFor="usernameOrEmail" className="text-sm font-medium text-gray-700">
+                Username or Email
+              </Label>
+              <Input
+                id="usernameOrEmail"
+                name="usernameOrEmail"
+                type="text"
+                placeholder="Enter your username or email"
+                value={loginData.usernameOrEmail}
+                onChange={handleInputChange}
+                required
+                className="mt-1 h-12"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                Password
+              </Label>
+              <div className="relative mt-1">
+                <Input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  value={loginData.password}
+                  onChange={handleInputChange}
+                  required
+                  className="h-12 pr-12"
+                  disabled={isLoading}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={isLoading}
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4 text-gray-500" />
+                  ) : (
+                    <Eye className="w-4 h-4 text-gray-500" />
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {/* Forgot Password Link */}
+            <div className="text-right">
+              <Link href="/forgot-password">
+                <a className="text-sm text-[#D4AF37] hover:text-[#B8941F] font-medium">
+                  Forgot your password?
+                </a>
+              </Link>
+            </div>
+
+            {/* Login Button */}
+            <Button
+              type="submit"
+              className="w-full h-12 bg-[#D4AF37] hover:bg-[#B8941F] text-black font-semibold"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                  <span>Signing in...</span>
+                </div>
+              ) : (
+                "Sign In"
+              )}
+            </Button>
+          </form>
+
+          {/* Sign Up Link */}
+          <div className="text-center mt-6">
+            <p className="text-sm text-gray-600">
+              Don't have an account?{" "}
+              <Link href="/signup">
+                <a className="text-[#D4AF37] hover:text-[#B8941F] font-medium">
+                  Sign up for free
+                </a>
+              </Link>
+            </p>
+          </div>
+        </Card>
+
+        {/* Terms and Privacy */}
+        <div className="text-center mt-6">
+          <p className="text-xs text-gray-500">
+            By signing in, you agree to our{" "}
+            <Link href="/terms">
+              <a className="text-[#D4AF37] hover:text-[#B8941F]">Terms of Service</a>
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy">
+              <a className="text-[#D4AF37] hover:text-[#B8941F]">Privacy Policy</a>
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};

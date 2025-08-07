@@ -10,6 +10,8 @@ import { TravelHomePage } from "@/pages/TravelHomePage";
 import { ArticlePage } from "@/pages/ArticlePage";
 import { TripDetailPage } from "@/pages/TripDetailPage";
 import { ChatPage } from "@/pages/ChatPage";
+import { LoginPage } from "@/pages/LoginPage";
+import { SignupPage } from "@/pages/SignupPage";
 import ShopPage from "@/pages/ShopPage";
 import ProductDetailPage from "@/pages/ProductDetailPage";
 
@@ -18,6 +20,8 @@ function Router() {
     <Switch>
       {/* Add pages below */}
       <Route path="/" component={TravelHomePage} />
+      <Route path="/login" component={LoginPage} />
+      <Route path="/signup" component={SignupPage} />
       <Route path="/chats" component={ChatPage} />
       <Route path="/article/:slug" component={ArticlePage} />
       <Route path="/trip/:id" component={TripDetailPage} />

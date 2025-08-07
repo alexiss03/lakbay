@@ -31,12 +31,16 @@ export const TravelHomePage = (): JSX.Element => {
           
           {/* Right: Buttons and Language */}
           <div className="flex items-center space-x-4">
-            <Button variant="outline" className="text-sm">
-              Log in
-            </Button>
-            <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black text-sm">
-              Register
-            </Button>
+            <Link href="/login">
+              <Button variant="outline" className="text-sm">
+                Log in
+              </Button>
+            </Link>
+            <Link href="/signup">
+              <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black text-sm">
+                Register
+              </Button>
+            </Link>
             <span className="text-sm text-gray-700">EN</span>
           </div>
         </div>
