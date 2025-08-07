@@ -758,40 +758,40 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white px-8 py-4 border-b border-gray-100">
+      <header className="bg-white px-8 py-6 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <Link href="/">
-            <div className="w-8 h-8 bg-gray-300 rounded cursor-pointer"></div>
+            <div className="w-8 h-8 bg-black prada-corner-radius cursor-pointer"></div>
           </Link>
           
-          <nav className="flex items-center space-x-8">
-            <Link href="/" className="text-gray-900 font-medium">Home</Link>
-            <a href="#" className="text-gray-700 hover:text-gray-900">Trails</a>
-            <a href="#" className="text-gray-700 hover:text-gray-900">Story</a>
-            <a href="#" className="text-gray-700 hover:text-gray-900">Shop</a>
-            <a href="#" className="text-gray-700 hover:text-gray-900">Corporate</a>
-            <a href="#" className="text-gray-700 hover:text-gray-900">Explore</a>
+          <nav className="flex items-center space-x-12">
+            <Link href="/" className="prada-nav-link text-black font-light tracking-wider text-xs uppercase">Home</Link>
+            <a href="#" className="prada-nav-link text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase">Trails</a>
+            <a href="#" className="prada-nav-link text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase">Story</a>
+            <a href="#" className="prada-nav-link text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase">Shop</a>
+            <a href="#" className="prada-nav-link text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase">Corporate</a>
+            <a href="#" className="prada-nav-link text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase">Explore</a>
           </nav>
           
           <div className="flex items-center space-x-4">
-            <Button variant="outline" className="text-sm">Log in</Button>
-            <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black text-sm">Register</Button>
-            <span className="text-sm text-gray-700">EN</span>
+            <Button variant="outline" className="prada-button border-black text-xs font-light tracking-wider">LOG IN</Button>
+            <Button className="prada-button prada-gold-accent text-xs font-light tracking-wider">REGISTER</Button>
+            <span className="text-xs text-gray-700 font-light tracking-wider">EN</span>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <div className="relative h-64">
+      <div className="relative h-72">
         <img 
           src={trip.heroImage}
           alt={trip.title}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        <div className="absolute bottom-6 left-8 text-white">
-          <h1 className="text-3xl font-bold mb-2">{trip.title}</h1>
-          <p className="text-lg opacity-90">{trip.duration}</p>
+        <div className="absolute bottom-8 left-8 text-white">
+          <h1 className="prada-heading text-4xl font-light mb-3">{trip.title}</h1>
+          <p className="text-lg font-light tracking-wide opacity-90">{trip.duration}</p>
         </div>
       </div>
 
@@ -1645,16 +1645,16 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
         <div className="space-y-6">
           {!isBooked ? (
             /* Original Booking Section */
-            <Card className="p-6">
-              <div className="text-center mb-4">
-                <span className="text-2xl font-bold text-gray-900">{trip.price}</span>
+            <div className="prada-card p-8">
+              <div className="text-center mb-6">
+                <span className="prada-heading text-2xl font-light text-black">{trip.price}</span>
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Guests</label>
+                  <label className="block text-xs font-light text-gray-600 tracking-wider uppercase mb-2">Guests</label>
                   <Select value={guests} onValueChange={setGuests}>
-                    <SelectTrigger>
+                    <SelectTrigger className="prada-input h-12">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1666,14 +1666,14 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                   </Select>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Check in</label>
-                    <Input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} />
+                    <label className="block text-xs font-light text-gray-600 tracking-wider uppercase mb-2">Check in</label>
+                    <Input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} className="prada-input h-12" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Check out</label>
-                    <Input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} />
+                    <label className="block text-xs font-light text-gray-600 tracking-wider uppercase mb-2">Check out</label>
+                    <Input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} className="prada-input h-12" />
                   </div>
                 </div>
 
@@ -1733,7 +1733,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                   </div>
                 </div>
               </div>
-            </Card>
+            </div>
           ) : (
             /* Audio Book Section for Booked Trips */
             <Card className="p-6">

@@ -101,49 +101,49 @@ export const SignupPage = (): JSX.Element => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Back Button */}
-        <div className="mb-6">
+        <div className="mb-8">
           <Button
             variant="ghost"
             onClick={() => setLocation("/")}
-            className="flex items-center text-gray-600 hover:text-gray-900"
+            className="prada-button flex items-center text-gray-600 hover:text-black font-light tracking-wider"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Lakbay
+            <span className="text-xs uppercase">Back to Lakbay</span>
           </Button>
         </div>
 
         {/* Signup Card */}
-        <Card className="p-8 shadow-lg border-0">
+        <div className="prada-card p-10">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Join Lakbay</h1>
-            <p className="text-gray-600">Create your adventure account today</p>
+            <h1 className="prada-heading text-3xl text-black mb-3 font-light">JOIN LAKBAY</h1>
+            <p className="text-gray-600 font-light tracking-wide text-sm">Create your adventure account today</p>
           </div>
 
           {/* Social Signup Buttons */}
-          <div className="space-y-3 mb-6">
+          <div className="space-y-4 mb-8">
             <Button
               type="button"
               variant="outline"
-              className="w-full h-12 flex items-center justify-center space-x-3 hover:bg-blue-50 border-gray-300"
+              className="prada-button w-full h-12 flex items-center justify-center space-x-3 hover:bg-gray-50 border-black font-light tracking-wider"
               onClick={() => handleSocialSignup('google')}
               disabled={isLoading}
             >
-              <FaGoogle className="w-5 h-5 text-red-500" />
-              <span className="font-medium">Sign up with Google</span>
+              <FaGoogle className="w-4 h-4 text-red-500" />
+              <span className="text-xs">SIGN UP WITH GOOGLE</span>
             </Button>
 
             <Button
               type="button"
               variant="outline"
-              className="w-full h-12 flex items-center justify-center space-x-3 hover:bg-blue-50 border-gray-300"
+              className="prada-button w-full h-12 flex items-center justify-center space-x-3 hover:bg-gray-50 border-black font-light tracking-wider"
               onClick={() => handleSocialSignup('facebook')}
               disabled={isLoading}
             >
-              <FaFacebook className="w-5 h-5 text-blue-600" />
-              <span className="font-medium">Sign up with Facebook</span>
+              <FaFacebook className="w-4 h-4 text-blue-600" />
+              <span className="text-xs">SIGN UP WITH FACEBOOK</span>
             </Button>
           </div>
 
@@ -158,7 +158,7 @@ export const SignupPage = (): JSX.Element => {
           {/* Signup Form */}
           <form onSubmit={handleSignup} className="space-y-4">
             <div>
-              <Label htmlFor="username" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="username" className="text-xs font-light text-gray-600 tracking-wider uppercase">
                 Username
               </Label>
               <Input
@@ -169,14 +169,14 @@ export const SignupPage = (): JSX.Element => {
                 value={signupData.username}
                 onChange={handleInputChange}
                 required
-                className="mt-1 h-12"
+                className="prada-input mt-2 h-12"
                 disabled={isLoading}
                 minLength={3}
               />
             </div>
 
             <div>
-              <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="email" className="text-xs font-light text-gray-600 tracking-wider uppercase">
                 Email Address
               </Label>
               <Input
@@ -187,16 +187,16 @@ export const SignupPage = (): JSX.Element => {
                 value={signupData.email}
                 onChange={handleInputChange}
                 required
-                className="mt-1 h-12"
+                className="prada-input mt-2 h-12"
                 disabled={isLoading}
               />
             </div>
 
             <div>
-              <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="password" className="text-xs font-light text-gray-600 tracking-wider uppercase">
                 Password
               </Label>
-              <div className="relative mt-1">
+              <div className="relative mt-2">
                 <Input
                   id="password"
                   name="password"
@@ -205,7 +205,7 @@ export const SignupPage = (): JSX.Element => {
                   value={signupData.password}
                   onChange={handleInputChange}
                   required
-                  className="h-12 pr-12"
+                  className="prada-input h-12 pr-12"
                   disabled={isLoading}
                 />
                 <Button
@@ -236,10 +236,10 @@ export const SignupPage = (): JSX.Element => {
             </div>
 
             <div>
-              <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="confirmPassword" className="text-xs font-light text-gray-600 tracking-wider uppercase">
                 Confirm Password
               </Label>
-              <div className="relative mt-1">
+              <div className="relative mt-2">
                 <Input
                   id="confirmPassword"
                   name="confirmPassword"
@@ -248,7 +248,7 @@ export const SignupPage = (): JSX.Element => {
                   value={signupData.confirmPassword}
                   onChange={handleInputChange}
                   required
-                  className="h-12 pr-12"
+                  className="prada-input h-12 pr-12"
                   disabled={isLoading}
                 />
                 <Button
@@ -277,9 +277,9 @@ export const SignupPage = (): JSX.Element => {
             {/* Signup Button */}
             <Button
               type="submit"
-              className={`w-full h-12 font-semibold ${
+              className={`prada-button w-full h-12 font-light tracking-wider text-xs ${
                 isFormValid
-                  ? 'bg-[#D4AF37] hover:bg-[#B8941F] text-black'
+                  ? 'prada-gold-accent'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
               disabled={isLoading || !isFormValid}
@@ -287,10 +287,10 @@ export const SignupPage = (): JSX.Element => {
               {isLoading ? (
                 <div className="flex items-center space-x-2">
                   <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-                  <span>Creating Account...</span>
+                  <span>CREATING ACCOUNT...</span>
                 </div>
               ) : (
-                "Create Account"
+                "CREATE ACCOUNT"
               )}
             </Button>
           </form>
@@ -306,7 +306,7 @@ export const SignupPage = (): JSX.Element => {
               </Link>
             </p>
           </div>
-        </Card>
+        </div>
 
         {/* Terms and Privacy */}
         <div className="text-center mt-6">
