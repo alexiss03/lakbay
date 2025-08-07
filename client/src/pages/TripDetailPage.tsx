@@ -17,6 +17,32 @@ interface TripDetailPageProps {
   };
 }
 
+// Type for quiz data
+interface QuizTrip {
+  title: string;
+  duration: string;
+  price: string;
+  category: string;
+  heroImage: string;
+  host: { name: string; avatar: string; bio: string; };
+  meetingPlace: string;
+  mapCenter: { lat: number; lng: number };
+  quiz: {
+    title: string;
+    description: string;
+    totalQuestions: number;
+    timeLimit: number;
+    passingScore: number;
+    questions: Array<{
+      id: number;
+      question: string;
+      options: string[];
+      correct: number;
+      explanation: string;
+    }>;
+  };
+}
+
 export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => {
   const [location] = useLocation();
   const [guests, setGuests] = useState("1 guest");
@@ -791,6 +817,8 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
         avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&auto=format",
         bio: "Educational content creators specializing in Philippine geography, culture, and tourism."
       },
+      meetingPlace: "Online Platform",
+      mapCenter: { lat: 14.5995, lng: 120.9842 },
       quiz: {
         title: "Test Your Philippines Knowledge",
         description: "Challenge yourself with questions about Philippine geography, culture, history, and tourism destinations.",
@@ -859,13 +887,25 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
             explanation: "Baguio City is known as the Summer Capital due to its cool climate and mountainous location."
           }
         ]
-      },
-      meetingPlace: "Online Platform",
-      mapCenter: { lat: 12.8797, lng: 121.7740 }
+      }
     };
-  };
+  }
 
   const trip = getTripData();
+  
+  // Ensure we have a valid trip object
+  if (!trip || typeof trip !== 'object') {
+    return <div>Loading...</div>;
+  }
+
+  // Debug: Check trip structure
+  console.log("Trip object keys:", Object.keys(trip));
+  console.log("Trip category:", trip.category);
+  
+  // Type guard for quiz trips
+  const isQuizTrip = (trip: any): trip is QuizTrip => {
+    return trip.category === "online-quiz" && trip.quiz;
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -909,9 +949,13 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
 
       <div className="max-w-7xl mx-auto px-8 py-8 grid lg:grid-cols-3 gap-8">
         {/* Quiz Interface for Online Quiz Category */}
-        {trip.category === "online-quiz" && trip.quiz ? (
+        {trip.category === "online-quiz" ? (
           <div className="lg:col-span-2">
             <Card className="prada-card p-8">
+              <div className="text-center">
+                <h2>Quiz functionality temporarily disabled for debugging</h2>
+                <p>The quiz will be restored shortly.</p>
+              </div>
               {!quizStarted ? (
                 // Quiz Introduction
                 <div className="text-center space-y-6">
@@ -929,21 +973,21 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                         <Target className="w-8 h-8 text-[#D4AF37]" />
                       </div>
                       <p className="text-sm text-gray-600 font-light">Questions</p>
-                      <p className="text-lg font-medium">{trip.quiz.totalQuestions}</p>
+                      <p className="text-lg font-medium">{(trip as QuizTrip).quiz.totalQuestions}</p>
                     </div>
                     <div className="text-center">
                       <div className="flex justify-center mb-2">
                         <Timer className="w-8 h-8 text-[#D4AF37]" />
                       </div>
                       <p className="text-sm text-gray-600 font-light">Time Limit</p>
-                      <p className="text-lg font-medium">{Math.floor(trip.quiz.timeLimit / 60)} min</p>
+                      <p className="text-lg font-medium">{Math.floor((trip as QuizTrip).quiz.timeLimit / 60)} min</p>
                     </div>
                     <div className="text-center">
                       <div className="flex justify-center mb-2">
                         <Award className="w-8 h-8 text-[#D4AF37]" />
                       </div>
                       <p className="text-sm text-gray-600 font-light">Pass Score</p>
-                      <p className="text-lg font-medium">{trip.quiz.passingScore}%</p>
+                      <p className="text-lg font-medium">{(trip as QuizTrip).quiz.passingScore}%</p>
                     </div>
                   </div>
                   
@@ -960,10 +1004,10 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                   <div className="flex justify-between items-center">
                     <div className="flex items-center space-x-4">
                       <h3 className="prada-heading text-xl font-light">
-                        Question {currentQuestion + 1} of {trip.quiz.questions.length}
+                        Question {currentQuestion + 1} of {(trip as QuizTrip).quiz.questions.length}
                       </h3>
                       <Badge variant="outline" className="text-xs">
-                        {Math.round(((currentQuestion + 1) / trip.quiz.questions.length) * 100)}% Complete
+                        {Math.round(((currentQuestion + 1) / (trip as QuizTrip).quiz.questions.length) * 100)}% Complete
                       </Badge>
                     </div>
                     <div className="flex items-center space-x-2 text-sm text-gray-600">
@@ -974,11 +1018,11 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                   
                   <div className="bg-gray-50 p-6 prada-corner-radius">
                     <h4 className="text-lg font-medium mb-4">
-                      {trip.quiz.questions[currentQuestion]?.question}
+                      {(trip as QuizTrip).quiz.questions[currentQuestion]?.question}
                     </h4>
                     
                     <div className="space-y-3">
-                      {trip.quiz.questions[currentQuestion]?.options.map((option, index) => (
+                      {(trip as QuizTrip).quiz.questions[currentQuestion]?.options.map((option: string, index: number) => (
                         <button
                           key={index}
                           onClick={() => {
@@ -1019,7 +1063,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                       Previous
                     </Button>
                     
-                    {currentQuestion === trip.quiz.questions.length - 1 ? (
+                    {currentQuestion === (trip as QuizTrip).quiz.questions.length - 1 ? (
                       <Button
                         onClick={() => setShowResults(true)}
                         disabled={selectedAnswers[currentQuestion] === undefined}
@@ -1048,10 +1092,10 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                   
                   {(() => {
                     const correctAnswers = selectedAnswers.reduce((count, answer, index) => {
-                      return answer === trip.quiz.questions[index]?.correct ? count + 1 : count;
+                      return answer === (trip as QuizTrip).quiz.questions[index]?.correct ? count + 1 : count;
                     }, 0);
-                    const percentage = Math.round((correctAnswers / trip.quiz.questions.length) * 100);
-                    const passed = percentage >= trip.quiz.passingScore;
+                    const percentage = Math.round((correctAnswers / (trip as QuizTrip).quiz.questions.length) * 100);
+                    const passed = percentage >= (trip as QuizTrip).quiz.passingScore;
                     
                     return (
                       <div className="space-y-4">
@@ -1059,7 +1103,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                           {percentage}%
                         </div>
                         <p className="text-lg font-light">
-                          You got {correctAnswers} out of {trip.quiz.questions.length} questions correct
+                          You got {correctAnswers} out of {(trip as QuizTrip).quiz.questions.length} questions correct
                         </p>
                         <div className={`inline-flex items-center space-x-2 px-4 py-2 prada-corner-radius ${
                           passed ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -1077,7 +1121,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                               setCurrentQuestion(0);
                               setSelectedAnswers([]);
                               setShowResults(false);
-                              setTimeLeft(trip.quiz.timeLimit);
+                              setTimeLeft((trip as QuizTrip).quiz.timeLimit);
                             }}
                             variant="outline"
                             className="font-light"
@@ -1133,7 +1177,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
               ))}
             </TabsContent>
 
-            {trip.category === 'hiking' && trip.trail && (
+            {trip.category === 'hiking' && 'trail' in trip && trip.trail && (
               <TabsContent value="trail" className="space-y-6">
                 <Card className="p-6">
                   <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
