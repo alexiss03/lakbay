@@ -2,13 +2,25 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { X, MessageCircle, Send, Bot, User } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { X, MessageCircle, Send, Bot, User, Grid3X3, Plus, Trash2, BarChart3 } from "lucide-react";
+
+interface Poll {
+  id: string;
+  question: string;
+  options: { text: string; votes: number }[];
+  totalVotes: number;
+  createdBy: string;
+  timestamp: Date;
+}
 
 interface Message {
   id: string;
   text: string;
-  sender: 'user' | 'support';
+  sender: 'user' | 'support' | 'host';
   timestamp: Date;
+  poll?: Poll;
 }
 
 export const ChatWidget = (): JSX.Element => {
@@ -23,6 +35,12 @@ export const ChatWidget = (): JSX.Element => {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [showAppsMenu, setShowAppsMenu] = useState(false);
+  const [showPollModal, setShowPollModal] = useState(false);
+  const [pollQuestion, setPollQuestion] = useState('');
+  const [pollOptions, setPollOptions] = useState(['', '']);
+  const [userRole] = useState<'user' | 'host'>('host'); // For demo purposes, set as host
+  const [votedPolls, setVotedPolls] = useState<Set<string>>(new Set());
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -86,6 +104,65 @@ export const ChatWidget = (): JSX.Element => {
     });
   };
 
+  const addPollOption = () => {
+    setPollOptions([...pollOptions, '']);
+  };
+
+  const removePollOption = (index: number) => {
+    if (pollOptions.length > 2) {
+      setPollOptions(pollOptions.filter((_, i) => i !== index));
+    }
+  };
+
+  const updatePollOption = (index: number, value: string) => {
+    const newOptions = [...pollOptions];
+    newOptions[index] = value;
+    setPollOptions(newOptions);
+  };
+
+  const createPoll = () => {
+    if (!pollQuestion.trim() || pollOptions.some(opt => !opt.trim())) return;
+
+    const poll: Poll = {
+      id: Date.now().toString(),
+      question: pollQuestion,
+      options: pollOptions.filter(opt => opt.trim()).map(opt => ({ text: opt, votes: 0 })),
+      totalVotes: 0,
+      createdBy: 'Host',
+      timestamp: new Date()
+    };
+
+    const pollMessage: Message = {
+      id: Date.now().toString(),
+      text: '',
+      sender: 'host',
+      timestamp: new Date(),
+      poll
+    };
+
+    setMessages(prev => [...prev, pollMessage]);
+    setPollQuestion('');
+    setPollOptions(['', '']);
+    setShowPollModal(false);
+    setShowAppsMenu(false);
+  };
+
+  const voteOnPoll = (pollId: string, optionIndex: number) => {
+    if (votedPolls.has(pollId)) return;
+
+    setMessages(prev => prev.map(message => {
+      if (message.poll?.id === pollId) {
+        const updatedPoll = { ...message.poll };
+        updatedPoll.options[optionIndex].votes += 1;
+        updatedPoll.totalVotes += 1;
+        return { ...message, poll: updatedPoll };
+      }
+      return message;
+    }));
+
+    setVotedPolls(prev => new Set(Array.from(prev).concat(pollId)));
+  };
+
   return (
     <div className="fixed bottom-6 right-6 z-50">
       {/* Chat Widget */}
@@ -119,24 +196,84 @@ export const ChatWidget = (): JSX.Element => {
                 key={message.id}
                 className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                <div className={`flex items-end space-x-2 max-w-[75%]`}>
-                  {message.sender === 'support' && (
-                    <div className="w-6 h-6 bg-[#D4AF37] rounded-full flex items-center justify-center flex-shrink-0">
-                      <Bot className="w-3 h-3 text-white" />
+                <div className={`flex items-end space-x-2 max-w-[85%]`}>
+                  {(message.sender === 'support' || message.sender === 'host') && (
+                    <div className={`w-6 h-6 ${message.sender === 'host' ? 'bg-purple-600' : 'bg-[#D4AF37]'} rounded-full flex items-center justify-center flex-shrink-0`}>
+                      {message.sender === 'host' ? (
+                        <BarChart3 className="w-3 h-3 text-white" />
+                      ) : (
+                        <Bot className="w-3 h-3 text-white" />
+                      )}
                     </div>
                   )}
-                  <div>
-                    <div
-                      className={`px-3 py-2 rounded-lg text-sm ${
-                        message.sender === 'user'
-                          ? 'bg-gray-900 text-white rounded-br-none'
-                          : 'bg-white text-gray-900 rounded-bl-none border'
-                      }`}
-                    >
-                      {message.text}
-                    </div>
+                  <div className="flex-1">
+                    {message.poll ? (
+                      // Poll Message
+                      <div className="bg-white border-2 border-purple-200 rounded-lg p-4">
+                        <div className="flex items-center mb-3">
+                          <BarChart3 className="w-4 h-4 text-purple-600 mr-2" />
+                          <span className="text-xs font-semibold text-purple-600 uppercase tracking-wide">Poll by {message.poll.createdBy}</span>
+                        </div>
+                        <h4 className="font-semibold text-gray-900 mb-3">{message.poll.question}</h4>
+                        <div className="space-y-2">
+                          {message.poll.options.map((option, index) => {
+                            const percentage = message.poll!.totalVotes > 0 ? (option.votes / message.poll!.totalVotes) * 100 : 0;
+                            const hasVoted = votedPolls.has(message.poll!.id);
+                            return (
+                              <div key={index}>
+                                <button
+                                  onClick={() => voteOnPoll(message.poll!.id, index)}
+                                  disabled={hasVoted}
+                                  className={`w-full text-left p-3 rounded-lg border transition-all ${
+                                    hasVoted 
+                                      ? 'bg-gray-50 cursor-not-allowed' 
+                                      : 'hover:bg-purple-50 hover:border-purple-300 cursor-pointer'
+                                  }`}
+                                >
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className="text-sm font-medium text-gray-900">{option.text}</span>
+                                    {hasVoted && (
+                                      <span className="text-xs text-gray-500">
+                                        {option.votes} votes ({percentage.toFixed(0)}%)
+                                      </span>
+                                    )}
+                                  </div>
+                                  {hasVoted && (
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                      <div 
+                                        className="bg-purple-600 h-2 rounded-full transition-all duration-300"
+                                        style={{ width: `${percentage}%` }}
+                                      ></div>
+                                    </div>
+                                  )}
+                                </button>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        {votedPolls.has(message.poll.id) && (
+                          <div className="mt-3 pt-3 border-t border-gray-200 text-xs text-gray-500 text-center">
+                            Total votes: {message.poll.totalVotes}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      // Regular Message
+                      <div
+                        className={`px-3 py-2 rounded-lg text-sm ${
+                          message.sender === 'user'
+                            ? 'bg-gray-900 text-white rounded-br-none'
+                            : message.sender === 'host'
+                            ? 'bg-purple-100 text-purple-900 rounded-bl-none border border-purple-200'
+                            : 'bg-white text-gray-900 rounded-bl-none border'
+                        }`}
+                      >
+                        {message.text}
+                      </div>
+                    )}
                     <p className="text-xs text-gray-500 mt-1">
                       {formatTime(message.timestamp)}
+                      {message.sender === 'host' && <span className="ml-2 text-purple-600">• Host</span>}
                     </p>
                   </div>
                   {message.sender === 'user' && (
@@ -168,9 +305,44 @@ export const ChatWidget = (): JSX.Element => {
             <div ref={messagesEndRef} />
           </div>
 
+          {/* Apps Menu */}
+          {showAppsMenu && (
+            <div className="p-4 border-t bg-white">
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-gray-700 mb-3">Chat Apps</h4>
+                {userRole === 'host' && (
+                  <Button
+                    onClick={() => setShowPollModal(true)}
+                    variant="outline"
+                    className="w-full justify-start text-sm h-10"
+                  >
+                    <BarChart3 className="w-4 h-4 mr-3" />
+                    Create Poll
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-sm h-10"
+                  disabled
+                >
+                  <div className="w-4 h-4 mr-3 bg-gray-300 rounded"></div>
+                  More apps coming soon
+                </Button>
+              </div>
+            </div>
+          )}
+
           {/* Input */}
           <div className="p-4 border-t bg-white">
             <div className="flex space-x-2">
+              <Button
+                onClick={() => setShowAppsMenu(!showAppsMenu)}
+                variant="outline"
+                size="sm"
+                className="flex-shrink-0"
+              >
+                <Grid3X3 className="w-4 h-4" />
+              </Button>
               <Input
                 placeholder="Type your message..."
                 value={inputValue}
@@ -211,6 +383,87 @@ export const ChatWidget = (): JSX.Element => {
           </>
         )}
       </Button>
+
+      {/* Poll Creation Modal */}
+      <Dialog open={showPollModal} onOpenChange={setShowPollModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center">
+              <BarChart3 className="w-5 h-5 mr-2 text-purple-600" />
+              Create Poll
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="poll-question" className="text-sm font-medium">
+                Poll Question
+              </Label>
+              <Input
+                id="poll-question"
+                placeholder="Ask a question..."
+                value={pollQuestion}
+                onChange={(e) => setPollQuestion(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            
+            <div>
+              <Label className="text-sm font-medium">Poll Options</Label>
+              <div className="space-y-2 mt-2">
+                {pollOptions.map((option, index) => (
+                  <div key={index} className="flex space-x-2">
+                    <Input
+                      placeholder={`Option ${index + 1}`}
+                      value={option}
+                      onChange={(e) => updatePollOption(index, e.target.value)}
+                      className="flex-1"
+                    />
+                    {pollOptions.length > 2 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removePollOption(index)}
+                        className="px-3"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+                {pollOptions.length < 6 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={addPollOption}
+                    className="w-full mt-2"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Option
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            <div className="flex space-x-2 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowPollModal(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={createPoll}
+                disabled={!pollQuestion.trim() || pollOptions.some(opt => !opt.trim())}
+                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                Create Poll
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
