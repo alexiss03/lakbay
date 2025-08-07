@@ -4,6 +4,7 @@ import ws from "ws";
 import * as schema from "@shared/schema";
 import * as adminSchema from "@shared/admin-schema";
 import * as chatSchema from "@shared/chat-schema";
+import * as accommodationSchema from "@shared/accommodation-schema";
 
 neonConfig.webSocketConstructor = ws;
 
@@ -14,4 +15,4 @@ if (!process.env.DATABASE_URL) {
 }
 
 export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle({ client: pool, schema: { ...schema, ...adminSchema, ...chatSchema } });
+export const db = drizzle({ client: pool, schema: { ...schema, ...adminSchema, ...chatSchema, ...accommodationSchema } });

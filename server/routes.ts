@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import adminRoutes from "./routes/admin";
 import hostRoutes from "./routes/host";
 import chatRoutes from "./routes/chat";
+import accommodationRoutes from "./routes/accommodation";
 import { storage } from "./storage";
 import Stripe from "stripe";
 import { 
@@ -495,6 +496,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register chat routes
   app.use('/api/chat', chatRoutes);
+  
+  // Register accommodation routes
+  app.use('/api/accommodation', accommodationRoutes);
 
   const httpServer = createServer(app);
   return httpServer;
