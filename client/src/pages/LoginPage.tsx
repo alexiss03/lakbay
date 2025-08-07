@@ -77,49 +77,49 @@ export const LoginPage = (): JSX.Element => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#fafafa] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Back Button */}
-        <div className="mb-6">
+        <div className="mb-8">
           <Button
             variant="ghost"
             onClick={() => setLocation("/")}
-            className="flex items-center text-gray-600 hover:text-gray-900"
+            className="prada-button flex items-center text-gray-600 hover:text-black font-light"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Lakbay
+            BACK TO LAKBAY
           </Button>
         </div>
 
         {/* Login Card */}
-        <Card className="p-8 shadow-lg border-0">
+        <div className="prada-card p-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-            <p className="text-gray-600">Sign in to your Lakbay account</p>
+            <h1 className="prada-heading text-3xl text-black mb-3 font-light">WELCOME BACK</h1>
+            <p className="text-gray-600 font-light tracking-wide text-sm">Sign in to your Lakbay account</p>
           </div>
 
           {/* Social Login Buttons */}
-          <div className="space-y-3 mb-6">
+          <div className="space-y-4 mb-8">
             <Button
               type="button"
               variant="outline"
-              className="w-full h-12 flex items-center justify-center space-x-3 hover:bg-blue-50 border-gray-300"
+              className="prada-button w-full h-12 flex items-center justify-center space-x-3 hover:bg-gray-50 border-black font-light tracking-wider"
               onClick={() => handleSocialLogin('google')}
               disabled={isLoading}
             >
-              <FaGoogle className="w-5 h-5 text-red-500" />
-              <span className="font-medium">Continue with Google</span>
+              <FaGoogle className="w-4 h-4 text-red-500" />
+              <span className="text-xs">CONTINUE WITH GOOGLE</span>
             </Button>
 
             <Button
               type="button"
               variant="outline"
-              className="w-full h-12 flex items-center justify-center space-x-3 hover:bg-blue-50 border-gray-300"
+              className="prada-button w-full h-12 flex items-center justify-center space-x-3 hover:bg-gray-50 border-black font-light tracking-wider"
               onClick={() => handleSocialLogin('facebook')}
               disabled={isLoading}
             >
-              <FaFacebook className="w-5 h-5 text-blue-600" />
-              <span className="font-medium">Continue with Facebook</span>
+              <FaFacebook className="w-4 h-4 text-blue-600" />
+              <span className="text-xs">CONTINUE WITH FACEBOOK</span>
             </Button>
           </div>
 
@@ -134,7 +134,7 @@ export const LoginPage = (): JSX.Element => {
           {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <Label htmlFor="usernameOrEmail" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="usernameOrEmail" className="text-xs font-light text-gray-600 tracking-wider uppercase">
                 Username or Email
               </Label>
               <Input
@@ -145,16 +145,16 @@ export const LoginPage = (): JSX.Element => {
                 value={loginData.usernameOrEmail}
                 onChange={handleInputChange}
                 required
-                className="mt-1 h-12"
+                className="prada-input mt-2 h-12"
                 disabled={isLoading}
               />
             </div>
 
             <div>
-              <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="password" className="text-xs font-light text-gray-600 tracking-wider uppercase">
                 Password
               </Label>
-              <div className="relative mt-1">
+              <div className="relative mt-2">
                 <Input
                   id="password"
                   name="password"
@@ -163,7 +163,7 @@ export const LoginPage = (): JSX.Element => {
                   value={loginData.password}
                   onChange={handleInputChange}
                   required
-                  className="h-12 pr-12"
+                  className="prada-input h-12 pr-12"
                   disabled={isLoading}
                 />
                 <Button
@@ -195,16 +195,16 @@ export const LoginPage = (): JSX.Element => {
             {/* Login Button */}
             <Button
               type="submit"
-              className="w-full h-12 bg-[#D4AF37] hover:bg-[#B8941F] text-black font-semibold"
+              className="prada-button prada-gold-accent w-full h-12 font-light tracking-wider text-xs"
               disabled={isLoading}
             >
               {isLoading ? (
                 <div className="flex items-center space-x-2">
                   <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-                  <span>Signing in...</span>
+                  <span>SIGNING IN...</span>
                 </div>
               ) : (
-                "Sign In"
+                "SIGN IN"
               )}
             </Button>
           </form>
@@ -220,7 +220,7 @@ export const LoginPage = (): JSX.Element => {
               </Link>
             </p>
           </div>
-        </Card>
+        </div>
 
         {/* Terms and Privacy */}
         <div className="text-center mt-6">

@@ -42,7 +42,7 @@
 
     --ring: 215 20.2% 65.1%;
 
-    --radius: 0.5rem;
+    --radius: 0.125rem;
   }
 
   .dark {
@@ -75,7 +75,7 @@
 
     --ring: 216 34% 17%;
 
-    --radius: 0.5rem;
+    --radius: 0.125rem;
   }
 }
 
@@ -87,5 +87,80 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Arial", sans-serif;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer components {
+  /* Prada-style design system */
+  .prada-button {
+    @apply transition-all duration-200 ease-out;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+    font-weight: 400;
+    border: 1px solid transparent;
+  }
+  
+  .prada-button:hover {
+    @apply transform translate-y-[-1px];
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .prada-card {
+    border-radius: 2px;
+    border: 1px solid #e5e5e5;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease-out;
+  }
+  
+  .prada-card:hover {
+    border-color: #d0d0d0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  
+  .prada-input {
+    border-radius: 2px;
+    border: 1px solid #d0d0d0;
+    background: #ffffff;
+    transition: all 0.15s ease-out;
+    font-weight: 300;
+    letter-spacing: 0.25px;
+  }
+  
+  .prada-input:focus {
+    border-color: #000000;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .prada-nav {
+    letter-spacing: 0.5px;
+    font-weight: 300;
+    text-transform: uppercase;
+    font-size: 13px;
+  }
+  
+  .prada-heading {
+    letter-spacing: -0.02em;
+    font-weight: 300;
+  }
+  
+  .prada-select {
+    border-radius: 2px;
+    border: 1px solid #d0d0d0;
+    background: #ffffff;
+    letter-spacing: 0.25px;
+  }
+  
+  .prada-gold-accent {
+    background: #D4AF37;
+    color: #000000;
+    border: 1px solid #D4AF37;
+  }
+  
+  .prada-gold-accent:hover {
+    background: #B8941F;
+    border-color: #B8941F;
   }
 }

@@ -13,46 +13,46 @@ export const TravelHomePage = (): JSX.Element => {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white px-8 py-4 border-b border-gray-100">
+      <header className="bg-white px-8 py-6 border-b border-gray-100">
         <div className="flex items-center justify-between">
           {/* Left: Logo placeholder */}
-          <div className="w-8 h-8 bg-gray-300 rounded"></div>
+          <div className="w-8 h-8 bg-black" style={{borderRadius: '1px'}}></div>
           
           {/* Center: Navigation */}
-          <nav className="flex items-center space-x-8">
-            <Link href="/" className="text-gray-900 font-medium">Home</Link>
-            <Link href="/chats" className="text-gray-700 hover:text-gray-900">Chats</Link>
-            <a href="#" className="text-gray-700 hover:text-gray-900">Trails</a>
-            <a href="#" className="text-gray-700 hover:text-gray-900">Story</a>
-            <Link href="/shop" className="text-gray-700 hover:text-gray-900">Shop</Link>
-            <a href="#" className="text-gray-700 hover:text-gray-900">Corporate</a>
-            <a href="#" className="text-gray-700 hover:text-gray-900">Explore</a>
+          <nav className="flex items-center space-x-12">
+            <Link href="/" className="prada-nav text-black hover:text-gray-600 transition-colors">Home</Link>
+            <Link href="/chats" className="prada-nav text-gray-700 hover:text-black transition-colors">Chats</Link>
+            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Trails</a>
+            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</a>
+            <Link href="/shop" className="prada-nav text-gray-700 hover:text-black transition-colors">Shop</Link>
+            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</a>
+            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Explore</a>
           </nav>
           
           {/* Right: Buttons and Language */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             <Link href="/login">
-              <Button variant="outline" className="text-sm">
-                Log in
+              <Button variant="outline" className="prada-button h-9 px-6 text-xs font-light border-black text-black hover:bg-black hover:text-white">
+                LOG IN
               </Button>
             </Link>
             <Link href="/signup">
-              <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black text-sm">
-                Register
+              <Button className="prada-button prada-gold-accent h-9 px-6 text-xs font-light">
+                REGISTER
               </Button>
             </Link>
-            <span className="text-sm text-gray-700">EN</span>
+            <span className="text-xs text-gray-500 font-light ml-4">EN</span>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="px-8 py-16 bg-[#f8f7f4]">
+      <section className="px-8 py-20 bg-[#fafafa]">
         <div className="max-w-4xl">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="prada-heading text-6xl text-black mb-6 leading-tight">
             Become a premium adventurer
           </h1>
-          <p className="text-xl text-gray-700 leading-relaxed">
+          <p className="text-xl text-gray-600 leading-relaxed font-light tracking-wide">
             Rediscover the world through Lakbay, with our nature and cultural trips.<br />
             Don't just travel, Lakbay!
           </p>
@@ -60,54 +60,54 @@ export const TravelHomePage = (): JSX.Element => {
       </section>
 
       {/* Trending Articles */}
-      <section className="px-8 py-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8">Trending articles</h2>
+      <section className="px-8 py-16">
+        <h2 className="prada-heading text-3xl text-black mb-12 font-light">TRENDING ARTICLES</h2>
         
         <div className="grid grid-cols-2 gap-6">
           <Link href="/article/hidden-gems">
-            <Card className="overflow-hidden rounded-xl group cursor-pointer shadow-sm">
-              <div className="relative aspect-[16/5] rounded-xl overflow-hidden">
+            <div className="prada-card overflow-hidden group cursor-pointer">
+              <div className="relative aspect-[16/5] overflow-hidden">
                 <img 
                   src="https://images.unsplash.com/photo-1464822759844-d150baec0494?w=600&h=200&fit=crop&auto=format" 
                   alt="Hidden Gems"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 rounded-xl"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-xl" />
-                <div className="absolute bottom-3 left-3 text-white">
-                  <span className="inline-block px-2 py-1 bg-[#D4AF37] text-black text-xs rounded-md mb-1">
-                    Lakbay Exclusive
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                <div className="absolute bottom-4 left-4 text-white">
+                  <span className="inline-block px-3 py-1 prada-gold-accent text-xs font-light tracking-wider mb-2" style={{borderRadius: '1px'}}>
+                    LAKBAY EXCLUSIVE
                   </span>
-                  <h3 className="text-base font-semibold">Top 5 Hidden Gems in the Philippines</h3>
+                  <h3 className="text-base font-light tracking-wide">Top 5 Hidden Gems in the Philippines</h3>
                 </div>
               </div>
-            </Card>
+            </div>
           </Link>
           
           <Link href="/article/mountain-tribes">
-            <Card className="overflow-hidden rounded-xl group cursor-pointer shadow-sm">
-              <div className="relative aspect-[16/5] rounded-xl overflow-hidden">
+            <div className="prada-card overflow-hidden group cursor-pointer">
+              <div className="relative aspect-[16/5] overflow-hidden">
                 <img 
                   src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=200&fit=crop&auto=format" 
                   alt="Cultural Journey"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 rounded-xl"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-xl" />
-                <div className="absolute bottom-3 left-3 text-white">
-                  <span className="inline-block px-2 py-1 bg-[#D4AF37] text-black text-xs rounded-md mb-1">
-                    Cultural Guide
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                <div className="absolute bottom-4 left-4 text-white">
+                  <span className="inline-block px-3 py-1 prada-gold-accent text-xs font-light tracking-wider mb-2" style={{borderRadius: '1px'}}>
+                    CULTURAL GUIDE
                   </span>
-                  <h3 className="text-base font-semibold">Ancient Traditions of Mountain Tribes</h3>
+                  <h3 className="text-base font-light tracking-wide">Ancient Traditions of Mountain Tribes</h3>
                 </div>
               </div>
-            </Card>
+            </div>
           </Link>
         </div>
       </section>
 
       {/* Trip Categories */}
-      <section className="px-8 py-12 bg-gray-50">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8">Explore Event Categories</h2>
-        <p className="text-gray-600 mb-8">Join exciting events, meet fellow adventurers, and create unforgettable memories</p>
+      <section className="px-8 py-16 bg-white">
+        <h2 className="prada-heading text-3xl text-black mb-6 font-light">EXPLORE EVENT CATEGORIES</h2>
+        <p className="text-gray-600 mb-12 font-light tracking-wide">Join exciting events, meet fellow adventurers, and create unforgettable memories</p>
         
         {/* Categories Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
@@ -121,29 +121,29 @@ export const TravelHomePage = (): JSX.Element => {
             { name: "Online Quizzes", icon: "🧠", description: "Interactive knowledge challenges", count: "25 quizzes" },
             { name: "Weekend Escapes", icon: "🏕️", description: "Multi-day expeditions", count: "9 events" }
           ].map((category, index) => (
-            <Card key={index} className="p-4 hover:shadow-lg transition-shadow cursor-pointer group">
+            <div key={index} className="prada-card p-6 cursor-pointer group transition-all duration-300">
               <div className="text-center">
-                <div className="text-3xl mb-2">{category.icon}</div>
-                <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-[#D4AF37] transition-colors">{category.name}</h3>
-                <p className="text-sm text-gray-600 mb-2">{category.description}</p>
-                <span className="text-xs text-[#D4AF37] font-medium">{category.count}</span>
+                <div className="text-3xl mb-3">{category.icon}</div>
+                <h3 className="font-light text-black mb-2 group-hover:text-[#D4AF37] transition-colors tracking-wide text-sm">{category.name.toUpperCase()}</h3>
+                <p className="text-xs text-gray-600 mb-3 font-light">{category.description}</p>
+                <span className="text-xs text-[#D4AF37] font-light tracking-wider">{category.count}</span>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
         
-        <div className="flex space-x-8 mb-8 border-b border-gray-200">
+        <div className="flex space-x-12 mb-12 border-b border-gray-100">
           {["Private", "Joiner", "Meetups", "Mystery", "Events", "Virtual", "Online Quizzes"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 transition-colors ${
+              className={`prada-nav pb-4 transition-all duration-200 ${
                 activeTab === tab
-                  ? "text-gray-900 font-medium border-b-2 border-[#D4AF37]"
-                  : "text-gray-700 hover:text-gray-900"
+                  ? "text-black font-light border-b border-[#D4AF37]"
+                  : "text-gray-500 hover:text-black"
               }`}
             >
-              {tab}
+              {tab.toUpperCase()}
             </button>
           ))}
         </div>
@@ -156,24 +156,24 @@ export const TravelHomePage = (): JSX.Element => {
             { title: "Luxury Vigan Heritage Experience", location: "Ilocos Sur", price: "₱22,000", image: "1609137144813-7d9921338f24", link: "/trip/vigan-private", category: "private" }
           ].map((trip, i) => (
             <Link key={i} href={trip.link}>
-              <Card className="overflow-hidden rounded-lg group cursor-pointer">
+              <div className="prada-card overflow-hidden group cursor-pointer">
                 <div className="relative aspect-[4/3]">
                   <img 
                     src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={trip.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                   />
-                  <div className="absolute top-3 right-3">
-                    <span className="bg-[#D4AF37] text-black text-xs px-2 py-1 rounded capitalize">{trip.category}</span>
+                  <div className="absolute top-4 right-4">
+                    <span className="prada-gold-accent text-xs px-3 py-1 font-light tracking-wider" style={{borderRadius: '1px'}}>{trip.category.toUpperCase()}</span>
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute bottom-3 left-3 text-white">
-                    <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
-                    <p className="text-xs opacity-90">{trip.location}</p>
-                    <p className="text-sm font-bold">{trip.price}</p>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h3 className="font-light text-sm mb-1 tracking-wide">{trip.title}</h3>
+                    <p className="text-xs opacity-90 font-light">{trip.location}</p>
+                    <p className="text-sm font-light tracking-wider mt-1">{trip.price}</p>
                   </div>
                 </div>
-              </Card>
+              </div>
             </Link>
           ))}
 
@@ -183,24 +183,24 @@ export const TravelHomePage = (): JSX.Element => {
             { title: "Palawan Island Hopping", location: "Palawan", price: "₱5,200", image: "1507525428034-b723cf961d3e", link: "/trip/palawan-joiner" }
           ].map((trip, i) => (
             <Link key={i} href={trip.link}>
-              <Card className="overflow-hidden rounded-lg group cursor-pointer">
+              <div className="prada-card overflow-hidden group cursor-pointer">
                 <div className="relative aspect-[4/3]">
                   <img 
                     src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={trip.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                   />
-                  <div className="absolute top-3 right-3">
-                    <span className="bg-green-600 text-white text-xs px-2 py-1 rounded">Joiner</span>
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-green-600 text-white text-xs px-3 py-1 font-light tracking-wider" style={{borderRadius: '1px'}}>JOINER</span>
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute bottom-3 left-3 text-white">
-                    <h3 className="font-semibold text-sm mb-1">{trip.title}</h3>
-                    <p className="text-xs opacity-90">{trip.location}</p>
-                    <p className="text-sm font-bold">{trip.price}</p>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h3 className="font-light text-sm mb-1 tracking-wide">{trip.title}</h3>
+                    <p className="text-xs opacity-90 font-light">{trip.location}</p>
+                    <p className="text-sm font-light tracking-wider mt-1">{trip.price}</p>
                   </div>
                 </div>
-              </Card>
+              </div>
             </Link>
           ))}
 
