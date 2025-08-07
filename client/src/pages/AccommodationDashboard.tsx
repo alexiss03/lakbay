@@ -91,128 +91,119 @@ const AccommodationDashboard = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Mock data for demonstration
-  const [stats] = useState<AccommodationStats>({
-    totalProperties: 5,
-    totalRooms: 128,
-    occupancyRate: 78,
-    monthlyRevenue: 1250000,
-    averageRating: 4.6,
-    activeBookings: 89,
-    upcomingCheckins: 12,
-    maintenanceRooms: 3
+  // Current host ID - in a real app, this would come from auth context
+  const [currentHostId] = useState("host_1");
+
+  // Fetch accommodation analytics
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    queryKey: ['/api/accommodation/analytics', currentHostId],
+    queryFn: () => apiRequest('GET', `/api/accommodation/analytics/${currentHostId}`),
   });
 
-  const [properties] = useState<Property[]>([
-    {
-      id: '1',
-      name: 'Paradise Beach Resort',
-      type: 'resort',
-      address: 'El Nido, Palawan',
-      city: 'El Nido',
-      totalRooms: 45,
-      occupancyRate: 85,
-      averageRating: 4.8,
-      monthlyRevenue: 580000,
-      status: 'active',
-      heroImage: 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=400&h=200&fit=crop',
-      createdAt: '2024-01-15'
-    },
-    {
-      id: '2',
-      name: 'Manila Bay Hotel',
-      type: 'hotel',
-      address: 'Roxas Boulevard, Manila',
-      city: 'Manila',
-      totalRooms: 68,
-      occupancyRate: 72,
-      averageRating: 4.5,
-      monthlyRevenue: 480000,
-      status: 'active',
-      heroImage: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=200&fit=crop',
-      createdAt: '2024-02-10'
-    },
-    {
-      id: '3',
-      name: 'Mountain View Lodge',
-      type: 'lodge',
-      address: 'Baguio City, Benguet',
-      city: 'Baguio',
-      totalRooms: 15,
-      occupancyRate: 68,
-      averageRating: 4.4,
-      monthlyRevenue: 190000,
-      status: 'active',
-      heroImage: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400&h=200&fit=crop',
-      createdAt: '2024-03-05'
-    }
-  ]);
+  // Fetch properties
+  const { data: properties = [], isLoading: propertiesLoading } = useQuery<Property[]>({
+    queryKey: ['/api/accommodation/properties', currentHostId, selectedFilter],
+    queryFn: () => apiRequest('GET', `/api/accommodation/properties/${currentHostId}?type=${selectedFilter}&limit=50`),
+  });
 
-  const [roomTypes] = useState<RoomType[]>([
-    {
-      id: '1',
-      name: 'Ocean View Suite',
-      type: 'suite',
-      maxOccupancy: 4,
-      basePrice: 8500,
-      totalRooms: 12,
-      availableRooms: 3,
-      occupiedRooms: 9
+  // Fetch bookings for active properties
+  const { data: bookings = [], isLoading: bookingsLoading } = useQuery({
+    queryKey: ['/api/accommodation/bookings', currentHostId],
+    queryFn: async () => {
+      if (!Array.isArray(properties) || properties.length === 0) return [];
+      const allBookings = [];
+      for (const property of properties) {
+        const propertyBookings = await apiRequest('GET', `/api/accommodation/bookings/${property.id}?limit=20`);
+        allBookings.push(...propertyBookings);
+      }
+      return allBookings;
     },
-    {
-      id: '2',
-      name: 'Deluxe King Room',
-      type: 'deluxe',
-      maxOccupancy: 2,
-      basePrice: 5500,
-      totalRooms: 20,
-      availableRooms: 8,
-      occupiedRooms: 12
-    },
-    {
-      id: '3',
-      name: 'Standard Twin',
-      type: 'twin',
-      maxOccupancy: 2,
-      basePrice: 3500,
-      totalRooms: 15,
-      availableRooms: 6,
-      occupiedRooms: 9
-    }
-  ]);
+    enabled: Array.isArray(properties) && properties.length > 0,
+  });
 
-  const [bookings] = useState<Booking[]>([
-    {
-      id: '1',
-      guestName: 'Juan Dela Cruz',
-      guestEmail: 'juan@email.com',
-      guestPhone: '+63 917 123 4567',
-      propertyName: 'Paradise Beach Resort',
-      roomTypeName: 'Ocean View Suite',
-      checkinDate: '2024-08-15',
-      checkoutDate: '2024-08-18',
-      nights: 3,
-      guestCount: 2,
-      totalAmount: 25500,
-      status: 'confirmed',
-      paymentStatus: 'paid',
-      confirmationCode: 'PBR001'
+  // Fetch room types for all properties
+  const { data: allRoomTypes = [], isLoading: roomTypesLoading } = useQuery({
+    queryKey: ['/api/accommodation/room-types', currentHostId],
+    queryFn: async () => {
+      if (!Array.isArray(properties) || properties.length === 0) return [];
+      const allRoomTypes = [];
+      for (const property of properties) {
+        const propertyRoomTypes = await apiRequest('GET', `/api/accommodation/properties/${property.id}/room-types`);
+        allRoomTypes.push(...propertyRoomTypes.map((rt: any) => ({ ...rt, propertyName: property.name })));
+      }
+      return allRoomTypes;
     },
-    {
-      id: '2',
-      guestName: 'Maria Santos',
-      guestEmail: 'maria@email.com',
-      propertyName: 'Manila Bay Hotel',
-      roomTypeName: 'Deluxe King Room',
-      checkinDate: '2024-08-20',
-      checkoutDate: '2024-08-22',
-      nights: 2,
-      guestCount: 1,
-      totalAmount: 11000,
-      status: 'pending',
-      paymentStatus: 'pending'
+    enabled: Array.isArray(properties) && properties.length > 0,
+  });
+
+  // Mutations for property management
+  const createPropertyMutation = useMutation({
+    mutationFn: (propertyData: any) => 
+      apiRequest('POST', '/api/accommodation/properties', propertyData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/accommodation/properties'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/accommodation/analytics'] });
+      toast({
+        title: "Success",
+        description: "Property created successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create property",
+        variant: "destructive",
+      });
     }
-  ]);
+  });
+
+  const updatePropertyMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) =>
+      apiRequest('PUT', `/api/accommodation/properties/${id}`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/accommodation/properties'] });
+      toast({
+        title: "Success",
+        description: "Property updated successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update property",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Mutation for booking status updates
+  const updateBookingMutation = useMutation({
+    mutationFn: ({ bookingId, status, paymentStatus, notes }: { 
+      bookingId: string; 
+      status?: string; 
+      paymentStatus?: string; 
+      notes?: string 
+    }) =>
+      apiRequest('PUT', `/api/accommodation/bookings/${bookingId}/status`, {
+        status,
+        paymentStatus,
+        internalNotes: notes
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/accommodation/bookings'] });
+      toast({
+        title: "Success",
+        description: "Booking updated successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update booking",
+        variant: "destructive",
+      });
+    }
+  });
 
   const getStatusBadge = (status: string, type: 'property' | 'booking' | 'payment') => {
     const statusConfig: Record<string, Record<string, string>> = {
@@ -316,84 +307,118 @@ const AccommodationDashboard = () => {
 
           {/* Overview Tab */}
           <TabsContent value="overview">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <Card className="prada-card p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600 font-light">Total Properties</p>
-                    <p className="text-3xl font-light text-gray-900 mt-1">{stats.totalProperties}</p>
-                    <p className="text-sm text-gray-600 mt-2">{stats.totalRooms} rooms</p>
-                  </div>
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Building className="w-6 h-6 text-blue-600" />
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="prada-card p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600 font-light">Occupancy Rate</p>
-                    <p className="text-3xl font-light text-gray-900 mt-1">{stats.occupancyRate}%</p>
-                    <p className="text-sm text-green-600 mt-2">+5% from last month</p>
-                  </div>
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-green-600" />
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="prada-card p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600 font-light">Monthly Revenue</p>
-                    <p className="text-3xl font-light text-gray-900 mt-1">₱{stats.monthlyRevenue.toLocaleString()}</p>
-                    <p className="text-sm text-green-600 mt-2">+12% from last month</p>
-                  </div>
-                  <div className="w-12 h-12 bg-[#D4AF37] bg-opacity-20 rounded-full flex items-center justify-center">
-                    <DollarSign className="w-6 h-6 text-[#D4AF37]" />
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="prada-card p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600 font-light">Average Rating</p>
-                    <p className="text-3xl font-light text-gray-900 mt-1">{stats.averageRating}</p>
-                    <div className="flex items-center mt-2">
-                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                      <span className="text-sm text-gray-600 ml-1">Excellent</span>
+            {statsLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                {[...Array(4)].map((_, i) => (
+                  <Card key={i} className="prada-card p-6">
+                    <div className="animate-pulse">
+                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                      <div className="h-8 bg-gray-200 rounded w-1/2 mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <Card className="prada-card p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 font-light">Total Properties</p>
+                      <p className="text-3xl font-light text-gray-900 mt-1">{stats?.totalProperties || 0}</p>
+                      <p className="text-sm text-gray-600 mt-2">{stats?.totalRooms || 0} rooms</p>
+                    </div>
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                      <Building className="w-6 h-6 text-blue-600" />
                     </div>
                   </div>
-                  <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                    <Star className="w-6 h-6 text-yellow-600" />
+                </Card>
+
+                <Card className="prada-card p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 font-light">Occupancy Rate</p>
+                      <p className="text-3xl font-light text-gray-900 mt-1">{stats?.occupancyRate || 0}%</p>
+                      <p className="text-sm text-gray-600 mt-2">Current rate</p>
+                    </div>
+                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                      <TrendingUp className="w-6 h-6 text-green-600" />
+                    </div>
                   </div>
-                </div>
-              </Card>
-            </div>
+                </Card>
+
+                <Card className="prada-card p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 font-light">Monthly Revenue</p>
+                      <p className="text-3xl font-light text-gray-900 mt-1">₱{(stats?.monthlyRevenue || 0).toLocaleString()}</p>
+                      <p className="text-sm text-gray-600 mt-2">This month</p>
+                    </div>
+                    <div className="w-12 h-12 bg-[#D4AF37] bg-opacity-20 rounded-full flex items-center justify-center">
+                      <DollarSign className="w-6 h-6 text-[#D4AF37]" />
+                    </div>
+                  </div>
+                </Card>
+
+                <Card className="prada-card p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 font-light">Average Rating</p>
+                      <p className="text-3xl font-light text-gray-900 mt-1">{stats?.averageRating ? stats.averageRating.toFixed(1) : '0.0'}</p>
+                      <div className="flex items-center mt-2">
+                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                        <span className="text-sm text-gray-600 ml-1">Overall</span>
+                      </div>
+                    </div>
+                    <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                      <Star className="w-6 h-6 text-yellow-600" />
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            )}
 
             {/* Quick Actions */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
               <Card className="prada-card p-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Today's Check-ins</h3>
-                <div className="space-y-4">
-                  {bookings.filter(b => b.status === 'confirmed').slice(0, 3).map((booking) => (
-                    <div key={booking.id} className="flex items-center space-x-4">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <Users className="w-5 h-5 text-blue-600" />
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Recent Bookings</h3>
+                {bookingsLoading ? (
+                  <div className="space-y-4">
+                    {[...Array(3)].map((_, i) => (
+                      <div key={i} className="flex items-center space-x-4">
+                        <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"></div>
+                        <div className="flex-1">
+                          <div className="h-4 bg-gray-200 rounded animate-pulse mb-2"></div>
+                          <div className="h-3 bg-gray-200 rounded animate-pulse w-3/4"></div>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">{booking.guestName}</p>
-                        <p className="text-sm text-gray-500">{booking.propertyName} • {booking.roomTypeName}</p>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {bookings.slice(0, 3).map((booking) => (
+                      <div key={booking.id} className="flex items-center space-x-4">
+                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                          <Users className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">{booking.guestName}</p>
+                          <p className="text-sm text-gray-500">{booking.accommodationName || booking.propertyName} • {booking.roomTypeName}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-medium text-gray-900">{booking.guestCount} guests</p>
+                          <p className="text-xs text-gray-500">{booking.nights} nights</p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm font-medium text-gray-900">{booking.guestCount} guests</p>
-                        <p className="text-xs text-gray-500">{booking.nights} nights</p>
+                    ))}
+                    {bookings.length === 0 && (
+                      <div className="text-center py-8 text-gray-500">
+                        <Users className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                        <p>No bookings yet</p>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    )}
+                  </div>
+                )}
               </Card>
 
               <Card className="prada-card p-6">
@@ -403,28 +428,32 @@ const AccommodationDashboard = () => {
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
                       <CheckCircle className="w-8 h-8 text-green-600" />
                     </div>
-                    <p className="text-2xl font-light text-gray-900">{stats.totalRooms - (stats.totalRooms * stats.occupancyRate / 100) - stats.maintenanceRooms}</p>
+                    <p className="text-2xl font-light text-gray-900">
+                      {stats ? Math.max(0, (stats.totalRooms || 0) - Math.round((stats.totalRooms || 0) * (stats.occupancyRate || 0) / 100) - (stats.maintenanceRooms || 0)) : 0}
+                    </p>
                     <p className="text-sm text-gray-600">Available</p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
                       <Users className="w-8 h-8 text-blue-600" />
                     </div>
-                    <p className="text-2xl font-light text-gray-900">{Math.round(stats.totalRooms * stats.occupancyRate / 100)}</p>
+                    <p className="text-2xl font-light text-gray-900">
+                      {stats ? Math.round((stats.totalRooms || 0) * (stats.occupancyRate || 0) / 100) : 0}
+                    </p>
                     <p className="text-sm text-gray-600">Occupied</p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2">
                       <AlertCircle className="w-8 h-8 text-yellow-600" />
                     </div>
-                    <p className="text-2xl font-light text-gray-900">{stats.maintenanceRooms}</p>
+                    <p className="text-2xl font-light text-gray-900">{stats?.maintenanceRooms || 0}</p>
                     <p className="text-sm text-gray-600">Maintenance</p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
                       <Clock className="w-8 h-8 text-gray-600" />
                     </div>
-                    <p className="text-2xl font-light text-gray-900">{stats.upcomingCheckins}</p>
+                    <p className="text-2xl font-light text-gray-900">{stats?.upcomingCheckins || 0}</p>
                     <p className="text-sm text-gray-600">Check-ins Today</p>
                   </div>
                 </div>
@@ -460,75 +489,125 @@ const AccommodationDashboard = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {properties.map((property) => {
-                const IconComponent = getPropertyTypeIcon(property.type);
-                return (
-                  <Card key={property.id} className="prada-card overflow-hidden">
-                    {property.heroImage && (
-                      <img 
-                        src={property.heroImage} 
-                        alt={property.name}
-                        className="w-full h-48 object-cover"
-                      />
-                    )}
+            {propertiesLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[...Array(3)].map((_, i) => (
+                  <Card key={i} className="prada-card overflow-hidden">
+                    <div className="h-48 bg-gray-200 animate-pulse"></div>
                     <div className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center space-x-3">
-                          <IconComponent className="w-5 h-5 text-[#D4AF37]" />
-                          <div>
-                            <h3 className="text-lg font-medium text-gray-900">{property.name}</h3>
-                            <p className="text-sm text-gray-600 capitalize">{property.type}</p>
-                          </div>
-                        </div>
-                        <Badge className={getStatusBadge(property.status, 'property')}>
-                          {property.status}
-                        </Badge>
-                      </div>
-                      
-                      <div className="space-y-3">
-                        <div className="flex items-center text-sm text-gray-600">
-                          <MapPin className="w-4 h-4 mr-2" />
-                          {property.address}
-                        </div>
-                        
-                        <div className="flex items-center text-sm text-gray-600">
-                          <Bed className="w-4 h-4 mr-2" />
-                          {property.totalRooms} rooms
-                        </div>
-                        
-                        <div className="flex items-center text-sm text-gray-600">
-                          <TrendingUp className="w-4 h-4 mr-2" />
-                          {property.occupancyRate}% occupancy
-                        </div>
-                        
-                        <div className="flex items-center text-sm text-gray-600">
-                          <Star className="w-4 h-4 mr-2 text-yellow-500" />
-                          {property.averageRating} rating
-                        </div>
-                      </div>
-                      
-                      <div className="mt-6 pt-4 border-t border-gray-200">
-                        <div className="flex items-center justify-between">
-                          <div className="text-sm">
-                            <span className="font-medium text-gray-900">₱{property.monthlyRevenue.toLocaleString()}</span>
-                            <span className="text-gray-600 ml-1">this month</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Button size="sm" variant="outline">
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                            <Button size="sm" variant="outline">
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </div>
+                      <div className="h-6 bg-gray-200 rounded animate-pulse mb-2"></div>
+                      <div className="h-4 bg-gray-200 rounded animate-pulse w-2/3 mb-4"></div>
+                      <div className="space-y-2">
+                        {[...Array(4)].map((_, j) => (
+                          <div key={j} className="h-3 bg-gray-200 rounded animate-pulse"></div>
+                        ))}
                       </div>
                     </div>
                   </Card>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Array.isArray(properties) && properties.map((property) => {
+                  const IconComponent = getPropertyTypeIcon(property.type);
+                  return (
+                    <Card key={property.id} className="prada-card overflow-hidden">
+                      {property.heroImage && (
+                        <img 
+                          src={property.heroImage} 
+                          alt={property.name}
+                          className="w-full h-48 object-cover"
+                        />
+                      )}
+                      <div className="p-6">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center space-x-3">
+                            <IconComponent className="w-5 h-5 text-[#D4AF37]" />
+                            <div>
+                              <h3 className="text-lg font-medium text-gray-900">{property.name}</h3>
+                              <p className="text-sm text-gray-600 capitalize">{property.type}</p>
+                            </div>
+                          </div>
+                          <Badge className={getStatusBadge(property.status, 'property')}>
+                            {property.status}
+                          </Badge>
+                        </div>
+                        
+                        <div className="space-y-3">
+                          <div className="flex items-center text-sm text-gray-600">
+                            <MapPin className="w-4 h-4 mr-2" />
+                            {property.address}
+                          </div>
+                          
+                          <div className="flex items-center text-sm text-gray-600">
+                            <Bed className="w-4 h-4 mr-2" />
+                            {property.totalRooms} rooms
+                          </div>
+                          
+                          <div className="flex items-center text-sm text-gray-600">
+                            <TrendingUp className="w-4 h-4 mr-2" />
+                            {property.occupancyRate || 0}% occupancy
+                          </div>
+                          
+                          <div className="flex items-center text-sm text-gray-600">
+                            <Star className="w-4 h-4 mr-2 text-yellow-500" />
+                            {property.averageRating || 0} rating
+                          </div>
+                        </div>
+                        
+                        <div className="mt-6 pt-4 border-t border-gray-200">
+                          <div className="flex items-center justify-between">
+                            <div className="text-sm">
+                              <span className="font-medium text-gray-900">₱{(property.monthlyRevenue || 0).toLocaleString()}</span>
+                              <span className="text-gray-600 ml-1">this month</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => {
+                                  // Navigate to property detail view
+                                  toast({
+                                    title: "View Property",
+                                    description: `Opening ${property.name} details...`,
+                                  });
+                                }}
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => {
+                                  // Open edit property modal
+                                  toast({
+                                    title: "Edit Property",
+                                    description: `Opening ${property.name} for editing...`,
+                                  });
+                                }}
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })}
+                {properties.length === 0 && (
+                  <div className="col-span-full text-center py-12">
+                    <Building className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No properties yet</h3>
+                    <p className="text-gray-500 mb-6">Get started by adding your first property</p>
+                    <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Property
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
           </TabsContent>
 
           {/* Rooms Tab */}
@@ -537,58 +616,108 @@ const AccommodationDashboard = () => {
               <h2 className="text-2xl font-light text-gray-900">Room Types & Inventory</h2>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {roomTypes.map((roomType) => (
-                <Card key={roomType.id} className="prada-card p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900">{roomType.name}</h3>
-                      <p className="text-sm text-gray-600 capitalize">{roomType.type} Room</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-semibold text-[#D4AF37]">₱{roomType.basePrice.toLocaleString()}</p>
-                      <p className="text-sm text-gray-600">per night</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Max Occupancy</span>
-                      <span className="font-medium">{roomType.maxOccupancy} guests</span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Total Rooms</span>
-                      <span className="font-medium">{roomType.totalRooms}</span>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 pt-4 border-t border-gray-200">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <p className="text-green-600 font-medium">{roomType.availableRooms} Available</p>
-                        <p className="text-gray-600">Ready for booking</p>
-                      </div>
-                      <div>
-                        <p className="text-blue-600 font-medium">{roomType.occupiedRooms} Occupied</p>
-                        <p className="text-gray-600">Currently in use</p>
+            {roomTypesLoading ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                {[...Array(3)].map((_, i) => (
+                  <Card key={i} className="prada-card p-6">
+                    <div className="animate-pulse">
+                      <div className="h-6 bg-gray-200 rounded mb-2"></div>
+                      <div className="h-4 bg-gray-200 rounded w-2/3 mb-4"></div>
+                      <div className="space-y-2">
+                        {[...Array(3)].map((_, j) => (
+                          <div key={j} className="h-3 bg-gray-200 rounded"></div>
+                        ))}
                       </div>
                     </div>
-                  </div>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                {allRoomTypes.map((roomType) => (
+                  <Card key={roomType.id} className="prada-card p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="text-lg font-medium text-gray-900">{roomType.name}</h3>
+                        <p className="text-sm text-gray-600 capitalize">{roomType.type} Room</p>
+                        <p className="text-xs text-gray-500 mt-1">{roomType.propertyName}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-lg font-semibold text-[#D4AF37]">₱{Number(roomType.basePrice).toLocaleString()}</p>
+                        <p className="text-sm text-gray-600">per night</p>
+                      </div>
+                    </div>
 
-                  <div className="mt-4 flex items-center space-x-2">
-                    <Button size="sm" variant="outline" className="flex-1">
-                      <Edit className="w-4 h-4 mr-2" />
-                      Edit
-                    </Button>
-                    <Button size="sm" variant="outline" className="flex-1">
-                      <Eye className="w-4 h-4 mr-2" />
-                      Manage
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-600">Max Occupancy</span>
+                        <span className="font-medium">{roomType.maxOccupancy} guests</span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-600">Total Rooms</span>
+                        <span className="font-medium">{roomType.totalRooms}</span>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 pt-4 border-t border-gray-200">
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p className="text-green-600 font-medium">{roomType.availableRooms || 0} Available</p>
+                          <p className="text-gray-600">Ready for booking</p>
+                        </div>
+                        <div>
+                          <p className="text-blue-600 font-medium">{roomType.occupiedRooms || 0} Occupied</p>
+                          <p className="text-gray-600">Currently in use</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 flex items-center space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="flex-1"
+                        onClick={() => {
+                          toast({
+                            title: "Edit Room Type",
+                            description: `Opening ${roomType.name} for editing...`,
+                          });
+                        }}
+                      >
+                        <Edit className="w-4 h-4 mr-2" />
+                        Edit
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="flex-1"
+                        onClick={() => {
+                          toast({
+                            title: "Manage Rooms",
+                            description: `Managing individual rooms for ${roomType.name}...`,
+                          });
+                        }}
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        Manage
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+                {allRoomTypes.length === 0 && (
+                  <div className="col-span-full text-center py-12">
+                    <Bed className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No room types configured</h3>
+                    <p className="text-gray-500 mb-6">Add room types to your properties to start managing inventory</p>
+                    <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Room Type
                     </Button>
                   </div>
-                </Card>
-              ))}
-            </div>
+                )}
+              </div>
+            )}
           </TabsContent>
 
           {/* Bookings Tab */}
@@ -612,54 +741,127 @@ const AccommodationDashboard = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {bookings.map((booking) => (
-                      <tr key={booking.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div>
-                            <div className="text-sm font-medium text-gray-900">{booking.guestName}</div>
-                            <div className="text-sm text-gray-500">{booking.guestEmail}</div>
-                            {booking.guestPhone && (
-                              <div className="text-sm text-gray-500">{booking.guestPhone}</div>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div>
-                            <div className="text-sm font-medium text-gray-900">{booking.propertyName}</div>
-                            <div className="text-sm text-gray-500">{booking.roomTypeName}</div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div>
-                            <div className="text-sm text-gray-900">{new Date(booking.checkinDate).toLocaleDateString()}</div>
-                            <div className="text-sm text-gray-500">to {new Date(booking.checkoutDate).toLocaleDateString()}</div>
-                            <div className="text-sm text-gray-500">{booking.nights} nights</div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{booking.guestCount}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">₱{booking.totalAmount.toLocaleString()}</td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <Badge className={getStatusBadge(booking.status, 'booking')}>
-                            {booking.status.replace('_', ' ')}
-                          </Badge>
-                          <br />
-                          <Badge className={`mt-1 ${getStatusBadge(booking.paymentStatus, 'payment')}`}>
-                            {booking.paymentStatus}
-                          </Badge>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                          <Button size="sm" variant="outline">
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                          <Button size="sm" variant="outline">
-                            <MessageCircle className="w-4 h-4" />
-                          </Button>
-                          <Button size="sm" variant="outline">
-                            <Edit className="w-4 h-4" />
-                          </Button>
+                    {bookingsLoading ? (
+                      [...Array(3)].map((_, i) => (
+                        <tr key={i} className="animate-pulse">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                            <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                            <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="h-4 bg-gray-200 rounded w-8"></div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="h-4 bg-gray-200 rounded w-20"></div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="h-6 bg-gray-200 rounded w-16"></div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="h-8 bg-gray-200 rounded w-24"></div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : bookings.length > 0 ? (
+                      bookings.map((booking) => (
+                        <tr key={booking.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div>
+                              <div className="text-sm font-medium text-gray-900">{booking.guestName}</div>
+                              <div className="text-sm text-gray-500">{booking.guestEmail}</div>
+                              {booking.guestPhone && (
+                                <div className="text-sm text-gray-500">{booking.guestPhone}</div>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div>
+                              <div className="text-sm font-medium text-gray-900">{booking.accommodationName || booking.propertyName}</div>
+                              <div className="text-sm text-gray-500">{booking.roomTypeName}</div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div>
+                              <div className="text-sm text-gray-900">{new Date(booking.checkinDate).toLocaleDateString()}</div>
+                              <div className="text-sm text-gray-500">to {new Date(booking.checkoutDate).toLocaleDateString()}</div>
+                              <div className="text-sm text-gray-500">{booking.nights} nights</div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{booking.guestCount}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">₱{Number(booking.totalAmount).toLocaleString()}</td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <Badge className={getStatusBadge(booking.status, 'booking')}>
+                              {booking.status.replace('_', ' ')}
+                            </Badge>
+                            <br />
+                            <Badge className={`mt-1 ${getStatusBadge(booking.paymentStatus, 'payment')}`}>
+                              {booking.paymentStatus}
+                            </Badge>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => {
+                                toast({
+                                  title: "View Booking",
+                                  description: `Opening booking details for ${booking.guestName}...`,
+                                });
+                              }}
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => {
+                                toast({
+                                  title: "Message Guest",
+                                  description: `Opening chat with ${booking.guestName}...`,
+                                });
+                              }}
+                            >
+                              <MessageCircle className="w-4 h-4" />
+                            </Button>
+                            <Select 
+                              value={booking.status} 
+                              onValueChange={(value) => {
+                                updateBookingMutation.mutate({
+                                  bookingId: booking.id,
+                                  status: value
+                                });
+                              }}
+                            >
+                              <SelectTrigger className="w-32 h-8">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="pending">Pending</SelectItem>
+                                <SelectItem value="confirmed">Confirmed</SelectItem>
+                                <SelectItem value="checked_in">Checked In</SelectItem>
+                                <SelectItem value="checked_out">Checked Out</SelectItem>
+                                <SelectItem value="cancelled">Cancelled</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={7} className="px-6 py-12 text-center">
+                          <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                          <h3 className="text-lg font-medium text-gray-900 mb-2">No bookings yet</h3>
+                          <p className="text-gray-500">Bookings will appear here once guests make reservations</p>
                         </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -677,7 +879,7 @@ const AccommodationDashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-600 font-light">This Month</p>
-                    <p className="text-2xl font-light text-gray-900 mt-1">₱{stats.monthlyRevenue.toLocaleString()}</p>
+                    <p className="text-2xl font-light text-gray-900 mt-1">₱{(stats?.monthlyRevenue || 0).toLocaleString()}</p>
                     <p className="text-sm text-green-600 mt-2">+12% from last month</p>
                   </div>
                   <TrendingUp className="w-8 h-8 text-green-600" />
@@ -710,33 +912,56 @@ const AccommodationDashboard = () => {
             <Card className="prada-card p-6">
               <h3 className="text-lg font-medium text-gray-900 mb-4">Revenue by Property</h3>
               <div className="space-y-4">
-                {properties.map((property) => (
-                  <div key={property.id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden">
-                        {property.heroImage ? (
-                          <img 
-                            src={property.heroImage} 
-                            alt={property.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gray-300 flex items-center justify-center">
-                            <Building className="w-6 h-6 text-gray-600" />
-                          </div>
-                        )}
+                {propertiesLoading ? (
+                  [...Array(3)].map((_, i) => (
+                    <div key={i} className="flex items-center justify-between p-4 border rounded-lg animate-pulse">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
+                        <div>
+                          <div className="h-4 bg-gray-200 rounded w-32 mb-2"></div>
+                          <div className="h-3 bg-gray-200 rounded w-24"></div>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-medium text-gray-900">{property.name}</h4>
-                        <p className="text-sm text-gray-600">{property.city} • {property.totalRooms} rooms</p>
+                      <div className="text-right">
+                        <div className="h-4 bg-gray-200 rounded w-20 mb-2"></div>
+                        <div className="h-3 bg-gray-200 rounded w-16"></div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-gray-900">₱{property.monthlyRevenue.toLocaleString()}</p>
-                      <p className="text-sm text-gray-600">{property.occupancyRate}% occupancy</p>
+                  ))
+                ) : Array.isArray(properties) && properties.length > 0 ? (
+                  properties.map((property) => (
+                    <div key={property.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden">
+                          {property.heroImage ? (
+                            <img 
+                              src={property.heroImage} 
+                              alt={property.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gray-300 flex items-center justify-center">
+                              <Building className="w-6 h-6 text-gray-600" />
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900">{property.name}</h4>
+                          <p className="text-sm text-gray-600">{property.city} • {property.totalRooms} rooms</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold text-gray-900">₱{(property.monthlyRevenue || 0).toLocaleString()}</p>
+                        <p className="text-sm text-gray-600">{property.occupancyRate || 0}% occupancy</p>
+                      </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500">No revenue data available</p>
                   </div>
-                ))}
+                )}
               </div>
             </Card>
           </TabsContent>
