@@ -15,6 +15,7 @@ import { LoginPage } from "@/pages/LoginPage";
 import { SignupPage } from "@/pages/SignupPage";
 import ShopPage from "@/pages/ShopPage";
 import ProductDetailPage from "@/pages/ProductDetailPage";
+import AdminDashboard from "@/pages/AdminDashboard";
 
 function Router() {
   return (
@@ -29,6 +30,7 @@ function Router() {
       <Route path="/trip/:id" component={TripDetailPage} />
       <Route path="/shop" component={ShopPage} />
       <Route path="/product/:slug" component={ProductDetailPage} />
+      <Route path="/admin" component={AdminDashboard} />
       <Route path="/welcome" component={Box} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />

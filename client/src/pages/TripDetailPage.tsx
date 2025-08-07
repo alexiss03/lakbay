@@ -1023,7 +1023,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                     onClick={() => setQuizStarted(true)}
                     className="bg-[#D4AF37] hover:bg-[#B8941F] text-black font-light tracking-wider text-sm px-8 py-3"
                   >
-                    START QUIZ
+                    Start Quiz
                   </Button>
                 </div>
               ) : !showResults ? (

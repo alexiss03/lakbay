@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import adminRoutes from "./routes/admin";
 import { storage } from "./storage";
 import Stripe from "stripe";
 import { 
@@ -483,6 +484,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: 'Webhook processing failed' });
     }
   });
+
+  // Register admin routes
+  app.use('/api/admin', adminRoutes);
 
   const httpServer = createServer(app);
   return httpServer;
