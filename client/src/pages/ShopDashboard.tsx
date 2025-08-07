@@ -26,7 +26,12 @@ import {
   Filter,
   Package2,
   ShoppingBag,
-  BarChart3
+  BarChart3,
+  Grid3X3,
+  List,
+  Upload,
+  X,
+  ImagePlus
 } from 'lucide-react';
 
 interface Product {
@@ -91,10 +96,13 @@ const ShopDashboard = () => {
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddProductModal, setShowAddProductModal] = useState(false);
+  const [showEditProductModal, setShowEditProductModal] = useState(false);
   const [showStockModal, setShowStockModal] = useState(false);
   const [showShippingModal, setShowShippingModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedOrder, setSelectedOrder] = useState<ShopOrder | null>(null);
+  const [productViewMode, setProductViewMode] = useState<'card' | 'list'>('card');
+  const [orderViewMode, setOrderViewMode] = useState<'card' | 'list'>('card');
   const [newProduct, setNewProduct] = useState({
     name: '',
     description: '',
@@ -106,7 +114,23 @@ const ShopDashboard = () => {
     stock: '',
     lowStockThreshold: '5',
     weight: '',
-    tags: ''
+    tags: '',
+    images: [] as string[]
+  });
+  const [editProduct, setEditProduct] = useState({
+    id: '',
+    name: '',
+    description: '',
+    category: 'electronics',
+    brand: '',
+    sku: '',
+    price: '',
+    costPrice: '',
+    stock: '',
+    lowStockThreshold: '5',
+    weight: '',
+    tags: '',
+    images: [] as string[]
   });
   const [stockUpdate, setStockUpdate] = useState({
     quantity: '',
@@ -174,7 +198,8 @@ const ShopDashboard = () => {
         stock: '',
         lowStockThreshold: '5',
         weight: '',
-        tags: ''
+        tags: '',
+        images: []
       });
       toast({
         title: "Success",
@@ -185,6 +210,30 @@ const ShopDashboard = () => {
       toast({
         title: "Error",
         description: error.message || "Failed to create product",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const updateProductMutation = useMutation({
+    mutationFn: async (productData: any) => {
+      const response = await apiRequest('PUT', `/api/shop/products/${productData.id}`, { ...productData, shopId: currentShopId });
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/shop/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/shop/analytics'] });
+      setShowEditProductModal(false);
+      setSelectedProduct(null);
+      toast({
+        title: "Success",
+        description: "Product updated successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update product",
         variant: "destructive",
       });
     }
@@ -281,11 +330,90 @@ const ShopDashboard = () => {
       lowStockThreshold: parseInt(newProduct.lowStockThreshold),
       weight: parseFloat(newProduct.weight || '0'),
       tags: newProduct.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-      images: [],
+      images: newProduct.images,
       dimensions: null
     };
 
     createProductMutation.mutate(productData);
+  };
+
+  const handleEditProduct = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!editProduct.name || !editProduct.sku || !editProduct.price || !editProduct.costPrice) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const productData = {
+      ...editProduct,
+      price: parseFloat(editProduct.price),
+      costPrice: parseFloat(editProduct.costPrice),
+      stock: parseInt(editProduct.stock || '0'),
+      lowStockThreshold: parseInt(editProduct.lowStockThreshold),
+      weight: parseFloat(editProduct.weight || '0'),
+      tags: editProduct.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+      images: editProduct.images,
+      dimensions: null
+    };
+
+    updateProductMutation.mutate(productData);
+  };
+
+  const openEditModal = (product: Product) => {
+    setEditProduct({
+      id: product.id,
+      name: product.name,
+      description: product.description || '',
+      category: product.category,
+      brand: product.brand || '',
+      sku: product.sku,
+      price: product.price,
+      costPrice: product.costPrice,
+      stock: product.stock.toString(),
+      lowStockThreshold: product.lowStockThreshold.toString(),
+      weight: product.weight || '',
+      tags: product.tags.join(', '),
+      images: product.images
+    });
+    setSelectedProduct(product);
+    setShowEditProductModal(true);
+  };
+
+  const addImageUrl = (imageUrl: string, isEdit: boolean = false) => {
+    if (isEdit) {
+      if (editProduct.images.length < 20 && imageUrl.trim()) {
+        setEditProduct({
+          ...editProduct,
+          images: [...editProduct.images, imageUrl.trim()]
+        });
+      }
+    } else {
+      if (newProduct.images.length < 20 && imageUrl.trim()) {
+        setNewProduct({
+          ...newProduct,
+          images: [...newProduct.images, imageUrl.trim()]
+        });
+      }
+    }
+  };
+
+  const removeImage = (index: number, isEdit: boolean = false) => {
+    if (isEdit) {
+      setEditProduct({
+        ...editProduct,
+        images: editProduct.images.filter((_, i) => i !== index)
+      });
+    } else {
+      setNewProduct({
+        ...newProduct,
+        images: newProduct.images.filter((_, i) => i !== index)
+      });
+    }
   };
 
   const handleStockUpdate = (e: React.FormEvent) => {
@@ -533,158 +661,461 @@ const ShopDashboard = () => {
                   </SelectContent>
                 </Select>
               </div>
+              
+              {/* View Mode Toggle */}
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant={productViewMode === 'card' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setProductViewMode('card')}
+                >
+                  <Grid3X3 className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant={productViewMode === 'list' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setProductViewMode('list')}
+                >
+                  <List className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
 
-            {/* Products Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {productsLoading ? (
-                Array.from({ length: 6 }).map((_, i) => (
-                  <Card key={i} className="animate-pulse">
-                    <CardContent className="p-6">
-                      <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                      <div className="h-3 bg-gray-200 rounded mb-4"></div>
-                      <div className="h-8 bg-gray-200 rounded"></div>
-                    </CardContent>
-                  </Card>
-                ))
-              ) : (
-                (products as Product[]).map((product) => {
-                  const stockStatus = getStockStatus(product.stock, product.lowStockThreshold);
-                  return (
-                    <Card key={product.id} className="hover:shadow-md transition-shadow">
+            {/* Products Display */}
+            {productViewMode === 'card' ? (
+              /* Card View */
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {productsLoading ? (
+                  Array.from({ length: 6 }).map((_, i) => (
+                    <Card key={i} className="animate-pulse">
                       <CardContent className="p-6">
-                        <div className="flex justify-between items-start mb-3">
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-lg">{product.name}</h3>
-                            <p className="text-sm text-gray-600 mb-2">{product.brand} • {product.sku}</p>
-                            {product.description && (
-                              <p className="text-sm text-gray-600 mb-3">{product.description}</p>
-                            )}
-                          </div>
-                          <Badge className={getStatusColor(product.status)}>
-                            {product.status}
-                          </Badge>
-                        </div>
-                        
-                        <div className="space-y-2 mb-4">
-                          <div className="flex justify-between text-sm">
-                            <span>Price:</span>
-                            <span className="font-medium">₱{parseFloat(product.price).toLocaleString()}</span>
-                          </div>
-                          <div className="flex justify-between items-center text-sm">
-                            <span>Stock:</span>
-                            <div className="flex items-center space-x-2">
-                              <span className="font-medium">{product.stock} units</span>
-                              <Badge className={stockStatus.color}>
-                                {stockStatus.status}
-                              </Badge>
-                            </div>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span>Category:</span>
-                            <span className="capitalize">{product.category}</span>
-                          </div>
-                        </div>
-
-                        <div className="flex space-x-2">
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={() => {
-                              setSelectedProduct(product);
-                              setShowStockModal(true);
-                            }}
-                            className="flex-1"
-                          >
-                            <Package className="w-4 h-4 mr-2" />
-                            Stock
-                          </Button>
-                          <Button size="sm" variant="outline" className="flex-1">
-                            <Edit className="w-4 h-4 mr-2" />
-                            Edit
-                          </Button>
-                        </div>
+                        <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                        <div className="h-3 bg-gray-200 rounded mb-4"></div>
+                        <div className="h-8 bg-gray-200 rounded"></div>
                       </CardContent>
                     </Card>
-                  );
-                })
-              )}
-            </div>
+                  ))
+                ) : (
+                  (products as Product[]).map((product) => {
+                    const stockStatus = getStockStatus(product.stock, product.lowStockThreshold);
+                    return (
+                      <Card key={product.id} className="hover:shadow-md transition-shadow">
+                        <CardContent className="p-6">
+                          {/* Product Image */}
+                          {product.images && product.images.length > 0 && (
+                            <div className="mb-4">
+                              <img
+                                src={product.images[0]}
+                                alt={product.name}
+                                className="w-full h-32 object-cover rounded-lg"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = 'none';
+                                }}
+                              />
+                              {product.images.length > 1 && (
+                                <div className="mt-2 flex space-x-1">
+                                  {product.images.slice(1, 4).map((img, i) => (
+                                    <img
+                                      key={i}
+                                      src={img}
+                                      alt={`${product.name} ${i + 2}`}
+                                      className="w-8 h-8 object-cover rounded"
+                                      onError={(e) => {
+                                        (e.target as HTMLImageElement).style.display = 'none';
+                                      }}
+                                    />
+                                  ))}
+                                  {product.images.length > 4 && (
+                                    <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center text-xs">
+                                      +{product.images.length - 4}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          
+                          <div className="flex justify-between items-start mb-3">
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-lg">{product.name}</h3>
+                              <p className="text-sm text-gray-600 mb-2">{product.brand} • {product.sku}</p>
+                              {product.description && (
+                                <p className="text-sm text-gray-600 mb-3 line-clamp-2">{product.description}</p>
+                              )}
+                            </div>
+                            <Badge className={getStatusColor(product.status)}>
+                              {product.status}
+                            </Badge>
+                          </div>
+                          
+                          <div className="space-y-2 mb-4">
+                            <div className="flex justify-between text-sm">
+                              <span>Price:</span>
+                              <span className="font-medium">₱{parseFloat(product.price).toLocaleString()}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-sm">
+                              <span>Stock:</span>
+                              <div className="flex items-center space-x-2">
+                                <span className="font-medium">{product.stock} units</span>
+                                <Badge className={stockStatus.color}>
+                                  {stockStatus.status}
+                                </Badge>
+                              </div>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span>Category:</span>
+                              <span className="capitalize">{product.category}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex space-x-2">
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => {
+                                setSelectedProduct(product);
+                                setShowStockModal(true);
+                              }}
+                              className="flex-1"
+                            >
+                              <Package className="w-4 h-4 mr-2" />
+                              Stock
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="flex-1"
+                              onClick={() => openEditModal(product)}
+                            >
+                              <Edit className="w-4 h-4 mr-2" />
+                              Edit
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })
+                )}
+              </div>
+            ) : (
+              /* List View */
+              <Card>
+                <CardContent className="p-0">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="text-left p-4 font-medium">Product</th>
+                          <th className="text-left p-4 font-medium">SKU</th>
+                          <th className="text-left p-4 font-medium">Category</th>
+                          <th className="text-left p-4 font-medium">Price</th>
+                          <th className="text-left p-4 font-medium">Stock</th>
+                          <th className="text-left p-4 font-medium">Status</th>
+                          <th className="text-left p-4 font-medium">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {productsLoading ? (
+                          Array.from({ length: 5 }).map((_, i) => (
+                            <tr key={i} className="border-t animate-pulse">
+                              <td className="p-4">
+                                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                              </td>
+                              <td className="p-4">
+                                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                              </td>
+                              <td className="p-4">
+                                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                              </td>
+                              <td className="p-4">
+                                <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                              </td>
+                              <td className="p-4">
+                                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                              </td>
+                              <td className="p-4">
+                                <div className="h-6 bg-gray-200 rounded w-16"></div>
+                              </td>
+                              <td className="p-4">
+                                <div className="h-8 bg-gray-200 rounded w-20"></div>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          (products as Product[]).map((product) => {
+                            const stockStatus = getStockStatus(product.stock, product.lowStockThreshold);
+                            return (
+                              <tr key={product.id} className="border-t hover:bg-gray-50">
+                                <td className="p-4">
+                                  <div className="flex items-center space-x-3">
+                                    {product.images && product.images.length > 0 && (
+                                      <img
+                                        src={product.images[0]}
+                                        alt={product.name}
+                                        className="w-10 h-10 object-cover rounded"
+                                        onError={(e) => {
+                                          (e.target as HTMLImageElement).style.display = 'none';
+                                        }}
+                                      />
+                                    )}
+                                    <div>
+                                      <p className="font-medium">{product.name}</p>
+                                      <p className="text-sm text-gray-600">{product.brand}</p>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="p-4 text-sm">{product.sku}</td>
+                                <td className="p-4 text-sm capitalize">{product.category}</td>
+                                <td className="p-4 text-sm font-medium">₱{parseFloat(product.price).toLocaleString()}</td>
+                                <td className="p-4">
+                                  <div className="flex items-center space-x-2">
+                                    <span className="text-sm font-medium">{product.stock}</span>
+                                    <Badge className={stockStatus.color}>
+                                      {stockStatus.status}
+                                    </Badge>
+                                  </div>
+                                </td>
+                                <td className="p-4">
+                                  <Badge className={getStatusColor(product.status)}>
+                                    {product.status}
+                                  </Badge>
+                                </td>
+                                <td className="p-4">
+                                  <div className="flex space-x-2">
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline"
+                                      onClick={() => {
+                                        setSelectedProduct(product);
+                                        setShowStockModal(true);
+                                      }}
+                                    >
+                                      <Package className="w-4 h-4" />
+                                    </Button>
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline"
+                                      onClick={() => openEditModal(product)}
+                                    >
+                                      <Edit className="w-4 h-4" />
+                                    </Button>
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                  {(products as Product[]).length === 0 && !productsLoading && (
+                    <div className="text-center py-8 text-gray-500">
+                      No products found
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           {/* Orders Tab */}
           <TabsContent value="orders" className="space-y-6">
             <Card>
-              <CardHeader>
-                <CardTitle>Order Management</CardTitle>
-                <CardDescription>
-                  Manage customer orders and shipping
-                </CardDescription>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Order Management</CardTitle>
+                  <CardDescription>
+                    Manage customer orders and shipping
+                  </CardDescription>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant={orderViewMode === 'card' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setOrderViewMode('card')}
+                  >
+                    <Grid3X3 className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={orderViewMode === 'list' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setOrderViewMode('list')}
+                  >
+                    <List className="w-4 h-4" />
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {ordersLoading ? (
-                    <div className="animate-pulse space-y-4">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <div key={i} className="h-20 bg-gray-200 rounded"></div>
-                      ))}
-                    </div>
-                  ) : (
-                    (orders as ShopOrder[]).map((order) => (
-                      <div key={order.id} className="border rounded-lg p-4 space-y-3">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-medium">{order.orderNumber}</h3>
-                            <p className="text-sm text-gray-600">{order.customerName} • {order.customerEmail}</p>
-                            <p className="text-sm text-gray-600">
-                              {new Date(order.createdAt).toLocaleDateString()} • ₱{parseFloat(order.total).toLocaleString()}
-                            </p>
-                          </div>
-                          <div className="flex space-x-2">
-                            <Badge className={getStatusColor(order.paymentStatus)}>
-                              {order.paymentStatus}
-                            </Badge>
-                            <Badge className={getStatusColor(order.orderStatus)}>
-                              {order.orderStatus}
-                            </Badge>
-                          </div>
-                        </div>
-                        
-                        <div className="text-sm text-gray-600">
-                          <p><strong>Items:</strong> {order.items.map((item: any) => `${item.productName} (${item.quantity}x)`).join(', ')}</p>
-                          <p><strong>Address:</strong> {order.shippingAddress.street}, {order.shippingAddress.city}, {order.shippingAddress.province}</p>
-                          {order.trackingNumber && (
-                            <p><strong>Tracking:</strong> {order.trackingNumber} ({order.shippingProvider})</p>
-                          )}
-                        </div>
-
-                        <div className="flex space-x-2 pt-2">
-                          <Button size="sm" variant="outline">
-                            <Eye className="w-4 h-4 mr-2" />
-                            View Details
-                          </Button>
-                          {order.paymentStatus === 'paid' && order.shippingStatus !== 'shipped' && (
-                            <Button 
-                              size="sm"
-                              onClick={() => {
-                                setSelectedOrder(order);
-                                setShowShippingModal(true);
-                              }}
-                            >
-                              <Truck className="w-4 h-4 mr-2" />
-                              Ship Order
-                            </Button>
-                          )}
-                        </div>
+                {orderViewMode === 'card' ? (
+                  /* Card View for Orders */
+                  <div className="space-y-4">
+                    {ordersLoading ? (
+                      <div className="animate-pulse space-y-4">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <div key={i} className="h-20 bg-gray-200 rounded"></div>
+                        ))}
                       </div>
-                    ))
-                  )}
-                  {(orders as ShopOrder[]).length === 0 && !ordersLoading && (
-                    <div className="text-center py-8 text-gray-500">
-                      No orders found
-                    </div>
-                  )}
-                </div>
+                    ) : (
+                      (orders as ShopOrder[]).map((order) => (
+                        <div key={order.id} className="border rounded-lg p-4 space-y-3 hover:shadow-md transition-shadow">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="font-medium">{order.orderNumber}</h3>
+                              <p className="text-sm text-gray-600">{order.customerName} • {order.customerEmail}</p>
+                              <p className="text-sm text-gray-600">
+                                {new Date(order.createdAt).toLocaleDateString()} • ₱{parseFloat(order.total).toLocaleString()}
+                              </p>
+                            </div>
+                            <div className="flex space-x-2">
+                              <Badge className={getStatusColor(order.paymentStatus)}>
+                                {order.paymentStatus}
+                              </Badge>
+                              <Badge className={getStatusColor(order.orderStatus)}>
+                                {order.orderStatus}
+                              </Badge>
+                            </div>
+                          </div>
+                          
+                          <div className="text-sm text-gray-600">
+                            <p><strong>Items:</strong> {order.items.map((item: any) => `${item.productName} (${item.quantity}x)`).join(', ')}</p>
+                            <p><strong>Address:</strong> {order.shippingAddress.street}, {order.shippingAddress.city}, {order.shippingAddress.province}</p>
+                            {order.trackingNumber && (
+                              <p><strong>Tracking:</strong> {order.trackingNumber} ({order.shippingProvider})</p>
+                            )}
+                          </div>
+
+                          <div className="flex space-x-2 pt-2">
+                            <Button size="sm" variant="outline">
+                              <Eye className="w-4 h-4 mr-2" />
+                              View Details
+                            </Button>
+                            {order.paymentStatus === 'paid' && order.shippingStatus !== 'shipped' && (
+                              <Button 
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedOrder(order);
+                                  setShowShippingModal(true);
+                                }}
+                              >
+                                <Truck className="w-4 h-4 mr-2" />
+                                Ship Order
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    )}
+                    {(orders as ShopOrder[]).length === 0 && !ordersLoading && (
+                      <div className="text-center py-8 text-gray-500">
+                        No orders found
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* List View for Orders */
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="text-left p-4 font-medium">Order</th>
+                          <th className="text-left p-4 font-medium">Customer</th>
+                          <th className="text-left p-4 font-medium">Date</th>
+                          <th className="text-left p-4 font-medium">Total</th>
+                          <th className="text-left p-4 font-medium">Payment</th>
+                          <th className="text-left p-4 font-medium">Status</th>
+                          <th className="text-left p-4 font-medium">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {ordersLoading ? (
+                          Array.from({ length: 5 }).map((_, i) => (
+                            <tr key={i} className="border-t animate-pulse">
+                              <td className="p-4">
+                                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                              </td>
+                              <td className="p-4">
+                                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                              </td>
+                              <td className="p-4">
+                                <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                              </td>
+                              <td className="p-4">
+                                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                              </td>
+                              <td className="p-4">
+                                <div className="h-6 bg-gray-200 rounded w-16"></div>
+                              </td>
+                              <td className="p-4">
+                                <div className="h-6 bg-gray-200 rounded w-16"></div>
+                              </td>
+                              <td className="p-4">
+                                <div className="h-8 bg-gray-200 rounded w-20"></div>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          (orders as ShopOrder[]).map((order) => (
+                            <tr key={order.id} className="border-t hover:bg-gray-50">
+                              <td className="p-4">
+                                <div>
+                                  <p className="font-medium">{order.orderNumber}</p>
+                                  <p className="text-xs text-gray-600">
+                                    {order.items.length} item{order.items.length !== 1 ? 's' : ''}
+                                  </p>
+                                </div>
+                              </td>
+                              <td className="p-4">
+                                <div>
+                                  <p className="text-sm font-medium">{order.customerName}</p>
+                                  <p className="text-xs text-gray-600">{order.customerEmail}</p>
+                                </div>
+                              </td>
+                              <td className="p-4 text-sm">
+                                {new Date(order.createdAt).toLocaleDateString()}
+                              </td>
+                              <td className="p-4 text-sm font-medium">
+                                ₱{parseFloat(order.total).toLocaleString()}
+                              </td>
+                              <td className="p-4">
+                                <Badge className={getStatusColor(order.paymentStatus)}>
+                                  {order.paymentStatus}
+                                </Badge>
+                              </td>
+                              <td className="p-4">
+                                <Badge className={getStatusColor(order.orderStatus)}>
+                                  {order.orderStatus}
+                                </Badge>
+                              </td>
+                              <td className="p-4">
+                                <div className="flex space-x-2">
+                                  <Button size="sm" variant="outline">
+                                    <Eye className="w-4 h-4" />
+                                  </Button>
+                                  {order.paymentStatus === 'paid' && order.shippingStatus !== 'shipped' && (
+                                    <Button 
+                                      size="sm"
+                                      onClick={() => {
+                                        setSelectedOrder(order);
+                                        setShowShippingModal(true);
+                                      }}
+                                    >
+                                      <Truck className="w-4 h-4" />
+                                    </Button>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                    {(orders as ShopOrder[]).length === 0 && !ordersLoading && (
+                      <div className="text-center py-8 text-gray-500">
+                        No orders found
+                      </div>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -819,6 +1250,64 @@ const ShopDashboard = () => {
                 onChange={(e) => setNewProduct({...newProduct, tags: e.target.value})}
                 placeholder="smartphone, premium, apple"
               />
+            </div>
+
+            {/* Image Upload Section */}
+            <div className="space-y-3">
+              <Label>Product Images (up to 20)</Label>
+              <div className="flex space-x-2">
+                <Input
+                  placeholder="Enter image URL"
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      const input = e.target as HTMLInputElement;
+                      addImageUrl(input.value, false);
+                      input.value = '';
+                    }
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={(e) => {
+                    const input = (e.target as HTMLElement).parentNode?.querySelector('input') as HTMLInputElement;
+                    if (input?.value) {
+                      addImageUrl(input.value, false);
+                      input.value = '';
+                    }
+                  }}
+                >
+                  <ImagePlus className="w-4 h-4 mr-2" />
+                  Add
+                </Button>
+              </div>
+              {newProduct.images.length > 0 && (
+                <div className="grid grid-cols-4 gap-2 mt-3">
+                  {newProduct.images.map((img, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={img}
+                        alt={`Product ${index + 1}`}
+                        className="w-full h-20 object-cover rounded border"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiAxNkwyIDZIMjJMMTIgMTZaIiBmaWxsPSIjOUIxMDFEIi8+Cjx0ZXh0IHg9IjEyIiB5PSIxNCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI4IiBmaWxsPSIjOUIxMDFEIj5JbWFnZSBub3QgZm91bmQ8L3RleHQ+Cjwvc3ZnPg==';
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="absolute -top-2 -right-2 h-6 w-6 p-0 bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => removeImage(index, false)}
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <p className="text-sm text-gray-500">{newProduct.images.length}/20 images added</p>
             </div>
 
             <div className="flex justify-end space-x-2 pt-4">
@@ -966,6 +1455,206 @@ const ShopDashboard = () => {
               </Button>
               <Button type="submit" disabled={shipOrderMutation.isPending}>
                 {shipOrderMutation.isPending ? 'Shipping...' : 'Ship Order'}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Product Modal */}
+      <Dialog open={showEditProductModal} onOpenChange={setShowEditProductModal}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Product</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleEditProduct} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="editName">Product Name *</Label>
+                <Input
+                  id="editName"
+                  value={editProduct.name}
+                  onChange={(e) => setEditProduct({...editProduct, name: e.target.value})}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="editSku">SKU *</Label>
+                <Input
+                  id="editSku"
+                  value={editProduct.sku}
+                  onChange={(e) => setEditProduct({...editProduct, sku: e.target.value})}
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="editDescription">Description</Label>
+              <Textarea
+                id="editDescription"
+                value={editProduct.description}
+                onChange={(e) => setEditProduct({...editProduct, description: e.target.value})}
+                rows={3}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="editCategory">Category</Label>
+                <Select value={editProduct.category} onValueChange={(value) => setEditProduct({...editProduct, category: value})}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="electronics">Electronics</SelectItem>
+                    <SelectItem value="footwear">Footwear</SelectItem>
+                    <SelectItem value="clothing">Clothing</SelectItem>
+                    <SelectItem value="books">Books</SelectItem>
+                    <SelectItem value="home">Home & Garden</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="editBrand">Brand</Label>
+                <Input
+                  id="editBrand"
+                  value={editProduct.brand}
+                  onChange={(e) => setEditProduct({...editProduct, brand: e.target.value})}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="editPrice">Price (₱) *</Label>
+                <Input
+                  id="editPrice"
+                  type="number"
+                  step="0.01"
+                  value={editProduct.price}
+                  onChange={(e) => setEditProduct({...editProduct, price: e.target.value})}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="editCostPrice">Cost Price (₱) *</Label>
+                <Input
+                  id="editCostPrice"
+                  type="number"
+                  step="0.01"
+                  value={editProduct.costPrice}
+                  onChange={(e) => setEditProduct({...editProduct, costPrice: e.target.value})}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="editStock">Stock</Label>
+                <Input
+                  id="editStock"
+                  type="number"
+                  value={editProduct.stock}
+                  onChange={(e) => setEditProduct({...editProduct, stock: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="editLowStockThreshold">Low Stock Alert</Label>
+                <Input
+                  id="editLowStockThreshold"
+                  type="number"
+                  value={editProduct.lowStockThreshold}
+                  onChange={(e) => setEditProduct({...editProduct, lowStockThreshold: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="editWeight">Weight (kg)</Label>
+                <Input
+                  id="editWeight"
+                  type="number"
+                  step="0.01"
+                  value={editProduct.weight}
+                  onChange={(e) => setEditProduct({...editProduct, weight: e.target.value})}
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="editTags">Tags (comma-separated)</Label>
+              <Input
+                id="editTags"
+                value={editProduct.tags}
+                onChange={(e) => setEditProduct({...editProduct, tags: e.target.value})}
+                placeholder="smartphone, premium, apple"
+              />
+            </div>
+
+            {/* Image Upload Section for Edit */}
+            <div className="space-y-3">
+              <Label>Product Images (up to 20)</Label>
+              <div className="flex space-x-2">
+                <Input
+                  placeholder="Enter image URL"
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      const input = e.target as HTMLInputElement;
+                      addImageUrl(input.value, true);
+                      input.value = '';
+                    }
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={(e) => {
+                    const input = (e.target as HTMLElement).parentNode?.querySelector('input') as HTMLInputElement;
+                    if (input?.value) {
+                      addImageUrl(input.value, true);
+                      input.value = '';
+                    }
+                  }}
+                >
+                  <ImagePlus className="w-4 h-4 mr-2" />
+                  Add
+                </Button>
+              </div>
+              {editProduct.images.length > 0 && (
+                <div className="grid grid-cols-4 gap-2 mt-3">
+                  {editProduct.images.map((img, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={img}
+                        alt={`Product ${index + 1}`}
+                        className="w-full h-20 object-cover rounded border"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMiAxNkwyIDZIMjJMMTIgMTZaIiBmaWxsPSIjOUIxMDFEIi8+Cjx0ZXh0IHg9IjEyIiB5PSIxNCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSI4IiBmaWxsPSIjOUIxMDFEIj5JbWFnZSBub3QgZm91bmQ8L3RleHQ+Cjwvc3ZnPg==';
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="absolute -top-2 -right-2 h-6 w-6 p-0 bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => removeImage(index, true)}
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <p className="text-sm text-gray-500">{editProduct.images.length}/20 images added</p>
+            </div>
+
+            <div className="flex justify-end space-x-2 pt-4">
+              <Button type="button" variant="outline" onClick={() => setShowEditProductModal(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={updateProductMutation.isPending}>
+                {updateProductMutation.isPending ? 'Updating...' : 'Update Product'}
               </Button>
             </div>
           </form>
