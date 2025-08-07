@@ -1211,13 +1211,15 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                   trip.category === 'virtual' ? virtualTabs :
                   defaultTabs;
 
-                const gridCols = tabs.length === 7 ? "grid-cols-7" : tabs.length === 6 ? "grid-cols-6" : "grid-cols-5";
-
                 return (
-                  <TabsList className={`grid w-full h-auto p-1 ${gridCols}`}>
+                  <TabsList className="flex space-x-8 bg-transparent border-none shadow-none p-0 h-auto">
                     {tabs.map((tab) => (
-                      <TabsTrigger key={tab} value={tab} className="text-xs px-2 py-2">
-                        {tab}
+                      <TabsTrigger 
+                        key={tab} 
+                        value={tab} 
+                        className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
+                      >
+                        {tab.toUpperCase()}
                       </TabsTrigger>
                     ))}
                   </TabsList>
