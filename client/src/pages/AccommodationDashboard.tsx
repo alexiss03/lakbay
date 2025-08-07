@@ -157,8 +157,11 @@ const AccommodationDashboard = () => {
     mutationFn: (propertyData: any) => 
       apiRequest('POST', '/api/accommodation/properties', propertyData),
     onSuccess: () => {
+      // Invalidate all property-related queries
       queryClient.invalidateQueries({ queryKey: ['/api/accommodation/properties'] });
       queryClient.invalidateQueries({ queryKey: ['/api/accommodation/analytics'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/accommodation/bookings'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/accommodation/room-types'] });
       setShowAddPropertyModal(false);
       setNewProperty({
         name: '',
