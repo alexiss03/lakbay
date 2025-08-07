@@ -971,6 +971,26 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-8 left-8 text-white">
+          <div className="mb-3">
+            <Badge 
+              className={`text-xs px-3 py-1 font-light tracking-wider prada-corner-radius ${
+                trip.category === 'private' ? 'bg-[#D4AF37] text-black' :
+                trip.category === 'joiner' ? 'bg-green-600 text-white' :
+                trip.category === 'meetup' ? 'bg-blue-500 text-white' :
+                trip.category === 'mystery' ? 'bg-purple-600 text-white' :
+                trip.category === 'event' ? 'bg-orange-500 text-white' :
+                trip.category === 'virtual' ? 'bg-red-500 text-white' :
+                trip.category === 'wellness' ? 'bg-emerald-500 text-white' :
+                trip.category === 'online-quiz' ? 'bg-[#D4AF37] text-black' :
+                trip.category === 'culinary' ? 'bg-pink-500 text-white' :
+                trip.category === 'hiking' ? 'bg-teal-600 text-white' :
+                trip.category === 'island' ? 'bg-cyan-500 text-white' :
+                'bg-gray-600 text-white'
+              }`}
+            >
+              {trip.category.toUpperCase().replace('-', ' ')}
+            </Badge>
+          </div>
           <h1 className="prada-heading text-4xl font-light mb-3">{trip.title}</h1>
           <p className="text-lg font-light tracking-wide opacity-90">{trip.duration}</p>
         </div>
@@ -2147,6 +2167,28 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
           {!isBooked ? (
             /* Original Booking Section */
             <div className="prada-card p-8">
+              {/* Category Badge */}
+              <div className="mb-4">
+                <Badge 
+                  className={`text-xs px-3 py-1 font-light tracking-wider prada-corner-radius ${
+                    trip.category === 'private' ? 'bg-[#D4AF37] text-black' :
+                    trip.category === 'joiner' ? 'bg-green-600 text-white' :
+                    trip.category === 'meetup' ? 'bg-blue-500 text-white' :
+                    trip.category === 'mystery' ? 'bg-purple-600 text-white' :
+                    trip.category === 'event' ? 'bg-orange-500 text-white' :
+                    trip.category === 'virtual' ? 'bg-red-500 text-white' :
+                    trip.category === 'wellness' ? 'bg-emerald-500 text-white' :
+                    trip.category === 'online-quiz' ? 'bg-[#D4AF37] text-black' :
+                    trip.category === 'culinary' ? 'bg-pink-500 text-white' :
+                    trip.category === 'hiking' ? 'bg-teal-600 text-white' :
+                    trip.category === 'island' ? 'bg-cyan-500 text-white' :
+                    'bg-gray-600 text-white'
+                  }`}
+                >
+                  {trip.category.toUpperCase().replace('-', ' ')}
+                </Badge>
+              </div>
+              
               <div className="text-center mb-6">
                 <span className="prada-heading text-2xl font-light text-black">{trip.price}</span>
               </div>

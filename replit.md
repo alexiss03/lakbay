@@ -50,6 +50,7 @@ This is a full-stack JavaScript application migrated from Figma to Replit enviro
 - Updated homepage to display FREE quiz cards with difficulty levels and passing scores
 - Enhanced AI recommendations modal with 4 personalized trip suggestions and confidence scoring
 - **August 7, 2025**: Added WELLNESS category tab to travel platform with mindfulness retreats, spa experiences, and forest therapy
+- **August 7, 2025**: Implemented category display badges in trip detail pages showing category type in hero section and booking card
 - **August 7, 2025**: Created comprehensive host dashboard for trip creation, management, payouts, and communication
 - Built HostDashboard.tsx with 6 main sections: Overview, My Trips, Bookings, Payouts, Chats, and Settings
 - Implemented host-specific backend API system in server/routes/host.ts with analytics, trip management, and payout functionality
