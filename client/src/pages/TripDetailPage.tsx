@@ -9,7 +9,7 @@ import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { ChatWidget } from "@/components/ChatWidget";
 import { TrailMap } from "@/components/TrailMap";
-import { MapPin, Star, Clock, Users, Calendar, Shield, AlertTriangle, CheckCircle2, Mountain, TrendingUp, MapIcon, Headphones, Play, Pause, Download, Volume2, Utensils, Package, Brain, Award, Timer, Target, ShoppingCart } from "lucide-react";
+import { MapPin, Star, Clock, Users, Calendar, Shield, AlertTriangle, CheckCircle2, Mountain, TrendingUp, MapIcon, Headphones, Play, Pause, Download, Volume2, Utensils, Package, Brain, Award, Timer, Target, ShoppingCart, Heart, Search, Monitor } from "lucide-react";
 
 interface TripDetailPageProps {
   params?: {
@@ -999,7 +999,8 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
       {/* Navigation Tab Content */}
       <Tabs value={activeNavTab} onValueChange={setActiveNavTab} className="max-w-7xl mx-auto px-8">
         <TabsContent value="Home">
-          <div className="py-8 grid lg:grid-cols-3 gap-8">
+          <div className="py-8">
+          <div className="grid lg:grid-cols-3 gap-8">
             {/* Quiz Interface for Online Quiz Category */}
         {isQuizTrip(trip) ? (
           <div className="lg:col-span-2">
@@ -1193,15 +1194,35 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
           // Regular Trip Details
           <div className="lg:col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-              <TabsList className="grid w-full h-auto p-1 grid-cols-6">
-                <TabsTrigger value="Event details" className="text-xs px-2 py-2">Event details</TabsTrigger>
-                <TabsTrigger value="Inclusions" className="text-xs px-2 py-2">Inclusions</TabsTrigger>
-                <TabsTrigger value="Reviews" className="text-xs px-2 py-2">Reviews</TabsTrigger>
-                <TabsTrigger value="Things to bring" className="text-xs px-2 py-2">Things to bring</TabsTrigger>
-                <TabsTrigger value="Reminders" className="text-xs px-2 py-2">Reminders</TabsTrigger>
-                <TabsTrigger value="Cancellation" className="text-xs px-2 py-2">Cancellation</TabsTrigger>
-              </TabsList>
+              {(() => {
+                // Different tabs for each category
+                const defaultTabs = ["Event details", "Inclusions", "Reviews", "Things to bring", "Reminders", "Cancellation"];
+                const hikingTabs = ["Event details", "Trail", "Inclusions", "Reviews", "Things to bring", "Reminders", "Cancellation"];
+                const privateTabs = ["Event details", "VIP Experience", "Inclusions", "Reviews", "Things to bring", "Reminders", "Cancellation"];
+                const wellnessTabs = ["Event details", "Wellness Program", "Inclusions", "Reviews", "Things to bring", "Reminders", "Cancellation"];
+                const mysteryTabs = ["Event details", "Mystery Clues", "Inclusions", "Reviews", "Things to bring", "Reminders", "Cancellation"];
+                const virtualTabs = ["Event details", "Tech Requirements", "Inclusions", "Reviews", "Cancellation"];
+                
+                const tabs = 
+                  trip.category === 'hiking' ? hikingTabs :
+                  trip.category === 'private' ? privateTabs :
+                  trip.category === 'wellness' ? wellnessTabs :
+                  trip.category === 'mystery' ? mysteryTabs :
+                  trip.category === 'virtual' ? virtualTabs :
+                  defaultTabs;
 
+                const gridCols = tabs.length === 7 ? "grid-cols-7" : tabs.length === 6 ? "grid-cols-6" : "grid-cols-5";
+
+                return (
+                  <TabsList className={`grid w-full h-auto p-1 ${gridCols}`}>
+                    {tabs.map((tab) => (
+                      <TabsTrigger key={tab} value={tab} className="text-xs px-2 py-2">
+                        {tab}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                );
+              })()}
               <TabsContent value="Event details" className="space-y-6">
                 {trip.itinerary && trip.itinerary.map((day, index) => (
                 <Card key={index} className="p-6">
@@ -1225,8 +1246,8 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
               ))}
             </TabsContent>
 
-            {trip.category === 'hiking' && 'trail' in trip && trip.trail && (
-              <TabsContent value="trail" className="space-y-6">
+            {/* Trail Tab - for hiking category */}
+            <TabsContent value="Trail" className="space-y-6">
                 <Card className="p-6">
                   <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
                     <Mountain className="w-5 h-5 mr-2 text-[#D4AF37]" />
@@ -1236,23 +1257,23 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                   {/* Trail Overview */}
                   <div className="grid md:grid-cols-2 gap-6 mb-6">
                     <div className="space-y-4">
-                      <h3 className="font-semibold text-gray-900">{trip.trail.name}</h3>
+                      <h3 className="font-semibold text-gray-900">{trip.trail?.name || "Trail Name"}</h3>
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
                           <span className="text-gray-600">Difficulty:</span>
-                          <p className="font-medium text-gray-900">{trip.trail.difficulty}</p>
+                          <p className="font-medium text-gray-900">{trip.trail?.difficulty || "Moderate"}</p>
                         </div>
                         <div>
                           <span className="text-gray-600">Distance:</span>
-                          <p className="font-medium text-gray-900">{trip.trail.distance}</p>
+                          <p className="font-medium text-gray-900">{trip.trail?.distance || "8 km"}</p>
                         </div>
                         <div>
                           <span className="text-gray-600">Duration:</span>
-                          <p className="font-medium text-gray-900">{trip.trail.duration}</p>
+                          <p className="font-medium text-gray-900">{trip.trail?.duration || "4-6 hours"}</p>
                         </div>
                         <div>
                           <span className="text-gray-600">Elevation Gain:</span>
-                          <p className="font-medium text-gray-900">{trip.trail.elevationGain}</p>
+                          <p className="font-medium text-gray-900">{trip.trail?.elevationGain || "500m"}</p>
                         </div>
                       </div>
                     </div>
@@ -1261,8 +1282,8 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                       <h4 className="font-medium text-gray-900 mb-2">Elevation Profile</h4>
                       <div className="w-full h-32 bg-gradient-to-r from-green-200 via-yellow-200 to-red-200 rounded relative">
                         <div className="absolute inset-0 flex items-end justify-between px-2 pb-2 text-xs">
-                          <span className="bg-white px-1 rounded">{trip.trail.startElevation}m</span>
-                          <span className="bg-white px-1 rounded">{trip.trail.peakElevation}m</span>
+                          <span className="bg-white px-1 rounded">{trip.trail?.startElevation || "200"}m</span>
+                          <span className="bg-white px-1 rounded">{trip.trail?.peakElevation || "700"}m</span>
                         </div>
                         <svg className="w-full h-full" viewBox="0 0 300 100" preserveAspectRatio="none">
                           <path 
@@ -1283,7 +1304,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                       Trail Map - Satellite View
                     </h3>
                     <TrailMap 
-                      trailPoints={trip.trail.trailPoints}
+                      trailPoints={trip.trail?.trailPoints || []}
                       center={trip.mapCenter}
                       zoom={14}
                     />
@@ -1316,7 +1337,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-4">Trail Points & Camping Sites</h3>
                     <div className="space-y-4">
-                      {trip.trail.trailPoints.map((point, index) => (
+                      {(trip.trail?.trailPoints || []).map((point, index) => (
                         <div key={index} className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${
                             point.type === 'trailhead' ? 'bg-green-500' :
@@ -1356,8 +1377,132 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
 
 
                 </Card>
-              </TabsContent>
-            )}
+            </TabsContent>
+
+            {/* VIP Experience Tab - for private category */}
+            <TabsContent value="VIP Experience" className="space-y-6">
+              <Card className="p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                  <Star className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                  Exclusive VIP Experience
+                </h2>
+                <div className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <h3 className="font-semibold text-yellow-800 mb-3">Private Transfers</h3>
+                      <ul className="space-y-2 text-sm text-yellow-700">
+                        <li>• Luxury vehicle with professional driver</li>
+                        <li>• Airport pickup and drop-off included</li>
+                        <li>• Flexible scheduling to your preference</li>
+                        <li>• Complimentary refreshments during transfer</li>
+                      </ul>
+                    </div>
+                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <h3 className="font-semibold text-yellow-800 mb-3">Exclusive Access</h3>
+                      <ul className="space-y-2 text-sm text-yellow-700">
+                        <li>• Private beach areas and secluded spots</li>
+                        <li>• Skip-the-line access to attractions</li>
+                        <li>• Reserved seating at restaurants</li>
+                        <li>• Access to VIP lounges and facilities</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </TabsContent>
+
+            {/* Wellness Program Tab - for wellness category */}
+            <TabsContent value="Wellness Program" className="space-y-6">
+              <Card className="p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                  <Heart className="w-5 h-5 mr-2 text-emerald-500" />
+                  Wellness Program Schedule
+                </h2>
+                <div className="space-y-6">
+                  <div className="grid gap-4">
+                    <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+                      <h3 className="font-semibold text-emerald-800 mb-3">Daily Wellness Activities</h3>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-emerald-700">6:00 AM - Morning Meditation</span>
+                          <span className="text-xs bg-emerald-100 px-2 py-1 rounded">45 min</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-emerald-700">7:00 AM - Sunrise Yoga</span>
+                          <span className="text-xs bg-emerald-100 px-2 py-1 rounded">60 min</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-emerald-700">2:00 PM - Spa Treatment</span>
+                          <span className="text-xs bg-emerald-100 px-2 py-1 rounded">90 min</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-emerald-700">6:00 PM - Mindfulness Workshop</span>
+                          <span className="text-xs bg-emerald-100 px-2 py-1 rounded">60 min</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </TabsContent>
+
+            {/* Mystery Clues Tab - for mystery category */}
+            <TabsContent value="Mystery Clues" className="space-y-6">
+              <Card className="p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                  <Search className="w-5 h-5 mr-2 text-purple-600" />
+                  Mystery Adventure Clues
+                </h2>
+                <div className="space-y-6">
+                  <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                    <h3 className="font-semibold text-purple-800 mb-3">What We Can Reveal</h3>
+                    <ul className="space-y-2 text-sm text-purple-700">
+                      <li>• The destination is a hidden gem in Luzon</li>
+                      <li>• You'll experience both adventure and cultural immersion</li>
+                      <li>• The location has historical significance</li>
+                      <li>• Outdoor activities and indoor discoveries await</li>
+                      <li>• Local cuisine will be a highlight of the experience</li>
+                    </ul>
+                  </div>
+                  <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                    <h3 className="font-semibold text-gray-800 mb-3">The Full Reveal</h3>
+                    <p className="text-sm text-gray-700">The complete destination and detailed itinerary will be revealed 24 hours before departure. Pack for warm weather and comfortable walking!</p>
+                  </div>
+                </div>
+              </Card>
+            </TabsContent>
+
+            {/* Tech Requirements Tab - for virtual category */}
+            <TabsContent value="Tech Requirements" className="space-y-6">
+              <Card className="p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                  <Monitor className="w-5 h-5 mr-2 text-red-500" />
+                  Technical Requirements
+                </h2>
+                <div className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                      <h3 className="font-semibold text-red-800 mb-3">System Requirements</h3>
+                      <ul className="space-y-2 text-sm text-red-700">
+                        <li>• Stable internet connection (minimum 10 Mbps)</li>
+                        <li>• Computer/laptop with webcam and microphone</li>
+                        <li>• Latest version of Zoom installed</li>
+                        <li>• Quiet environment for best experience</li>
+                      </ul>
+                    </div>
+                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                      <h3 className="font-semibold text-red-800 mb-3">Platform Access</h3>
+                      <ul className="space-y-2 text-sm text-red-700">
+                        <li>• Zoom meeting link sent 1 hour before</li>
+                        <li>• WhatsApp group for real-time chat</li>
+                        <li>• Digital materials accessible via email</li>
+                        <li>• Recording available for 7 days after</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </TabsContent>
 
             <TabsContent value="Inclusions" className="space-y-6">
               <Card className="p-6">
@@ -2158,8 +2303,8 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                 </div>
               </Card>
             </TabsContent>
-          </Tabs>
-        </div>
+            </Tabs>
+          </div>
         )}
 
         {/* Booking Sidebar or Audio Book Section */}
@@ -2403,51 +2548,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
           </Card>
         </div>
           </div>
-        </TabsContent>
-        
-        <TabsContent value="Trails">
-          <div className="py-8">
-            <div className="text-center text-gray-500">
-              <h2 className="text-2xl font-light mb-4">Trails Section</h2>
-              <p>Discover amazing trail adventures and hiking experiences.</p>
-            </div>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="Story">
-          <div className="py-8">
-            <div className="text-center text-gray-500">
-              <h2 className="text-2xl font-light mb-4">Our Story</h2>
-              <p>Learn about Lakbay's mission and journey in adventure travel.</p>
-            </div>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="Shop">
-          <div className="py-8">
-            <div className="text-center text-gray-500">
-              <h2 className="text-2xl font-light mb-4">Adventure Shop</h2>
-              <p>Browse our curated collection of travel gear and equipment.</p>
-            </div>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="Corporate">
-          <div className="py-8">
-            <div className="text-center text-gray-500">
-              <h2 className="text-2xl font-light mb-4">Corporate Travel</h2>
-              <p>Custom adventure experiences for teams and organizations.</p>
-            </div>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="Explore">
-          <div className="py-8">
-            <div className="text-center text-gray-500">
-              <h2 className="text-2xl font-light mb-4">Explore More</h2>
-              <p>Discover hidden gems and unique travel experiences.</p>
-            </div>
-          </div>
+        </div>
         </TabsContent>
       </Tabs>
 
