@@ -1,6 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import adminRoutes from "./routes/admin";
+import hostRoutes from "./routes/host";
+import chatRoutes from "./routes/chat";
 import { storage } from "./storage";
 import Stripe from "stripe";
 import { 
@@ -487,6 +489,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Register admin routes
   app.use('/api/admin', adminRoutes);
+  
+  // Register host routes
+  app.use('/api/host', hostRoutes);
+  
+  // Register chat routes
+  app.use('/api/chat', chatRoutes);
 
   const httpServer = createServer(app);
   return httpServer;
