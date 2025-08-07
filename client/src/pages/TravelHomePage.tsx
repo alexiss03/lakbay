@@ -21,12 +21,12 @@ export const TravelHomePage = (): JSX.Element => {
           {/* Center: Navigation */}
           <nav className="flex items-center space-x-12">
             <Link href="/" className="prada-nav text-black hover:text-gray-600 transition-colors">Home</Link>
+            <Link href="/trips" className="prada-nav text-gray-700 hover:text-black transition-colors">Trips</Link>
             <Link href="/chats" className="prada-nav text-gray-700 hover:text-black transition-colors">Chats</Link>
             <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Trails</a>
             <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</a>
             <Link href="/shop" className="prada-nav text-gray-700 hover:text-black transition-colors">Shop</Link>
             <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</a>
-            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Explore</a>
           </nav>
           
           {/* Right: Buttons and Language */}
@@ -112,26 +112,7 @@ export const TravelHomePage = (): JSX.Element => {
               </div>
             </div>
 
-            {/* Your Lakbays */}
-            <div>
-              <h3 className="prada-heading text-xl text-black mb-6 font-light">Your Lakbays</h3>
-              <div className="flex space-x-4 text-sm text-gray-600 font-light tracking-wider mb-6">
-                <button className="border-b-2 border-[#D4AF37] pb-1">Upcoming</button>
-                <button className="pb-1 hover:border-b-2 hover:border-gray-300 transition-all">Past trips</button>
-              </div>
-              
-              <div className="flex space-x-4">
-                {[1, 2].map((i) => (
-                  <div key={i} className="w-32 h-32 prada-corner-radius overflow-hidden group">
-                    <img 
-                      src={`https://images.unsplash.com/photo-150617009${i}0-6c4444b7${i}3bc?w=200&h=200&fit=crop&auto=format`}
-                      alt={`Lakbay ${i}`}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
+
           </div>
 
           {/* Right Column - Philippines Map */}
