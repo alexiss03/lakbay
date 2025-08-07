@@ -18,6 +18,7 @@ import ProductDetailPage from "@/pages/ProductDetailPage";
 import AdminDashboard from "@/pages/AdminDashboard";
 import HostDashboard from "@/pages/HostDashboard";
 import AccommodationDashboard from "@/pages/AccommodationDashboard";
+import ShopDashboard from "@/pages/ShopDashboard";
 
 function Router() {
   return (
@@ -35,6 +36,7 @@ function Router() {
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/host" component={HostDashboard} />
       <Route path="/accommodation" component={AccommodationDashboard} />
+      <Route path="/shop-manager" component={ShopDashboard} />
       <Route path="/welcome" component={Box} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
