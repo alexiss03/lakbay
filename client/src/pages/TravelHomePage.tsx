@@ -368,7 +368,7 @@ export const TravelHomePage = (): JSX.Element => {
             { name: "Festival Events", icon: "🎉", description: "Cultural celebrations", count: "10 events" },
             { name: "Virtual Experiences", icon: "💻", description: "Online tours & workshops", count: "20 events" },
             { name: "Online Quizzes", icon: "🧠", description: "Interactive knowledge challenges", count: "25 quizzes" },
-            { name: "Weekend Escapes", icon: "🏕️", description: "Multi-day expeditions", count: "9 events" }
+            { name: "Wellness Retreats", icon: "🧘", description: "Mindfulness & health experiences", count: "14 retreats" }
           ].map((category, index) => (
             <div key={index} className="prada-card p-6 cursor-pointer group transition-all duration-300">
               <div className="text-center">
@@ -382,7 +382,7 @@ export const TravelHomePage = (): JSX.Element => {
         </div>
         
         <div className="flex space-x-12 mb-12 border-b border-gray-100">
-          {["Private", "Joiner", "Meetups", "Mystery", "Events", "Virtual", "Online Quizzes"].map((tab) => (
+          {["Private", "Joiner", "Meetups", "Mystery", "Events", "Virtual", "Wellness", "Online Quizzes"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -561,6 +561,33 @@ export const TravelHomePage = (): JSX.Element => {
             </Link>
           ))}
 
+          {activeTab === "Wellness" && [
+            { title: "Baguio Yoga & Meditation Retreat", location: "Baguio City", price: "₱8,500", image: "1506905925346-21bda4d32df4", link: "/trip/baguio-wellness" },
+            { title: "Palawan Spa & Beach Wellness", location: "El Nido", price: "₱12,000", image: "1507525428034-b723cf961d3e", link: "/trip/palawan-wellness" },
+            { title: "Mount Makiling Forest Therapy", location: "Laguna", price: "₱4,800", image: "1441974231531-c6227db76b6e", link: "/trip/makiling-wellness" }
+          ].map((retreat, i) => (
+            <Link key={i} href={retreat.link}>
+              <div className="prada-card overflow-hidden group cursor-pointer">
+                <div className="relative aspect-[4/3]">
+                  <img 
+                    src={`https://images.unsplash.com/photo-${retreat.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={retreat.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-emerald-500 text-white text-xs px-3 py-1 font-light tracking-wider prada-corner-radius">WELLNESS</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h3 className="font-light text-sm mb-1 tracking-wide">{retreat.title}</h3>
+                    <p className="text-xs opacity-90 font-light">{retreat.location}</p>
+                    <p className="text-sm font-light tracking-wider mt-1">{retreat.price}</p>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+
           {activeTab === "Online Quizzes" && [
             { title: "Philippines Geography & Culture Quiz", location: "5 minutes • 5 questions", price: "FREE", image: "1506905925346-21bda4d32df4", link: "/trip/philippines-geography-quiz", difficulty: "Beginner", passingScore: "70%" },
             { title: "Filipino Heritage & Traditions", location: "7 minutes • 8 questions", price: "FREE", image: "1609137144813-7d9921338f24", link: "/trip/heritage-quiz", difficulty: "Intermediate", passingScore: "75%" },
@@ -624,7 +651,7 @@ export const TravelHomePage = (): JSX.Element => {
                 <li>Hiking & Trekking</li>
                 <li>Island Hopping</li>
                 <li>Cultural Tours</li>
-                <li>Wildlife & Nature</li>
+                <li>Wellness Retreats</li>
               </ul>
             </div>
             <div>
