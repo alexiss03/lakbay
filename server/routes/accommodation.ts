@@ -5,24 +5,31 @@ import { eq, desc, count, sum, and, gte, lte, sql } from "drizzle-orm";
 
 const router = Router();
 
+// In-memory store for created properties (in production, this would be in database)
+const createdProperties = new Map();
+
 // Create new accommodation property
 router.post("/properties", async (req, res) => {
   try {
     const accommodationData = req.body;
     
-    // For demo purposes, create a mock response with a new ID
+    // Create a new property with generated data
     const newAccommodation = {
       id: `prop_${Date.now()}`,
       ...accommodationData,
       occupancyRate: Math.floor(Math.random() * 30 + 50), // Random occupancy between 50-80%
-      averageRating: (Math.random() * 1.5 + 3.5).toFixed(1), // Random rating between 3.5-5.0
+      averageRating: parseFloat((Math.random() * 1.5 + 3.5).toFixed(1)), // Random rating between 3.5-5.0
       monthlyRevenue: Math.floor(Math.random() * 100000 + 50000), // Random revenue
       status: 'active',
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
+    // Store the new property in our in-memory store
+    createdProperties.set(newAccommodation.id, newAccommodation);
+    
     console.log('Created new accommodation:', newAccommodation);
+    console.log('Total created properties:', createdProperties.size);
     res.status(201).json(newAccommodation);
   } catch (error) {
     console.error("Error creating accommodation:", error);
@@ -35,11 +42,15 @@ router.get("/analytics/:hostId", async (req, res) => {
   try {
     const { hostId } = req.params;
 
-    // For demo purposes, return mock data since we don't have real data yet
+    // Calculate analytics including created properties
+    const createdPropsArray = Array.from(createdProperties.values()).filter(p => p.hostId === hostId);
+    const totalCreatedProperties = createdPropsArray.length;
+    const totalCreatedRooms = createdPropsArray.reduce((sum, p) => sum + p.totalRooms, 0);
+
     const analytics = {
-      totalProperties: 3,
-      activeProperties: 3,
-      totalRooms: 125,
+      totalProperties: 3 + totalCreatedProperties,
+      activeProperties: 3 + totalCreatedProperties,
+      totalRooms: 125 + totalCreatedRooms,
       averageRating: 4.6,
       totalBookings: 89,
       monthlyBookings: 32,
@@ -63,8 +74,8 @@ router.get("/properties/:hostId", async (req, res) => {
     const { hostId } = req.params;
     const { type, status, limit = "50", offset = "0" } = req.query;
 
-    // For demo purposes, return mock data
-    const properties = [
+    // Base mock properties
+    const baseProperties = [
       {
         id: '1',
         name: 'Paradise Beach Resort',
@@ -127,35 +138,25 @@ router.get("/properties/:hostId", async (req, res) => {
       }
     ];
 
+    // Add all created properties to the base properties
+    const createdPropsArray = Array.from(createdProperties.values()).filter(p => p.hostId === hostId);
+    const allProperties = [...baseProperties, ...createdPropsArray];
+
     // Filter by type if specified
-    let filteredProperties = properties;
+    let filteredProperties = allProperties;
     if (type && type !== "all") {
-      filteredProperties = properties.filter(p => p.type === type);
+      filteredProperties = allProperties.filter(p => p.type === type);
     }
     
     if (status && status !== "all") {
       filteredProperties = filteredProperties.filter(p => p.status === status);
     }
 
+    console.log(`Returning ${filteredProperties.length} properties (${createdPropsArray.length} created, ${baseProperties.length} base)`);
     res.json(filteredProperties);
   } catch (error) {
     console.error("Error fetching accommodations:", error);
     res.status(500).json({ error: "Failed to fetch accommodations" });
-  }
-});
-
-// Create new accommodation
-router.post("/properties", async (req, res) => {
-  try {
-    const [newAccommodation] = await db
-      .insert(accommodations)
-      .values(req.body)
-      .returning();
-
-    res.status(201).json(newAccommodation);
-  } catch (error) {
-    console.error("Error creating accommodation:", error);
-    res.status(500).json({ error: "Failed to create accommodation" });
   }
 });
 
