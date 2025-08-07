@@ -59,6 +59,106 @@ export const TravelHomePage = (): JSX.Element => {
         </div>
       </section>
 
+      {/* Recommended Section */}
+      <section className="px-8 py-16 bg-gray-50">
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Left Column - Main Content */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Recommended Tours */}
+            <div>
+              <h2 className="prada-heading text-2xl text-black mb-6 font-light">Recommended</h2>
+              <div className="space-y-4">
+                <div className="flex items-center text-sm text-gray-600 font-light tracking-wide">
+                  <span className="mr-4">JQ Tours</span>
+                  <div className="bg-[#D4AF37] text-black px-2 py-1 text-xs font-light tracking-wider prada-corner-radius">
+                    POPULAR
+                  </div>
+                </div>
+                <div className="flex space-x-3 overflow-x-auto">
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <div key={i} className="flex-shrink-0 w-16 h-16 prada-corner-radius overflow-hidden">
+                      <img 
+                        src={`https://images.unsplash.com/photo-150617009${i}0-6c4444b7${i}3bc?w=100&h=100&fit=crop&auto=format`}
+                        alt={`Tour ${i}`}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Feature Cards */}
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="prada-card p-6">
+                <h3 className="prada-heading text-lg mb-3 font-light">Personalized Travel Tips for you</h3>
+                <p className="text-sm text-gray-600 font-light leading-relaxed">
+                  Powered by AI
+                </p>
+              </div>
+              
+              <div className="prada-card p-6">
+                <h3 className="prada-heading text-lg mb-3 font-light">Join Tala</h3>
+                <p className="text-sm text-gray-600 font-light leading-relaxed">
+                  Connect with other tourist enthusiast
+                </p>
+              </div>
+              
+              <div className="prada-card p-6">
+                <h3 className="prada-heading text-lg mb-3 font-light">Lakbay Tales</h3>
+                <p className="text-sm text-gray-600 font-light leading-relaxed">
+                  Share your island stories. Read your travel memories
+                </p>
+              </div>
+            </div>
+
+            {/* Your Lakbays */}
+            <div>
+              <h3 className="prada-heading text-xl text-black mb-6 font-light">Your Lakbays</h3>
+              <div className="flex space-x-4 text-sm text-gray-600 font-light tracking-wider mb-6">
+                <button className="border-b-2 border-[#D4AF37] pb-1">Upcoming</button>
+                <button className="pb-1 hover:border-b-2 hover:border-gray-300 transition-all">Past trips</button>
+              </div>
+              
+              <div className="flex space-x-4">
+                {[1, 2].map((i) => (
+                  <div key={i} className="w-32 h-32 prada-corner-radius overflow-hidden group">
+                    <img 
+                      src={`https://images.unsplash.com/photo-150617009${i}0-6c4444b7${i}3bc?w=200&h=200&fit=crop&auto=format`}
+                      alt={`Lakbay ${i}`}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Philippines Map */}
+          <div className="lg:col-span-1">
+            <div className="prada-card p-6 h-full">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="prada-heading text-lg font-light">Philippines</h3>
+              </div>
+              <div className="aspect-square relative">
+                {/* Simplified Philippines Map Placeholder */}
+                <div className="w-full h-full bg-gray-200 prada-corner-radius flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-32 h-40 mx-auto mb-4 bg-gray-300 prada-corner-radius relative">
+                      {/* Basic Philippines shape */}
+                      <div className="absolute inset-2 border-2 border-gray-400 prada-corner-radius"></div>
+                      <div className="absolute top-1 right-1 w-2 h-2 bg-[#D4AF37] rounded-full"></div>
+                      <div className="absolute bottom-3 left-2 w-2 h-2 bg-[#D4AF37] rounded-full"></div>
+                    </div>
+                    <p className="text-xs text-gray-500 font-light">Interactive Map</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Trending Articles */}
       <section className="px-8 py-16">
         <h2 className="prada-heading text-3xl text-black mb-12 font-light">TRENDING ARTICLES</h2>
