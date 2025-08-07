@@ -119,7 +119,7 @@ const AccommodationDashboard = () => {
   // Fetch properties
   const { data: properties = [], isLoading: propertiesLoading } = useQuery<Property[]>({
     queryKey: ['/api/accommodation/properties', currentHostId, selectedFilter],
-    queryFn: () => apiRequest('GET', `/api/accommodation/properties/${currentHostId}?type=${selectedFilter}&limit=50`),
+    queryFn: () => apiRequest('GET', `/api/accommodation/properties/${currentHostId}?type=${selectedFilter === 'all' ? 'all' : selectedFilter}&limit=50`),
   });
 
   // Fetch bookings for active properties
