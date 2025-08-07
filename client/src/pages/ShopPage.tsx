@@ -84,11 +84,7 @@ export default function ShopPage() {
             alt={product.name}
             className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
           />
-          {product.salePrice && (
-            <Badge className="absolute top-2 left-2 bg-red-500 text-white">
-              SALE
-            </Badge>
-          )}
+
           <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <Button size="sm" variant="secondary" className="h-8 w-8 p-0">
               <Heart className="h-4 w-4" />

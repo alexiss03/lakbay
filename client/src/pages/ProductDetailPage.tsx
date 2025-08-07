@@ -248,11 +248,7 @@ export default function ProductDetailPage() {
                 {formatPrice(getOriginalPrice())}
               </span>
             )}
-            {isOnSale() && (
-              <Badge className="bg-red-500 text-white">
-                SALE
-              </Badge>
-            )}
+
           </div>
 
           {/* Stock Status */}
