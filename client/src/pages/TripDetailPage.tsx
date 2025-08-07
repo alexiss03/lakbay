@@ -53,6 +53,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
   const [isBooked, setIsBooked] = useState(false); // Trip booking status
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentAudioTrack, setCurrentAudioTrack] = useState<number | null>(null);
+  const [activeNavTab, setActiveNavTab] = useState("Home");
   
   // Quiz state
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -898,10 +899,6 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
     return <div>Loading...</div>;
   }
 
-  // Debug: Check trip structure
-  console.log("Trip object keys:", Object.keys(trip));
-  console.log("Trip category:", trip.category);
-  
   // Type guard for quiz trips
   const isQuizTrip = (trip: any): trip is QuizTrip => {
     return trip.category === "online-quiz" && trip.quiz;
@@ -916,14 +913,46 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
             <div className="w-8 h-8 bg-black prada-corner-radius cursor-pointer"></div>
           </Link>
           
-          <nav className="flex items-center space-x-12">
-            <Link href="/" className="prada-nav-link text-black font-light tracking-wider text-xs uppercase">Home</Link>
-            <a href="#" className="prada-nav-link text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase">Trails</a>
-            <a href="#" className="prada-nav-link text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase">Story</a>
-            <a href="#" className="prada-nav-link text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase">Shop</a>
-            <a href="#" className="prada-nav-link text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase">Corporate</a>
-            <a href="#" className="prada-nav-link text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase">Explore</a>
-          </nav>
+          <Tabs value={activeNavTab} onValueChange={setActiveNavTab} className="flex-1">
+            <TabsList className="bg-transparent h-auto p-0 space-x-12 border-none">
+              <TabsTrigger 
+                value="Home" 
+                className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
+              >
+                Home
+              </TabsTrigger>
+              <TabsTrigger 
+                value="Trails" 
+                className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
+              >
+                Trails
+              </TabsTrigger>
+              <TabsTrigger 
+                value="Story" 
+                className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
+              >
+                Story
+              </TabsTrigger>
+              <TabsTrigger 
+                value="Shop" 
+                className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
+              >
+                Shop
+              </TabsTrigger>
+              <TabsTrigger 
+                value="Corporate" 
+                className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
+              >
+                Corporate
+              </TabsTrigger>
+              <TabsTrigger 
+                value="Explore" 
+                className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
+              >
+                Explore
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
           
           <div className="flex items-center space-x-4">
             <Button variant="outline" className="prada-button border-black text-xs font-light tracking-wider">LOG IN</Button>
@@ -947,15 +976,14 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-8 py-8 grid lg:grid-cols-3 gap-8">
-        {/* Quiz Interface for Online Quiz Category */}
-        {trip.category === "online-quiz" ? (
+      {/* Navigation Tab Content */}
+      <Tabs value={activeNavTab} onValueChange={setActiveNavTab} className="max-w-7xl mx-auto px-8">
+        <TabsContent value="Home">
+          <div className="py-8 grid lg:grid-cols-3 gap-8">
+            {/* Quiz Interface for Online Quiz Category */}
+        {isQuizTrip(trip) ? (
           <div className="lg:col-span-2">
             <Card className="prada-card p-8">
-              <div className="text-center">
-                <h2>Quiz functionality temporarily disabled for debugging</h2>
-                <p>The quiz will be restored shortly.</p>
-              </div>
               {!quizStarted ? (
                 // Quiz Introduction
                 <div className="text-center space-y-6">
@@ -2212,7 +2240,54 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
             </div>
           </Card>
         </div>
-      </div>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="Trails">
+          <div className="py-8">
+            <div className="text-center text-gray-500">
+              <h2 className="text-2xl font-light mb-4">Trails Section</h2>
+              <p>Discover amazing trail adventures and hiking experiences.</p>
+            </div>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="Story">
+          <div className="py-8">
+            <div className="text-center text-gray-500">
+              <h2 className="text-2xl font-light mb-4">Our Story</h2>
+              <p>Learn about Lakbay's mission and journey in adventure travel.</p>
+            </div>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="Shop">
+          <div className="py-8">
+            <div className="text-center text-gray-500">
+              <h2 className="text-2xl font-light mb-4">Adventure Shop</h2>
+              <p>Browse our curated collection of travel gear and equipment.</p>
+            </div>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="Corporate">
+          <div className="py-8">
+            <div className="text-center text-gray-500">
+              <h2 className="text-2xl font-light mb-4">Corporate Travel</h2>
+              <p>Custom adventure experiences for teams and organizations.</p>
+            </div>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="Explore">
+          <div className="py-8">
+            <div className="text-center text-gray-500">
+              <h2 className="text-2xl font-light mb-4">Explore More</h2>
+              <p>Discover hidden gems and unique travel experiences.</p>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
 
       {/* Chat Widget */}
       <ChatWidget />
