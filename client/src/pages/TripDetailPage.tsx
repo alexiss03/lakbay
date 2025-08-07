@@ -9,7 +9,7 @@ import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { ChatWidget } from "@/components/ChatWidget";
 import { TrailMap } from "@/components/TrailMap";
-import { MapPin, Star, Clock, Users, Calendar, Shield, AlertTriangle, CheckCircle2, Mountain, TrendingUp, MapIcon } from "lucide-react";
+import { MapPin, Star, Clock, Users, Calendar, Shield, AlertTriangle, CheckCircle2, Mountain, TrendingUp, MapIcon, Headphones, Play, Pause, Download, Volume2 } from "lucide-react";
 
 interface TripDetailPageProps {
   params?: {
@@ -24,6 +24,9 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
   const [checkOut, setCheckOut] = useState("09/16/2025");
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeTab, setActiveTab] = useState("Event details");
+  const [isBooked, setIsBooked] = useState(false); // Trip booking status
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentAudioTrack, setCurrentAudioTrack] = useState<number | null>(null);
   const { toast } = useToast();
 
   // Check for payment status in URL
@@ -116,6 +119,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
       const data = await response.json();
 
       if (data.success) {
+        setIsBooked(true); // Mark trip as booked
         toast({
           title: "Reservation Confirmed",
           description: "Your trip has been reserved. Complete payment within 24 hours.",
@@ -133,6 +137,30 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  // Audio book functionality
+  const handlePlayAudio = (trackIndex: number) => {
+    if (currentAudioTrack === trackIndex && isPlaying) {
+      setIsPlaying(false);
+      setCurrentAudioTrack(null);
+    } else {
+      setCurrentAudioTrack(trackIndex);
+      setIsPlaying(true);
+      // In a real app, this would control actual audio playback
+      toast({
+        title: "Audio Playing",
+        description: `Playing itinerary day ${trackIndex + 1} audio guide`,
+      });
+    }
+  };
+
+  const handleDownloadAudio = (trackIndex: number) => {
+    toast({
+      title: "Download Started",
+      description: `Downloading audio guide for day ${trackIndex + 1}`,
+    });
+    // In a real app, this would trigger actual download
   };
 
   // Comprehensive trip data based on route and category
@@ -1613,88 +1641,189 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
           </Tabs>
         </div>
 
-        {/* Booking Sidebar */}
+        {/* Booking Sidebar or Audio Book Section */}
         <div className="space-y-6">
-          <Card className="p-6">
-            <div className="text-center mb-4">
-              <span className="text-2xl font-bold text-gray-900">{trip.price}</span>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Guests</label>
-                <Select value={guests} onValueChange={setGuests}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1 guest">1 guest</SelectItem>
-                    <SelectItem value="2 guests">2 guests</SelectItem>
-                    <SelectItem value="3 guests">3 guests</SelectItem>
-                    <SelectItem value="4 guests">4 guests</SelectItem>
-                  </SelectContent>
-                </Select>
+          {!isBooked ? (
+            /* Original Booking Section */
+            <Card className="p-6">
+              <div className="text-center mb-4">
+                <span className="text-2xl font-bold text-gray-900">{trip.price}</span>
               </div>
               
-              <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Check in</label>
-                  <Input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Guests</label>
+                  <Select value={guests} onValueChange={setGuests}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1 guest">1 guest</SelectItem>
+                      <SelectItem value="2 guests">2 guests</SelectItem>
+                      <SelectItem value="3 guests">3 guests</SelectItem>
+                      <SelectItem value="4 guests">4 guests</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Check out</label>
-                  <Input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} />
-                </div>
-              </div>
-
-              {/* Price Breakdown */}
-              <div className="border-t pt-3 space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>{trip.price} x {guests}</span>
-                  <span>₱{(parseInt(trip.price.replace(/[^\d]/g, "")) * parseInt(guests.split(" ")[0])).toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between font-semibold">
-                  <span>Total</span>
-                  <span>₱{(parseInt(trip.price.replace(/[^\d]/g, "")) * parseInt(guests.split(" ")[0])).toLocaleString()}</span>
-                </div>
-              </div>
-              
-              <Button 
-                onClick={handleReservation}
-                disabled={isProcessing}
-                className="w-full bg-[#D4AF37] hover:bg-[#B8941F] text-black font-medium"
-              >
-                {isProcessing ? "Processing..." : "Reserve (24h hold)"}
-              </Button>
-              
-              <Button 
-                onClick={handlePayMongoPayment}
-                disabled={isProcessing}
-                className="w-full bg-gray-900 hover:bg-gray-800 text-white font-medium"
-              >
-                {isProcessing ? "Processing..." : "Book Now with PayMongo"}
-              </Button>
-
-              <div className="text-center">
-                <p className="text-xs text-gray-500 mb-2">Secure payment powered by</p>
-                <div className="flex items-center justify-center space-x-2">
-                  <div className="bg-[#1a56db] text-white px-3 py-1 rounded text-xs font-semibold">
-                    PayMongo
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Check in</label>
+                    <Input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} />
                   </div>
-                  <span className="text-xs text-gray-400">SSL Encrypted</span>
-                </div>
-                <div className="flex items-center justify-center space-x-3 mt-2">
-                  <span className="text-xs text-gray-500">Accepts:</span>
-                  <div className="flex space-x-1">
-                    <div className="bg-blue-600 text-white px-2 py-1 rounded text-xs">GCash</div>
-                    <div className="bg-green-600 text-white px-2 py-1 rounded text-xs">Maya</div>
-                    <div className="bg-purple-600 text-white px-2 py-1 rounded text-xs">Cards</div>
-                    <div className="bg-orange-600 text-white px-2 py-1 rounded text-xs">GrabPay</div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Check out</label>
+                    <Input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} />
                   </div>
                 </div>
+
+                {/* Price Breakdown */}
+                <div className="border-t pt-3 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>{trip.price} x {guests}</span>
+                    <span>₱{(parseInt(trip.price.replace(/[^\d]/g, "")) * parseInt(guests.split(" ")[0])).toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between font-semibold">
+                    <span>Total</span>
+                    <span>₱{(parseInt(trip.price.replace(/[^\d]/g, "")) * parseInt(guests.split(" ")[0])).toLocaleString()}</span>
+                  </div>
+                </div>
+                
+                <Button 
+                  onClick={handleReservation}
+                  disabled={isProcessing}
+                  className="w-full bg-[#D4AF37] hover:bg-[#B8941F] text-black font-medium"
+                >
+                  {isProcessing ? "Processing..." : "Reserve (24h hold)"}
+                </Button>
+                
+                <Button 
+                  onClick={handlePayMongoPayment}
+                  disabled={isProcessing}
+                  className="w-full bg-gray-900 hover:bg-gray-800 text-white font-medium"
+                >
+                  {isProcessing ? "Processing..." : "Book Now with PayMongo"}
+                </Button>
+
+                <div className="text-center">
+                  <p className="text-xs text-gray-500 mb-2">Secure payment powered by</p>
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="bg-[#1a56db] text-white px-3 py-1 rounded text-xs font-semibold">
+                      PayMongo
+                    </div>
+                    <span className="text-xs text-gray-400">SSL Encrypted</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-3 mt-2">
+                    <span className="text-xs text-gray-500">Accepts:</span>
+                    <div className="flex space-x-1">
+                      <div className="bg-blue-600 text-white px-2 py-1 rounded text-xs">GCash</div>
+                      <div className="bg-green-600 text-white px-2 py-1 rounded text-xs">Maya</div>
+                      <div className="bg-purple-600 text-white px-2 py-1 rounded text-xs">Cards</div>
+                      <div className="bg-orange-600 text-white px-2 py-1 rounded text-xs">GrabPay</div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          ) : (
+            /* Audio Book Section for Booked Trips */
+            <Card className="p-6">
+              <div className="text-center mb-6">
+                <div className="flex items-center justify-center mb-3">
+                  <Headphones className="w-8 h-8 text-[#D4AF37] mr-2" />
+                  <h2 className="text-xl font-bold text-gray-900">Audio Guide Available</h2>
+                </div>
+                <p className="text-sm text-gray-600">AI-generated itinerary audio guides for your booked trip</p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                  <div className="flex items-center justify-center text-green-700">
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    <span className="text-sm font-medium">Trip Confirmed</span>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-gray-900 flex items-center">
+                    <Volume2 className="w-4 h-4 mr-2 text-[#D4AF37]" />
+                    Daily Audio Guides
+                  </h3>
+                  
+                  {trip.itinerary.map((day, index) => (
+                    <div key={index} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center">
+                          <div className="w-6 h-6 bg-[#D4AF37] text-black rounded-full flex items-center justify-center text-xs font-bold mr-3">
+                            {day.day}
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-gray-900 text-sm">{day.title}</h4>
+                            <p className="text-xs text-gray-600">Duration: 8-12 min</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handlePlayAudio(index)}
+                            className="flex items-center p-2"
+                          >
+                            {currentAudioTrack === index && isPlaying ? (
+                              <Pause className="w-4 h-4" />
+                            ) : (
+                              <Play className="w-4 h-4" />
+                            )}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDownloadAudio(index)}
+                            className="flex items-center p-2"
+                          >
+                            <Download className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      {currentAudioTrack === index && isPlaying && (
+                        <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded">
+                          <div className="flex items-center text-blue-700 text-sm">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse"></div>
+                            Now playing: AI-generated guide for {day.title}
+                          </div>
+                          <div className="w-full bg-blue-200 rounded-full h-1 mt-2">
+                            <div className="bg-blue-500 h-1 rounded-full animate-pulse" style={{width: '45%'}}></div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      <p className="text-xs text-gray-600 mt-2 line-clamp-2">
+                        AI-generated audio description covering {day.description.toLowerCase()}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="border-t pt-4">
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                    <div className="flex items-start">
+                      <Headphones className="w-4 h-4 text-amber-600 mr-2 mt-0.5 flex-shrink-0" />
+                      <div className="text-xs text-amber-700">
+                        <p className="font-medium mb-1">Audio Guide Features:</p>
+                        <ul className="space-y-0.5">
+                          <li>• AI-powered narration with local insights</li>
+                          <li>• Offline download for areas with poor connectivity</li>
+                          <li>• Personalized content based on your interests</li>
+                          <li>• Available in multiple languages</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          )}
 
           {/* Host Information */}
           <Card className="p-6">
