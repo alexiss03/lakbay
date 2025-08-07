@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Calendar, Users, Star, Clock, Brain, Sparkles } from "lucide-react";
 import { Link } from "wouter";
 import { ChatWidget } from "@/components/ChatWidget";
 import { TrendingArticlesSection } from "@/components/TrendingArticlesSection";
@@ -90,12 +93,177 @@ export const TravelHomePage = (): JSX.Element => {
 
             {/* Feature Cards */}
             <div className="grid md:grid-cols-3 gap-4">
-              <div className="prada-card p-6">
-                <h3 className="prada-heading text-lg mb-3 font-light">Personalized Travel Tips for you</h3>
-                <p className="text-sm text-gray-600 font-light leading-relaxed">
-                  Powered by AI
-                </p>
-              </div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div className="prada-card p-6 cursor-pointer hover:shadow-lg transition-shadow">
+                    <h3 className="prada-heading text-lg mb-3 font-light flex items-center">
+                      <Brain className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                      Personalized Travel Tips for you
+                    </h3>
+                    <p className="text-sm text-gray-600 font-light leading-relaxed">
+                      Powered by AI
+                    </p>
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="prada-heading text-2xl font-light flex items-center">
+                      <Sparkles className="w-6 h-6 mr-2 text-[#D4AF37]" />
+                      AI-Powered Trip Recommendations
+                    </DialogTitle>
+                  </DialogHeader>
+                  
+                  <div className="space-y-6 mt-6">
+                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 prada-corner-radius">
+                      <h3 className="prada-heading text-lg mb-3 font-light">Based on Your Travel Profile</h3>
+                      <p className="text-sm text-gray-600 font-light leading-relaxed">
+                        Our AI analyzed your preferences for adventure travel, cultural experiences, and island destinations to create these personalized recommendations.
+                      </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {[
+                        {
+                          id: 1,
+                          title: "Siargao Surf & Culture Immersion",
+                          location: "Siargao, Philippines",
+                          duration: "5 days",
+                          participants: "8-12 people",
+                          price: "₱18,500",
+                          rating: 4.9,
+                          image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop",
+                          highlights: ["World-class surfing", "Local fishing village tour", "Island hopping", "Traditional Filipino cooking class"],
+                          aiReason: "Perfect match for your love of water sports and cultural experiences",
+                          confidence: 95
+                        },
+                        {
+                          id: 2,
+                          title: "Bohol Hidden Gems Explorer",
+                          location: "Bohol, Philippines",
+                          duration: "4 days",
+                          participants: "6-10 people",
+                          price: "₱12,800",
+                          rating: 4.7,
+                          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop",
+                          highlights: ["Chocolate Hills trek", "Tarsier sanctuary visit", "Underground river exploration", "Local market tour"],
+                          aiReason: "Ideal blend of nature adventure and wildlife experiences you enjoy",
+                          confidence: 88
+                        },
+                        {
+                          id: 3,
+                          title: "Batanes Untouched Paradise",
+                          location: "Batanes, Philippines",
+                          duration: "6 days",
+                          participants: "4-8 people",
+                          price: "₱24,200",
+                          rating: 4.8,
+                          image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop",
+                          highlights: ["Rolling hills landscape", "Traditional stone houses", "Lighthouse trail", "Ivatan cultural immersion"],
+                          aiReason: "Matches your preference for remote destinations and authentic cultural experiences",
+                          confidence: 92
+                        },
+                        {
+                          id: 4,
+                          title: "Palawan Underground Wonders",
+                          location: "Palawan, Philippines",
+                          duration: "7 days",
+                          participants: "10-14 people",
+                          price: "₱19,750",
+                          rating: 4.9,
+                          image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop",
+                          highlights: ["Underground river expedition", "El Nido island hopping", "Coron wreck diving", "Wildlife sanctuary visit"],
+                          aiReason: "Combines adventure activities with natural wonders you've shown interest in",
+                          confidence: 90
+                        }
+                      ].map((trip) => (
+                        <Card key={trip.id} className="prada-card p-6 hover:shadow-lg transition-shadow">
+                          <div className="space-y-4">
+                            <div className="relative">
+                              <img
+                                src={trip.image}
+                                alt={trip.title}
+                                className="w-full h-40 object-cover prada-corner-radius"
+                              />
+                              <Badge className="absolute top-2 right-2 bg-[#D4AF37] text-black">
+                                {trip.confidence}% Match
+                              </Badge>
+                            </div>
+                            
+                            <div>
+                              <h4 className="prada-heading text-lg font-light mb-2">{trip.title}</h4>
+                              <div className="flex items-center text-sm text-gray-600 font-light mb-3">
+                                <MapPin className="w-4 h-4 mr-1" />
+                                {trip.location}
+                              </div>
+                              
+                              <div className="flex flex-wrap gap-3 text-xs text-gray-600 font-light mb-3">
+                                <div className="flex items-center">
+                                  <Clock className="w-3 h-3 mr-1" />
+                                  {trip.duration}
+                                </div>
+                                <div className="flex items-center">
+                                  <Users className="w-3 h-3 mr-1" />
+                                  {trip.participants}
+                                </div>
+                                <div className="flex items-center">
+                                  <Star className="w-3 h-3 mr-1 fill-current text-yellow-400" />
+                                  {trip.rating}
+                                </div>
+                              </div>
+                              
+                              <div className="bg-blue-50 p-3 prada-corner-radius mb-3">
+                                <p className="text-xs text-blue-800 font-light italic">
+                                  <Brain className="w-3 h-3 inline mr-1" />
+                                  {trip.aiReason}
+                                </p>
+                              </div>
+                              
+                              <div className="mb-4">
+                                <h5 className="text-sm font-medium text-gray-900 mb-2">Trip Highlights:</h5>
+                                <ul className="space-y-1">
+                                  {trip.highlights.map((highlight, index) => (
+                                    <li key={index} className="text-xs text-gray-600 font-light flex items-center">
+                                      <div className="w-1 h-1 bg-[#D4AF37] rounded-full mr-2" />
+                                      {highlight}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                              
+                              <div className="flex items-center justify-between">
+                                <div className="text-lg font-light text-[#D4AF37]">{trip.price}</div>
+                                <Link href={`/trip/${trip.id}`}>
+                                  <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black font-light tracking-wider text-xs px-4 py-2">
+                                    VIEW DETAILS
+                                  </Button>
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                    
+                    <div className="bg-gray-50 p-6 prada-corner-radius">
+                      <h3 className="prada-heading text-lg mb-3 font-light">How AI Recommendations Work</h3>
+                      <div className="grid md:grid-cols-3 gap-4 text-sm font-light">
+                        <div>
+                          <h4 className="font-medium text-gray-900 mb-2">Travel History Analysis</h4>
+                          <p className="text-gray-600">AI analyzes your past bookings, ratings, and preferences</p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 mb-2">Behavioral Patterns</h4>
+                          <p className="text-gray-600">Learns from your browsing behavior and trip interactions</p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-900 mb-2">Real-time Updates</h4>
+                          <p className="text-gray-600">Recommendations improve with every trip and review you provide</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
               
               <div className="prada-card p-6">
                 <h3 className="prada-heading text-lg mb-3 font-light">Join Tala</h3>
