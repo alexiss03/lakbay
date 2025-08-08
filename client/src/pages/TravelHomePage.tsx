@@ -10,9 +10,19 @@ import { Link } from "wouter";
 import { ChatWidget } from "@/components/ChatWidget";
 import { TrendingArticlesSection } from "@/components/TrendingArticlesSection";
 import { RecommendedSection } from "@/components/RecommendedSection";
+import { PhilippinesMap } from "@/components/PhilippinesMap";
 
 export const TravelHomePage = (): JSX.Element => {
   const [activeTab, setActiveTab] = useState("Private");
+  
+  // Sample travel history data for the interactive map
+  const travelHistory = [
+    { province: 'Bohol', region: 'Central Visayas', visits: 3, lastVisit: '2024-12-15' },
+    { province: 'Palawan', region: 'MIMAROPA', visits: 2, lastVisit: '2024-11-20' },
+    { province: 'Benguet', region: 'Cordillera', visits: 1, lastVisit: '2024-10-05' },
+    { province: 'Siargao', region: 'Caraga', visits: 2, lastVisit: '2024-09-12' },
+    { province: 'Cebu', region: 'Central Visayas', visits: 4, lastVisit: '2024-08-08' },
+  ];
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -26,7 +36,7 @@ export const TravelHomePage = (): JSX.Element => {
             <Link href="/" className="prada-nav text-black hover:text-gray-600 transition-colors">Home</Link>
             <Link href="/trips" className="prada-nav text-gray-700 hover:text-black transition-colors">Trips</Link>
             <Link href="/chats" className="prada-nav text-gray-700 hover:text-black transition-colors">Chats</Link>
-            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Trails</a>
+            <Link href="/trails" className="prada-nav text-gray-700 hover:text-black transition-colors">Trails</Link>
             <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</a>
             <Link href="/shop" className="prada-nav text-gray-700 hover:text-black transition-colors">Shop</Link>
             <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</a>
@@ -290,18 +300,8 @@ export const TravelHomePage = (): JSX.Element => {
                 <h3 className="prada-heading text-lg font-light">Philippines</h3>
               </div>
               <div className="aspect-square relative">
-                {/* Simplified Philippines Map Placeholder */}
-                <div className="w-full h-full bg-gray-200 prada-corner-radius flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-32 h-40 mx-auto mb-4 bg-gray-300 prada-corner-radius relative">
-                      {/* Basic Philippines shape */}
-                      <div className="absolute inset-2 border-2 border-gray-400 prada-corner-radius"></div>
-                      <div className="absolute top-1 right-1 w-2 h-2 bg-[#D4AF37] rounded-full"></div>
-                      <div className="absolute bottom-3 left-2 w-2 h-2 bg-[#D4AF37] rounded-full"></div>
-                    </div>
-                    <p className="text-xs text-gray-500 font-light">Interactive Map</p>
-                  </div>
-                </div>
+                {/* Interactive Philippines Map */}
+                <PhilippinesMap visitedProvinces={travelHistory} />
               </div>
             </div>
           </div>

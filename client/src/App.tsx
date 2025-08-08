@@ -20,6 +20,7 @@ import HostDashboard from "@/pages/HostDashboard";
 import AccommodationDashboard from "@/pages/AccommodationDashboard";
 import ShopDashboard from "@/pages/ShopDashboard";
 import AudioStudioPage from "@/pages/AudioStudioPage";
+import { TrailsPage } from "@/pages/TrailsPage";
 
 function Router() {
   return (
@@ -30,6 +31,7 @@ function Router() {
       <Route path="/signup" component={SignupPage} />
       <Route path="/trips" component={TripsPage} />
       <Route path="/chats" component={ChatPage} />
+      <Route path="/trails" component={TrailsPage} />
       <Route path="/article/:slug" component={ArticlePage} />
       <Route path="/trip/:id" component={TripDetailPage} />
       <Route path="/shop" component={ShopPage} />

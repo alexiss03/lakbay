@@ -125,7 +125,7 @@ export const ArticlePage = ({ params }: ArticlePageProps): JSX.Element => {
             <Link href="/" className="text-gray-900 font-medium">Home</Link>
             <Link href="/trips" className="text-gray-700 hover:text-gray-900">Trips</Link>
             <Link href="/chats" className="text-gray-700 hover:text-gray-900">Chats</Link>
-            <a href="#" className="text-gray-700 hover:text-gray-900">Trails</a>
+            <Link href="/trails" className="text-gray-700 hover:text-gray-900">Trails</Link>
             <a href="#" className="text-gray-700 hover:text-gray-900">Story</a>
             <Link href="/shop" className="text-gray-700 hover:text-gray-900">Shop</Link>
             <a href="#" className="text-gray-700 hover:text-gray-900">Corporate</a>

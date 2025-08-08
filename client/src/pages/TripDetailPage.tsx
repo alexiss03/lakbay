@@ -941,6 +941,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
               <TabsTrigger 
                 value="Trails" 
                 className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
+                onClick={() => window.location.href = '/trails'}
               >
                 Trails
               </TabsTrigger>

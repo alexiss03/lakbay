@@ -13,7 +13,7 @@ interface PhilippinesMapProps {
 }
 
 // Province coordinates mapping
-const provinceCoordinates: Record<string, google.maps.LatLngLiteral> = {
+const provinceCoordinates: Record<string, { lat: number; lng: number }> = {
   'Bohol': { lat: 9.8349, lng: 124.1436 },
   'Palawan': { lat: 9.5340, lng: 118.7675 },
   'Benguet': { lat: 16.4023, lng: 120.5979 },
@@ -32,7 +32,7 @@ const provinceCoordinates: Record<string, google.maps.LatLngLiteral> = {
 };
 
 // Philippines provincial boundaries (simplified polygons for major provinces)
-const provincePolygons: Record<string, google.maps.LatLngLiteral[]> = {
+const provincePolygons: Record<string, { lat: number; lng: number }[]> = {
   'Bohol': [
     { lat: 9.5000, lng: 123.7000 },
     { lat: 10.1000, lng: 123.7000 },
@@ -73,7 +73,7 @@ const provincePolygons: Record<string, google.maps.LatLngLiteral[]> = {
 
 export const PhilippinesMap: React.FC<PhilippinesMapProps> = ({ visitedProvinces }) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [map, setMap] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
