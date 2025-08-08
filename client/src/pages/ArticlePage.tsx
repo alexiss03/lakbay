@@ -123,11 +123,12 @@ export const ArticlePage = ({ params }: ArticlePageProps): JSX.Element => {
           
           <nav className="flex items-center space-x-8">
             <Link href="/" className="text-gray-900 font-medium">Home</Link>
+            <Link href="/trips" className="text-gray-700 hover:text-gray-900">Trips</Link>
+            <Link href="/chats" className="text-gray-700 hover:text-gray-900">Chats</Link>
             <a href="#" className="text-gray-700 hover:text-gray-900">Trails</a>
             <a href="#" className="text-gray-700 hover:text-gray-900">Story</a>
-            <a href="#" className="text-gray-700 hover:text-gray-900">Shop</a>
+            <Link href="/shop" className="text-gray-700 hover:text-gray-900">Shop</Link>
             <a href="#" className="text-gray-700 hover:text-gray-900">Corporate</a>
-            <a href="#" className="text-gray-700 hover:text-gray-900">Explore</a>
           </nav>
           
           <div className="flex items-center space-x-4">

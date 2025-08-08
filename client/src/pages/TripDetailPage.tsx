@@ -927,6 +927,18 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                 Home
               </TabsTrigger>
               <TabsTrigger 
+                value="Trips" 
+                className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
+              >
+                Trips
+              </TabsTrigger>
+              <TabsTrigger 
+                value="Chats" 
+                className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
+              >
+                Chats
+              </TabsTrigger>
+              <TabsTrigger 
                 value="Trails" 
                 className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
               >
@@ -949,12 +961,6 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                 className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
               >
                 Corporate
-              </TabsTrigger>
-              <TabsTrigger 
-                value="Explore" 
-                className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
-              >
-                Explore
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -1894,35 +1900,35 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
               <Card className="p-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-6">What to Bring</h2>
                 
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-6">
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-4 text-green-700">Essential Items</h3>
-                    <ul className="space-y-2 text-sm">
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span><strong>Valid passport</strong> - Required for domestic flights</span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span><strong>Travel insurance documents</strong> - Highly recommended</span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span><strong>Personal medications</strong> - Bring extra supplies</span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span><strong>Sunscreen (SPF 50+)</strong> - Tropical sun is intense</span>
-                      </li>
-                      <li className="flex items-start space-x-2">
-                        <CheckCircle2 className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                        <span><strong>Insect repellent</strong> - DEET-based recommended</span>
-                      </li>
-                    </ul>
+                    <h3 className="font-semibold text-gray-900 mb-3 text-green-700">Essential Items</h3>
+                    <div className="grid grid-cols-1 gap-1.5 text-sm">
+                      <div className="flex items-center space-x-2">
+                        <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                        <span>Valid passport - Required for domestic flights</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                        <span>Travel insurance documents - Highly recommended</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                        <span>Personal medications - Bring extra supplies</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                        <span>Sunscreen (SPF 50+) - Tropical sun is intense</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                        <span>Insect repellent - DEET-based recommended</span>
+                      </div>
+                    </div>
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-4 text-blue-700">Clothing & Gear</h3>
+                    <h3 className="font-semibold text-gray-900 mb-3 text-blue-700">Clothing & Gear</h3>
                     <ul className="space-y-2 text-sm">
                       <li className="flex items-start space-x-2">
                         <CheckCircle2 className="w-4 h-4 mt-0.5 text-blue-600 flex-shrink-0" />

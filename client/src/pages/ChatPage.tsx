@@ -189,14 +189,23 @@ export const ChatPage = (): JSX.Element => {
               <Link href="/" className="text-gray-600 hover:text-[#D4AF37] transition-colors">
                 Home
               </Link>
+              <Link href="/trips" className="text-gray-600 hover:text-[#D4AF37] transition-colors">
+                Trips
+              </Link>
               <Link href="/chats" className="text-[#D4AF37] font-medium">
                 Chats
               </Link>
               <span className="text-gray-600 hover:text-[#D4AF37] transition-colors cursor-pointer">
-                Trips
+                Trails
               </span>
               <span className="text-gray-600 hover:text-[#D4AF37] transition-colors cursor-pointer">
-                Support
+                Story
+              </span>
+              <Link href="/shop" className="text-gray-600 hover:text-[#D4AF37] transition-colors">
+                Shop
+              </Link>
+              <span className="text-gray-600 hover:text-[#D4AF37] transition-colors cursor-pointer">
+                Corporate
               </span>
             </nav>
 
