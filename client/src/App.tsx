@@ -19,6 +19,7 @@ import AdminDashboard from "@/pages/AdminDashboard";
 import HostDashboard from "@/pages/HostDashboard";
 import AccommodationDashboard from "@/pages/AccommodationDashboard";
 import ShopDashboard from "@/pages/ShopDashboard";
+import AudioStudioPage from "@/pages/AudioStudioPage";
 
 function Router() {
   return (
@@ -37,6 +38,7 @@ function Router() {
       <Route path="/host" component={HostDashboard} />
       <Route path="/accommodation" component={AccommodationDashboard} />
       <Route path="/shop-manager" component={ShopDashboard} />
+      <Route path="/audio-studio" component={AudioStudioPage} />
       <Route path="/welcome" component={Box} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />

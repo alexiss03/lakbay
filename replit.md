@@ -86,3 +86,10 @@ This is a full-stack JavaScript application migrated from Figma to Replit enviro
 - Restored simple item lists without shopping integration to previous clean state
 - Maintained standalone shop functionality while removing cross-platform integration
 - **Content Update**: Removed "ISLAND above PHP 15000 per person" content by modifying default fallback trip from "Private Island Adventure in Palawan" (PHP 15000) to "Palawan Beach Experience" (PHP 12500)
+- **Audio Generation System**: Implemented comprehensive audio generation functionality for travel content
+  - Created AudioGenerator.tsx component with text-to-speech, voice recording, and audio analysis capabilities
+  - Built audio API endpoints in server/routes/audio.ts with OpenAI integration for TTS and speech-to-text
+  - Added AudioStudioPage.tsx for professional audio content creation
+  - Integrated multiple voice options (Alloy, Echo, Fable, Onyx, Nova, Shimmer) with speed controls
+  - Features include: tour description audio, safety instruction recordings, welcome messages, and cultural narrations
+  - Added route /audio-studio for dedicated audio creation workspace

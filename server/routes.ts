@@ -5,6 +5,7 @@ import hostRoutes from "./routes/host";
 import chatRoutes from "./routes/chat";
 import accommodationRoutes from "./routes/accommodation";
 import shopRoutes from "./routes/shop";
+import audioRoutes from "./routes/audio";
 import { storage } from "./storage";
 import Stripe from "stripe";
 import { 
@@ -503,6 +504,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Register shop routes
   app.use('/api/shop', shopRoutes);
+
+  // Register audio routes
+  app.use('/api', audioRoutes);
 
   const httpServer = createServer(app);
   return httpServer;
