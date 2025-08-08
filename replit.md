@@ -85,3 +85,4 @@ This is a full-stack JavaScript application migrated from Figma to Replit enviro
 - **Shop Integration Removed**: Reverted shop integration from trip detail pages by removing all "Shop" buttons from "Things to bring" section
 - Restored simple item lists without shopping integration to previous clean state
 - Maintained standalone shop functionality while removing cross-platform integration
+- **Content Update**: Removed "ISLAND above PHP 15000 per person" content by modifying default fallback trip from "Private Island Adventure in Palawan" (PHP 15000) to "Palawan Beach Experience" (PHP 12500)

@@ -760,10 +760,10 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
     
     // Default fallback
     return {
-      title: "Private Island Adventure in Palawan",
+      title: "Palawan Beach Experience",
       duration: "September 20-23, 2025",
-      price: "PHP 15000 per person",
-      category: "island",
+      price: "PHP 12500 per person",
+      category: "beach",
       heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=400&fit=crop&auto=format",
       host: {
         name: "Juan Dela Cruz",
