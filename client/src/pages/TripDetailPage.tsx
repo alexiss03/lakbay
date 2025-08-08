@@ -9,6 +9,7 @@ import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { ChatWidget } from "@/components/ChatWidget";
 import { TrailMap } from "@/components/TrailMap";
+import { AdminAudioModal } from "@/components/AdminAudioModal";
 import { MapPin, Star, Clock, Users, Calendar, Shield, AlertTriangle, CheckCircle2, Mountain, TrendingUp, MapIcon, Headphones, Play, Pause, Download, Volume2, Utensils, Package, Brain, Award, Timer, Target, ShoppingCart, Heart, Search, Monitor } from "lucide-react";
 
 interface TripDetailPageProps {
@@ -53,6 +54,10 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
   const [isBooked, setIsBooked] = useState(false); // Trip booking status
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentAudioTrack, setCurrentAudioTrack] = useState<number | null>(null);
+  const [showAudioModal, setShowAudioModal] = useState(false);
+  
+  // Mock admin check - in real app this would come from auth context
+  const isAdmin = true; // For demo purposes
   const [activeNavTab, setActiveNavTab] = useState("Home");
   
   // Quiz state
@@ -994,6 +999,20 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
           <h1 className="prada-heading text-4xl font-light mb-3">{trip.title}</h1>
           <p className="text-lg font-light tracking-wide opacity-90">{trip.duration}</p>
         </div>
+        
+        {/* Admin Audio Generation Button */}
+        {isAdmin && (
+          <div className="absolute top-4 right-4">
+            <Button
+              onClick={() => setShowAudioModal(true)}
+              className="bg-[#D4AF37] hover:bg-[#B8941F] text-black text-xs font-light tracking-wider prada-corner-radius flex items-center gap-2"
+              size="sm"
+            >
+              <Volume2 className="w-4 h-4" />
+              Generate Audio
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Navigation Tab Content */}
@@ -2436,6 +2455,23 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
 
       {/* Chat Widget */}
       <ChatWidget />
+
+      {/* Admin Audio Modal */}
+      {isAdmin && (
+        <AdminAudioModal
+          isOpen={showAudioModal}
+          onClose={() => setShowAudioModal(false)}
+          tripData={{
+            title: trip.title,
+            duration: trip.duration,
+            price: trip.price,
+            category: trip.category,
+            host: trip.host,
+            itinerary: trip.itinerary || [],
+            meetingPlace: trip.meetingPlace
+          }}
+        />
+      )}
     </div>
   );
 };
