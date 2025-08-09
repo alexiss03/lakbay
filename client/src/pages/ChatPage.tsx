@@ -190,7 +190,7 @@ export const ChatPage = (): JSX.Element => {
                 Home
               </Link>
               <Link href="/trips" className="text-gray-600 hover:text-[#D4AF37] transition-colors">
-                My Trips
+                Trips
               </Link>
               <Link href="/chats" className="text-[#D4AF37] font-medium">
                 Chats
