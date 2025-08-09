@@ -145,187 +145,194 @@ export const InteractiveTrailMap: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Trail Selection */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {sampleTrails.map((trail) => (
-          <Card 
-            key={trail.id} 
-            className={`p-4 cursor-pointer transition-all hover:shadow-md ${
-              selectedTrail.id === trail.id ? 'ring-2 ring-[#D4AF37] bg-[#D4AF37]/5' : ''
-            }`}
-            onClick={() => setSelectedTrail(trail)}
-          >
-            <div className="flex items-start justify-between mb-3">
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-1">{trail.name}</h3>
-                <p className="text-sm text-gray-600">{trail.region}</p>
+    <div className="flex h-[calc(100vh-240px)] gap-6">
+      {/* Left: Trail Selection List */}
+      <div className="w-1/3 flex flex-col">
+        <h3 className="text-lg font-semibold mb-4 text-gray-900">Available Trails</h3>
+        <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+          {sampleTrails.map((trail) => (
+            <Card 
+              key={trail.id} 
+              className={`p-4 cursor-pointer transition-all hover:shadow-md ${
+                selectedTrail.id === trail.id ? 'ring-2 ring-[#D4AF37] bg-[#D4AF37]/5' : ''
+              }`}
+              onClick={() => setSelectedTrail(trail)}
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">{trail.name}</h3>
+                  <p className="text-sm text-gray-600">{trail.region}</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge className={getDifficultyColor(trail.difficulty)}>
+                    {trail.difficulty}
+                  </Badge>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFavorite(trail.id);
+                    }}
+                    className="p-1 h-auto"
+                  >
+                    <Heart 
+                      className={`w-4 h-4 ${
+                        favorites.includes(trail.id) 
+                          ? 'fill-red-500 text-red-500' 
+                          : 'text-gray-400'
+                      }`} 
+                    />
+                  </Button>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <Badge className={getDifficultyColor(trail.difficulty)}>
-                  {trail.difficulty}
-                </Badge>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleFavorite(trail.id);
-                  }}
-                  className="p-1 h-auto"
-                >
-                  <Heart 
-                    className={`w-4 h-4 ${
-                      favorites.includes(trail.id) 
-                        ? 'fill-red-500 text-red-500' 
-                        : 'text-gray-400'
-                    }`} 
-                  />
-                </Button>
+              
+              <div className="grid grid-cols-1 gap-1 text-xs text-gray-600 mb-3">
+                <div className="flex items-center">
+                  <Navigation className="w-3 h-3 mr-1" />
+                  {trail.distance}
+                </div>
+                <div className="flex items-center">
+                  <TrendingUp className="w-3 h-3 mr-1" />
+                  {trail.elevation}
+                </div>
+                <div className="flex items-center">
+                  <Clock className="w-3 h-3 mr-1" />
+                  {trail.duration}
+                </div>
               </div>
-            </div>
-            
-            <div className="grid grid-cols-3 gap-2 text-xs text-gray-600 mb-3">
-              <div className="flex items-center">
-                <Navigation className="w-3 h-3 mr-1" />
-                {trail.distance}
-              </div>
-              <div className="flex items-center">
-                <TrendingUp className="w-3 h-3 mr-1" />
-                {trail.elevation}
-              </div>
-              <div className="flex items-center">
-                <Clock className="w-3 h-3 mr-1" />
-                {trail.duration}
-              </div>
-            </div>
-            
-            <p className="text-sm text-gray-700 line-clamp-2">{trail.description}</p>
-          </Card>
-        ))}
+              
+              <p className="text-sm text-gray-700 line-clamp-2">{trail.description}</p>
+            </Card>
+          ))}
+        </div>
       </div>
 
-      {/* Selected Trail Details */}
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">{selectedTrail.name}</h2>
-            <div className="flex items-center space-x-4 text-sm text-gray-600">
-              <div className="flex items-center">
-                <Mountain className="w-4 h-4 mr-1" />
-                {selectedTrail.region}
+      {/* Right: Selected Trail Details */}
+      <div className="flex-1 flex flex-col">
+        <Card className="p-6 flex-1 flex flex-col">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">{selectedTrail.name}</h2>
+              <div className="flex items-center space-x-4 text-sm text-gray-600">
+                <div className="flex items-center">
+                  <Mountain className="w-4 h-4 mr-1" />
+                  {selectedTrail.region}
+                </div>
+                <Badge className={getDifficultyColor(selectedTrail.difficulty)}>
+                  {selectedTrail.difficulty}
+                </Badge>
               </div>
-              <Badge className={getDifficultyColor(selectedTrail.difficulty)}>
-                {selectedTrail.difficulty}
-              </Badge>
             </div>
+            <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-white">
+              Plan This Hike
+            </Button>
           </div>
-          <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-white">
-            Plan This Hike
-          </Button>
-        </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-4 w-full mb-6">
-            <TabsTrigger value="map">Trail Map</TabsTrigger>
-            <TabsTrigger value="details">Details</TabsTrigger>
-            <TabsTrigger value="points">Trail Points</TabsTrigger>
-            <TabsTrigger value="gallery">Gallery</TabsTrigger>
-          </TabsList>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+            <TabsList className="grid grid-cols-4 w-full mb-6">
+              <TabsTrigger value="map">Trail Map</TabsTrigger>
+              <TabsTrigger value="details">Details</TabsTrigger>
+              <TabsTrigger value="points">Trail Points</TabsTrigger>
+              <TabsTrigger value="gallery">Gallery</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="map" className="space-y-4">
-            <div className="aspect-video relative rounded-lg overflow-hidden">
-              <TrailMap 
-                trailPoints={selectedTrail.trailPoints}
-                center={selectedTrail.center}
-                zoom={13}
-              />
-            </div>
-            
-            <div className="grid grid-cols-4 gap-4 mt-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-[#D4AF37]">{selectedTrail.distance}</div>
-                <p className="text-sm text-gray-600">Distance</p>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-[#D4AF37]">{selectedTrail.elevation}</div>
-                <p className="text-sm text-gray-600">Elevation Gain</p>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-[#D4AF37]">{selectedTrail.duration}</div>
-                <p className="text-sm text-gray-600">Duration</p>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-[#D4AF37]">{selectedTrail.trailPoints.length}</div>
-                <p className="text-sm text-gray-600">Trail Points</p>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="details" className="space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold mb-3">Description</h3>
-              <p className="text-gray-700 leading-relaxed">{selectedTrail.description}</p>
-            </div>
-            
-            <div>
-              <h3 className="text-lg font-semibold mb-3">Key Features</h3>
-              <div className="grid grid-cols-2 gap-2">
-                {selectedTrail.features.map((feature, index) => (
-                  <div key={index} className="flex items-center">
-                    <Star className="w-4 h-4 text-[#D4AF37] mr-2" />
-                    <span className="text-sm text-gray-700">{feature}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="points" className="space-y-4">
-            {selectedTrail.trailPoints.map((point, index) => (
-              <Card key={index} className="p-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-white mr-3 ${
-                      point.type === 'trailhead' ? 'bg-green-500' :
-                      point.type === 'campsite' ? 'bg-orange-500' :
-                      point.type === 'checkpoint' ? 'bg-blue-500' :
-                      'bg-red-500'
-                    }`}>
-                      {index + 1}
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900">{point.name}</h4>
-                      <p className="text-sm text-gray-600 mb-1">Elevation: {point.elevation}</p>
-                      <p className="text-sm text-gray-700">{point.description}</p>
-                    </div>
-                  </div>
-                  <Badge variant="outline" className="text-xs">
-                    {point.type.charAt(0).toUpperCase() + point.type.slice(1)}
-                  </Badge>
-                </div>
-              </Card>
-            ))}
-          </TabsContent>
-
-          <TabsContent value="gallery" className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              {selectedTrail.images.map((image, index) => (
-                <div key={index} className="relative aspect-video rounded-lg overflow-hidden group cursor-pointer">
-                  <img 
-                    src={image} 
-                    alt={`${selectedTrail.name} ${index + 1}`}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+            <div className="flex-1 overflow-y-auto">
+              <TabsContent value="map" className="space-y-4 m-0">
+                <div className="aspect-video relative rounded-lg overflow-hidden">
+                  <TrailMap 
+                    trailPoints={selectedTrail.trailPoints}
+                    center={selectedTrail.center}
+                    zoom={13}
                   />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                    <Camera className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
+                
+                <div className="grid grid-cols-4 gap-4 mt-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-[#D4AF37]">{selectedTrail.distance}</div>
+                    <p className="text-sm text-gray-600">Distance</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-[#D4AF37]">{selectedTrail.elevation}</div>
+                    <p className="text-sm text-gray-600">Elevation Gain</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-[#D4AF37]">{selectedTrail.duration}</div>
+                    <p className="text-sm text-gray-600">Duration</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-[#D4AF37]">{selectedTrail.trailPoints.length}</div>
+                    <p className="text-sm text-gray-600">Trail Points</p>
                   </div>
                 </div>
-              ))}
+              </TabsContent>
+
+              <TabsContent value="details" className="space-y-6 m-0">
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Description</h3>
+                  <p className="text-gray-700 leading-relaxed">{selectedTrail.description}</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Key Features</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    {selectedTrail.features.map((feature, index) => (
+                      <div key={index} className="flex items-center">
+                        <Star className="w-4 h-4 text-[#D4AF37] mr-2" />
+                        <span className="text-sm text-gray-700">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="points" className="space-y-4 m-0">
+                {selectedTrail.trailPoints.map((point, index) => (
+                  <Card key={index} className="p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-white mr-3 ${
+                          point.type === 'trailhead' ? 'bg-green-500' :
+                          point.type === 'campsite' ? 'bg-orange-500' :
+                          point.type === 'checkpoint' ? 'bg-blue-500' :
+                          'bg-red-500'
+                        }`}>
+                          {index + 1}
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-gray-900">{point.name}</h4>
+                          <p className="text-sm text-gray-600 mb-1">Elevation: {point.elevation}</p>
+                          <p className="text-sm text-gray-700">{point.description}</p>
+                        </div>
+                      </div>
+                      <Badge variant="outline" className="text-xs">
+                        {point.type.charAt(0).toUpperCase() + point.type.slice(1)}
+                      </Badge>
+                    </div>
+                  </Card>
+                ))}
+              </TabsContent>
+
+              <TabsContent value="gallery" className="space-y-4 m-0">
+                <div className="grid grid-cols-2 gap-4">
+                  {selectedTrail.images.map((image, index) => (
+                    <div key={index} className="relative aspect-video rounded-lg overflow-hidden group cursor-pointer">
+                      <img 
+                        src={image} 
+                        alt={`${selectedTrail.name} ${index + 1}`}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                        <Camera className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </TabsContent>
             </div>
-          </TabsContent>
-        </Tabs>
-      </Card>
+          </Tabs>
+        </Card>
+      </div>
     </div>
   );
 };
