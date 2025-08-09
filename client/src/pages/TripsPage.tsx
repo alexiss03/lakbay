@@ -135,39 +135,36 @@ export const TripsPage = (): JSX.Element => {
 
       {/* Navigation Tabs */}
       <div className="max-w-7xl mx-auto px-8 py-6">
-        <div className="flex space-x-8 border-b border-gray-200">
+        <div className="flex space-x-8">
           <button
             onClick={() => setActiveTab("upcoming")}
-            className={`pb-4 px-2 text-sm font-light tracking-wider transition-all ${
+            className={`text-sm font-light tracking-wider transition-all ${
               activeTab === "upcoming"
-                ? "border-b-2 border-[#D4AF37] text-black"
-                : "text-gray-600 hover:text-black"
+                ? "text-black font-medium"
+                : "text-gray-500 hover:text-black"
             }`}
           >
             UPCOMING TRIPS ({upcomingTrips.length})
           </button>
           <button
             onClick={() => setActiveTab("past")}
-            className={`pb-4 px-2 text-sm font-light tracking-wider transition-all ${
+            className={`text-sm font-light tracking-wider transition-all ${
               activeTab === "past"
-                ? "border-b-2 border-[#D4AF37] text-black"
-                : "text-gray-600 hover:text-black"
+                ? "text-black font-medium"
+                : "text-gray-500 hover:text-black"
             }`}
           >
             PAST TRIPS ({pastTrips.length})
           </button>
           <button
             onClick={() => setActiveTab("bookmarked")}
-            className={`pb-4 px-2 text-sm font-light tracking-wider transition-all ${
+            className={`text-sm font-light tracking-wider transition-all ${
               activeTab === "bookmarked"
-                ? "border-b-2 border-[#D4AF37] text-black"
-                : "text-gray-600 hover:text-black"
+                ? "text-black font-medium"
+                : "text-gray-500 hover:text-black"
             }`}
           >
-            <div className="flex items-center space-x-2">
-              <Bookmark className="w-4 h-4" />
-              <span>BOOKMARKED ({bookmarkedTrips.length})</span>
-            </div>
+            BOOKMARKED ({bookmarkedTrips.length})
           </button>
         </div>
       </div>
