@@ -80,7 +80,7 @@ export default function ShopPage() {
                 Home
               </Link>
               <Link href="/trips" className="text-gray-700 hover:text-[#D4AF37] font-light tracking-wide transition-colors">
-                Trips
+                My Trips
               </Link>
               <Link href="/chats" className="text-gray-700 hover:text-[#D4AF37] font-light tracking-wide transition-colors">
                 Chats
@@ -142,7 +142,7 @@ export default function ShopPage() {
                 className="block text-gray-700 hover:text-[#D4AF37] font-light tracking-wide transition-colors py-2"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Trips
+                My Trips
               </Link>
               <Link 
                 href="/chats" 

@@ -34,7 +34,7 @@ export const TravelHomePage = (): JSX.Element => {
           {/* Center: Navigation */}
           <nav className="flex items-center space-x-12">
             <Link href="/" className="prada-nav text-black hover:text-gray-600 transition-colors">Home</Link>
-            <Link href="/trips" className="prada-nav text-gray-700 hover:text-black transition-colors">Trips</Link>
+            <Link href="/trips" className="prada-nav text-gray-700 hover:text-black transition-colors">My Trips</Link>
             <Link href="/chats" className="prada-nav text-gray-700 hover:text-black transition-colors">Chats</Link>
             <Link href="/trails" className="prada-nav text-gray-700 hover:text-black transition-colors">Trails</Link>
             <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</a>

@@ -119,3 +119,7 @@ This is a full-stack JavaScript application migrated from Figma to Replit enviro
   - **Shopping Cart Integration**: Added ShoppingCart icons and gold accent styling for shop buttons
   - **Product Links**: Direct links to specific product pages (/shop/product/[item-id]) for seamless shopping experience
   - **Enhanced UX**: Users can now purchase all trip essentials directly from the trip planning page
+- **Navigation Update**: Changed "Trips" to "My Trips" across all navigation components for better user personalization
+  - **Comprehensive Update**: Updated navigation in ShopPage, TravelHomePage, ChatPage, and TripDetailPage
+  - **Consistent Branding**: All navigation bars now display "My Trips" for personal trip management
+  - **User Experience**: Improved clarity that users are viewing their personal trip bookings and history
