@@ -113,3 +113,9 @@ This is a full-stack JavaScript application migrated from Figma to Replit enviro
   - **Route Integration**: Connected Trails navigation links across all pages to functional /trails route
   - **Interactive Features**: Trail point markers, elevation data, trail difficulty badges, photo galleries, and detailed trail descriptions
   - **Enhanced UX**: Tabbed interface with map view, trail details, points of interest, and image galleries for comprehensive trail planning
+- **Shop Integration for Trip Equipment**: Added "Buy in Shop" buttons to "Things to Bring" section in trip detail pages
+  - **E-commerce Integration**: Each purchasable item in trip packing lists now has direct shop links
+  - **Product Categories**: Organized items into categories - sunscreen, insect repellent, swimwear, water shoes, electronics, snorkeling gear
+  - **Shopping Cart Integration**: Added ShoppingCart icons and gold accent styling for shop buttons
+  - **Product Links**: Direct links to specific product pages (/shop/product/[item-id]) for seamless shopping experience
+  - **Enhanced UX**: Users can now purchase all trip essentials directly from the trip planning page
