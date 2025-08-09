@@ -123,3 +123,9 @@ This is a full-stack JavaScript application migrated from Figma to Replit enviro
   - **Comprehensive Update**: Updated navigation in ShopPage, TravelHomePage, ChatPage, and TripDetailPage
   - **Consistent Branding**: All navigation bars now display "My Trips" for personal trip management
   - **User Experience**: Improved clarity that users are viewing their personal trip bookings and history
+- **Bookmarked Trips Feature**: Added comprehensive "Bookmarked" section to TripsPage for saved trip functionality
+  - **Three-Tab System**: Enhanced TripsPage with Upcoming, Past, and Bookmarked trips organization
+  - **Bookmark Management**: Users can save trips for later consideration with dedicated bookmark status and styling
+  - **Golden Accent Design**: Bookmarked trips feature gold accent colors (#D4AF37) consistent with platform branding
+  - **Interactive Actions**: Added "Book Now" and "Remove Bookmark" buttons for seamless trip management
+  - **Empty State Design**: Clean empty state with bookmark icon when no trips are saved
