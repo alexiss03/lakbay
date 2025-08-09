@@ -3,10 +3,11 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { Calendar, MapPin, Users, Clock, Star, Bookmark } from "lucide-react";
+import { Calendar, MapPin, Users, Clock, Star, Bookmark, Menu, X } from "lucide-react";
 
 export const TripsPage = (): JSX.Element => {
   const [activeTab, setActiveTab] = useState<"upcoming" | "past" | "bookmarked">("upcoming");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const upcomingTrips = [
     {
@@ -125,6 +126,72 @@ export const TripsPage = (): JSX.Element => {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Top Navigation */}
+      <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <div className="flex items-center">
+              <Link href="/">
+                <h1 className="prada-heading text-2xl text-black font-light tracking-wider">LAKBAY</h1>
+              </Link>
+            </div>
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-8">
+              <Link href="/" className="prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
+                HOME
+              </Link>
+              <Link href="/trips" className="prada-nav-link text-sm font-light tracking-wider text-black">
+                MY TRIPS
+              </Link>
+              <Link href="/chats" className="prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
+                CHATS
+              </Link>
+              <Link href="/trails" className="prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
+                TRAILS
+              </Link>
+              <Link href="/shop" className="prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
+                SHOP
+              </Link>
+            </div>
+
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="text-gray-700 hover:text-black"
+              >
+                {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Navigation */}
+          {isMenuOpen && (
+            <div className="md:hidden py-4 border-t border-gray-100">
+              <div className="space-y-3">
+                <Link href="/" className="block prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
+                  HOME
+                </Link>
+                <Link href="/trips" className="block prada-nav-link text-sm font-light tracking-wider text-black">
+                  MY TRIPS
+                </Link>
+                <Link href="/chats" className="block prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
+                  CHATS
+                </Link>
+                <Link href="/trails" className="block prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
+                  TRAILS
+                </Link>
+                <Link href="/shop" className="block prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
+                  SHOP
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+      </nav>
+
       {/* Header */}
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-8 py-8">
@@ -172,7 +239,7 @@ export const TripsPage = (): JSX.Element => {
       {/* Content */}
       <div className="max-w-7xl mx-auto px-8 pb-16">
         {activeTab === "upcoming" && (
-          <div className="space-y-6">
+          <div className="space-y-8">
             {upcomingTrips.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-32 h-32 mx-auto bg-gray-100 prada-corner-radius flex items-center justify-center mb-6">
@@ -187,69 +254,82 @@ export const TripsPage = (): JSX.Element => {
                 </Link>
               </div>
             ) : (
-              upcomingTrips.map((trip) => (
-                <Card key={trip.id} className="prada-card p-6 hover:shadow-lg transition-shadow">
-                  <div className="grid md:grid-cols-4 gap-6">
-                    <div className="md:col-span-1">
-                      <img
-                        src={trip.image}
-                        alt={trip.title}
-                        className="w-full h-32 object-cover prada-corner-radius"
-                      />
+              <div className="relative">
+                {/* Timeline Line */}
+                <div className="absolute left-8 top-0 bottom-0 w-px bg-gray-200"></div>
+                
+                {upcomingTrips.map((trip, index) => (
+                  <div key={trip.id} className="relative flex items-start space-x-8 pb-8">
+                    {/* Timeline Dot */}
+                    <div className="relative z-10 flex-shrink-0">
+                      <div className="w-4 h-4 bg-[#D4AF37] rounded-full"></div>
                     </div>
-                    <div className="md:col-span-2 space-y-3">
-                      <div>
-                        <h3 className="prada-heading text-lg text-black font-light mb-1">{trip.title}</h3>
-                        <div className="flex items-center text-sm text-gray-600 font-light">
-                          <MapPin className="w-4 h-4 mr-1" />
-                          {trip.destination}
+                    
+                    {/* Trip Card */}
+                    <Card className="flex-1 prada-card p-6 hover:shadow-lg transition-shadow">
+                      <div className="grid md:grid-cols-4 gap-6">
+                        <div className="md:col-span-1">
+                          <img
+                            src={trip.image}
+                            alt={trip.title}
+                            className="w-full h-32 object-cover prada-corner-radius"
+                          />
+                        </div>
+                        <div className="md:col-span-2 space-y-3">
+                          <div>
+                            <h3 className="prada-heading text-lg text-black font-light mb-1">{trip.title}</h3>
+                            <div className="flex items-center text-sm text-gray-600 font-light">
+                              <MapPin className="w-4 h-4 mr-1" />
+                              {trip.destination}
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap gap-4 text-sm text-gray-600 font-light">
+                            <div className="flex items-center">
+                              <Calendar className="w-4 h-4 mr-1" />
+                              {trip.date}
+                            </div>
+                            <div className="flex items-center">
+                              <Users className="w-4 h-4 mr-1" />
+                              {trip.participants} participants
+                            </div>
+                            <div className="flex items-center">
+                              <Clock className="w-4 h-4 mr-1" />
+                              {trip.duration}
+                            </div>
+                          </div>
+                          <Badge className={`w-fit ${getStatusColor(trip.status)}`}>
+                            {trip.status}
+                          </Badge>
+                        </div>
+                        <div className="md:col-span-1 flex flex-col justify-between">
+                          <div className="text-right">
+                            <div className="text-lg font-light text-[#D4AF37] mb-1">{trip.price}</div>
+                          </div>
+                          <div className="space-y-2">
+                            <Link href={`/trip/${trip.id}`}>
+                              <Button variant="outline" className="w-full font-light tracking-wider">
+                                VIEW DETAILS
+                              </Button>
+                            </Link>
+                            {trip.status === "Pending Payment" && (
+                              <Button className="w-full bg-[#D4AF37] hover:bg-[#B8941F] text-black font-light tracking-wider">
+                                COMPLETE PAYMENT
+                              </Button>
+                            )}
+                          </div>
                         </div>
                       </div>
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-600 font-light">
-                        <div className="flex items-center">
-                          <Calendar className="w-4 h-4 mr-1" />
-                          {trip.date}
-                        </div>
-                        <div className="flex items-center">
-                          <Users className="w-4 h-4 mr-1" />
-                          {trip.participants} participants
-                        </div>
-                        <div className="flex items-center">
-                          <Clock className="w-4 h-4 mr-1" />
-                          {trip.duration}
-                        </div>
-                      </div>
-                      <Badge className={`w-fit ${getStatusColor(trip.status)}`}>
-                        {trip.status}
-                      </Badge>
-                    </div>
-                    <div className="md:col-span-1 flex flex-col justify-between">
-                      <div className="text-right">
-                        <div className="text-lg font-light text-[#D4AF37] mb-1">{trip.price}</div>
-                      </div>
-                      <div className="space-y-2">
-                        <Link href={`/trip/${trip.id}`}>
-                          <Button variant="outline" className="w-full font-light tracking-wider">
-                            VIEW DETAILS
-                          </Button>
-                        </Link>
-                        {trip.status === "Pending Payment" && (
-                          <Button className="w-full bg-[#D4AF37] hover:bg-[#B8941F] text-black font-light tracking-wider">
-                            COMPLETE PAYMENT
-                          </Button>
-                        )}
-                      </div>
-                    </div>
+                    </Card>
                   </div>
-                </Card>
-              ))
+                ))}
+              </div>
             )}
           </div>
         )}
 
         {/* Bookmarked Trips Section */}
         {activeTab === "bookmarked" && (
-          <div className="space-y-6">
+          <div className="space-y-8">
             {bookmarkedTrips.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-32 h-32 mx-auto bg-gray-100 prada-corner-radius flex items-center justify-center mb-6">
@@ -264,70 +344,85 @@ export const TripsPage = (): JSX.Element => {
                 </Link>
               </div>
             ) : (
-              bookmarkedTrips.map((trip) => (
-                <Card key={trip.id} className="prada-card p-6 hover:shadow-lg transition-shadow">
-                  <div className="grid md:grid-cols-4 gap-6">
-                    <div className="md:col-span-1">
-                      <img
-                        src={trip.image}
-                        alt={trip.title}
-                        className="w-full h-32 object-cover prada-corner-radius"
-                      />
-                    </div>
-                    <div className="md:col-span-2 space-y-3">
-                      <div>
-                        <h3 className="prada-heading text-lg text-black font-light mb-1">{trip.title}</h3>
-                        <div className="flex items-center text-sm text-gray-600 font-light">
-                          <MapPin className="w-4 h-4 mr-1" />
-                          {trip.destination}
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-600 font-light">
-                        <div className="flex items-center">
-                          <Calendar className="w-4 h-4 mr-1" />
-                          {trip.date}
-                        </div>
-                        <div className="flex items-center">
-                          <Users className="w-4 h-4 mr-1" />
-                          {trip.participants} participants
-                        </div>
-                        <div className="flex items-center">
-                          <Clock className="w-4 h-4 mr-1" />
-                          {trip.duration}
-                        </div>
-                      </div>
-                      <Badge className={`w-fit ${getStatusColor(trip.status)} flex items-center space-x-1`}>
-                        <Bookmark className="w-3 h-3" />
-                        <span>{trip.status}</span>
-                      </Badge>
-                    </div>
-                    <div className="md:col-span-1 flex flex-col justify-between">
-                      <div className="text-right">
-                        <div className="text-lg font-light text-[#D4AF37] mb-1">{trip.price}</div>
-                      </div>
-                      <div className="space-y-2">
-                        <Link href={`/trip/${trip.id}`}>
-                          <Button variant="outline" className="w-full font-light tracking-wider">
-                            VIEW DETAILS
-                          </Button>
-                        </Link>
-                        <Button className="w-full bg-green-600 hover:bg-green-700 text-white font-light tracking-wider">
-                          BOOK NOW
-                        </Button>
-                        <Button variant="outline" className="w-full font-light tracking-wider border-red-300 text-red-600 hover:bg-red-50">
-                          REMOVE BOOKMARK
-                        </Button>
+              <div className="relative">
+                {/* Timeline Line */}
+                <div className="absolute left-8 top-0 bottom-0 w-px bg-gray-200"></div>
+                
+                {bookmarkedTrips.map((trip, index) => (
+                  <div key={trip.id} className="relative flex items-start space-x-8 pb-8">
+                    {/* Timeline Dot */}
+                    <div className="relative z-10 flex-shrink-0">
+                      <div className="w-4 h-4 bg-[#D4AF37] rounded-full border-2 border-white shadow-sm">
+                        <Bookmark className="w-2 h-2 text-white absolute top-0.5 left-0.5" />
                       </div>
                     </div>
+                    
+                    {/* Trip Card */}
+                    <Card className="flex-1 prada-card p-6 hover:shadow-lg transition-shadow">
+                      <div className="grid md:grid-cols-4 gap-6">
+                        <div className="md:col-span-1">
+                          <img
+                            src={trip.image}
+                            alt={trip.title}
+                            className="w-full h-32 object-cover prada-corner-radius"
+                          />
+                        </div>
+                        <div className="md:col-span-2 space-y-3">
+                          <div>
+                            <h3 className="prada-heading text-lg text-black font-light mb-1">{trip.title}</h3>
+                            <div className="flex items-center text-sm text-gray-600 font-light">
+                              <MapPin className="w-4 h-4 mr-1" />
+                              {trip.destination}
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap gap-4 text-sm text-gray-600 font-light">
+                            <div className="flex items-center">
+                              <Calendar className="w-4 h-4 mr-1" />
+                              {trip.date}
+                            </div>
+                            <div className="flex items-center">
+                              <Users className="w-4 h-4 mr-1" />
+                              {trip.participants} participants
+                            </div>
+                            <div className="flex items-center">
+                              <Clock className="w-4 h-4 mr-1" />
+                              {trip.duration}
+                            </div>
+                          </div>
+                          <Badge className={`w-fit ${getStatusColor(trip.status)} flex items-center space-x-1`}>
+                            <Bookmark className="w-3 h-3" />
+                            <span>{trip.status}</span>
+                          </Badge>
+                        </div>
+                        <div className="md:col-span-1 flex flex-col justify-between">
+                          <div className="text-right">
+                            <div className="text-lg font-light text-[#D4AF37] mb-1">{trip.price}</div>
+                          </div>
+                          <div className="space-y-2">
+                            <Link href={`/trip/${trip.id}`}>
+                              <Button variant="outline" className="w-full font-light tracking-wider">
+                                VIEW DETAILS
+                              </Button>
+                            </Link>
+                            <Button className="w-full bg-green-600 hover:bg-green-700 text-white font-light tracking-wider">
+                              BOOK NOW
+                            </Button>
+                            <Button variant="outline" className="w-full font-light tracking-wider border-red-300 text-red-600 hover:bg-red-50">
+                              REMOVE BOOKMARK
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
                   </div>
-                </Card>
-              ))
+                ))}
+              </div>
             )}
           </div>
         )}
 
         {activeTab === "past" && (
-          <div className="space-y-6">
+          <div className="space-y-8">
             {pastTrips.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-32 h-32 mx-auto bg-gray-100 prada-corner-radius flex items-center justify-center mb-6">
@@ -337,69 +432,84 @@ export const TripsPage = (): JSX.Element => {
                 <p className="text-gray-600 font-light mb-6">Your travel history will appear here</p>
               </div>
             ) : (
-              pastTrips.map((trip) => (
-                <Card key={trip.id} className="prada-card p-6 hover:shadow-lg transition-shadow">
-                  <div className="grid md:grid-cols-4 gap-6">
-                    <div className="md:col-span-1">
-                      <img
-                        src={trip.image}
-                        alt={trip.title}
-                        className="w-full h-32 object-cover prada-corner-radius"
-                      />
-                    </div>
-                    <div className="md:col-span-2 space-y-3">
-                      <div>
-                        <h3 className="prada-heading text-lg text-black font-light mb-1">{trip.title}</h3>
-                        <div className="flex items-center text-sm text-gray-600 font-light">
-                          <MapPin className="w-4 h-4 mr-1" />
-                          {trip.destination}
-                        </div>
+              <div className="relative">
+                {/* Timeline Line */}
+                <div className="absolute left-8 top-0 bottom-0 w-px bg-gray-200"></div>
+                
+                {pastTrips.map((trip, index) => (
+                  <div key={trip.id} className="relative flex items-start space-x-8 pb-8">
+                    {/* Timeline Dot */}
+                    <div className="relative z-10 flex-shrink-0">
+                      <div className="w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-sm">
+                        <Star className="w-2 h-2 text-white absolute top-0.5 left-0.5 fill-current" />
                       </div>
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-600 font-light">
-                        <div className="flex items-center">
-                          <Calendar className="w-4 h-4 mr-1" />
-                          {trip.date}
+                    </div>
+                    
+                    {/* Trip Card */}
+                    <Card className="flex-1 prada-card p-6 hover:shadow-lg transition-shadow">
+                      <div className="grid md:grid-cols-4 gap-6">
+                        <div className="md:col-span-1">
+                          <img
+                            src={trip.image}
+                            alt={trip.title}
+                            className="w-full h-32 object-cover prada-corner-radius"
+                          />
                         </div>
-                        <div className="flex items-center">
-                          <Users className="w-4 h-4 mr-1" />
-                          {trip.participants} participants
-                        </div>
-                        <div className="flex items-center">
-                          <Clock className="w-4 h-4 mr-1" />
-                          {trip.duration}
-                        </div>
-                        {trip.rating && (
-                          <div className="flex items-center">
-                            <Star className="w-4 h-4 mr-1 fill-current text-yellow-400" />
-                            {trip.rating}
+                        <div className="md:col-span-2 space-y-3">
+                          <div>
+                            <h3 className="prada-heading text-lg text-black font-light mb-1">{trip.title}</h3>
+                            <div className="flex items-center text-sm text-gray-600 font-light">
+                              <MapPin className="w-4 h-4 mr-1" />
+                              {trip.destination}
+                            </div>
                           </div>
-                        )}
+                          <div className="flex flex-wrap gap-4 text-sm text-gray-600 font-light">
+                            <div className="flex items-center">
+                              <Calendar className="w-4 h-4 mr-1" />
+                              {trip.date}
+                            </div>
+                            <div className="flex items-center">
+                              <Users className="w-4 h-4 mr-1" />
+                              {trip.participants} participants
+                            </div>
+                            <div className="flex items-center">
+                              <Clock className="w-4 h-4 mr-1" />
+                              {trip.duration}
+                            </div>
+                            {trip.rating && (
+                              <div className="flex items-center">
+                                <Star className="w-4 h-4 mr-1 fill-current text-yellow-400" />
+                                {trip.rating}
+                              </div>
+                            )}
+                          </div>
+                          <Badge className={`w-fit ${getStatusColor(trip.status)}`}>
+                            {trip.status}
+                          </Badge>
+                        </div>
+                        <div className="md:col-span-1 flex flex-col justify-between">
+                          <div className="text-right">
+                            <div className="text-lg font-light text-gray-500 mb-1">{trip.price}</div>
+                          </div>
+                          <div className="space-y-2">
+                            <Link href={`/trip/${trip.id}`}>
+                              <Button variant="outline" className="w-full font-light tracking-wider">
+                                VIEW DETAILS
+                              </Button>
+                            </Link>
+                            <Button variant="outline" className="w-full font-light tracking-wider">
+                              WRITE REVIEW
+                            </Button>
+                            <Button variant="outline" className="w-full font-light tracking-wider">
+                              BOOK AGAIN
+                            </Button>
+                          </div>
+                        </div>
                       </div>
-                      <Badge className={`w-fit ${getStatusColor(trip.status)}`}>
-                        {trip.status}
-                      </Badge>
-                    </div>
-                    <div className="md:col-span-1 flex flex-col justify-between">
-                      <div className="text-right">
-                        <div className="text-lg font-light text-gray-500 mb-1">{trip.price}</div>
-                      </div>
-                      <div className="space-y-2">
-                        <Link href={`/trip/${trip.id}`}>
-                          <Button variant="outline" className="w-full font-light tracking-wider">
-                            VIEW DETAILS
-                          </Button>
-                        </Link>
-                        <Button variant="outline" className="w-full font-light tracking-wider">
-                          WRITE REVIEW
-                        </Button>
-                        <Button variant="outline" className="w-full font-light tracking-wider">
-                          BOOK AGAIN
-                        </Button>
-                      </div>
-                    </div>
+                    </Card>
                   </div>
-                </Card>
-              ))
+                ))}
+              </div>
             )}
           </div>
         )}
