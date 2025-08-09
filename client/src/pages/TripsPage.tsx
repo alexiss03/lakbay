@@ -19,7 +19,8 @@ export const TripsPage = (): JSX.Element => {
       image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop",
       participants: 8,
       duration: "4 days",
-      price: "₱12,500"
+      price: "₱12,500",
+      dateAdded: "January 8, 2025"
     },
     {
       id: 2,
@@ -30,7 +31,8 @@ export const TripsPage = (): JSX.Element => {
       image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop",
       participants: 12,
       duration: "3 days",
-      price: "₱8,900"
+      price: "₱8,900",
+      dateAdded: "January 5, 2025"
     }
   ];
 
@@ -45,7 +47,8 @@ export const TripsPage = (): JSX.Element => {
       participants: 6,
       duration: "4 days",
       rating: 4.8,
-      price: "₱15,200"
+      price: "₱15,200",
+      dateAdded: "December 20, 2023"
     },
     {
       id: 4,
@@ -57,7 +60,8 @@ export const TripsPage = (): JSX.Element => {
       participants: 10,
       duration: "5 days",
       rating: 4.9,
-      price: "₱18,750"
+      price: "₱18,750",
+      dateAdded: "November 15, 2023"
     },
     {
       id: 5,
@@ -69,7 +73,8 @@ export const TripsPage = (): JSX.Element => {
       participants: 8,
       duration: "4 days",
       rating: 4.7,
-      price: "₱22,400"
+      price: "₱22,400",
+      dateAdded: "October 25, 2023"
     }
   ];
 
@@ -83,7 +88,8 @@ export const TripsPage = (): JSX.Element => {
       image: "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=400&h=250&fit=crop",
       participants: 15,
       duration: "3 days",
-      price: "₱9,200"
+      price: "₱9,200",
+      dateAdded: "January 3, 2025"
     },
     {
       id: 7,
@@ -94,7 +100,8 @@ export const TripsPage = (): JSX.Element => {
       image: "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=400&h=250&fit=crop",
       participants: 10,
       duration: "4 days",
-      price: "₱6,800"
+      price: "₱6,800",
+      dateAdded: "December 28, 2024"
     },
     {
       id: 8,
@@ -105,7 +112,8 @@ export const TripsPage = (): JSX.Element => {
       image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=250&fit=crop",
       participants: 12,
       duration: "5 days",
-      price: "₱14,500"
+      price: "₱14,500",
+      dateAdded: "December 22, 2024"
     }
   ];
 
@@ -151,9 +159,15 @@ export const TripsPage = (): JSX.Element => {
               <Link href="/trails" className="prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
                 TRAILS
               </Link>
+              <span className="prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors cursor-pointer">
+                STORY
+              </span>
               <Link href="/shop" className="prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
                 SHOP
               </Link>
+              <span className="prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors cursor-pointer">
+                CORPORATE
+              </span>
             </div>
 
             {/* Mobile menu button */}
@@ -183,9 +197,15 @@ export const TripsPage = (): JSX.Element => {
                 <Link href="/trails" className="block prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
                   TRAILS
                 </Link>
+                <span className="block prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors cursor-pointer">
+                  STORY
+                </span>
                 <Link href="/shop" className="block prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
                   SHOP
                 </Link>
+                <span className="block prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors cursor-pointer">
+                  CORPORATE
+                </span>
               </div>
             </div>
           )}
@@ -297,6 +317,11 @@ export const TripsPage = (): JSX.Element => {
                               {trip.duration}
                             </div>
                           </div>
+                          {trip.dateAdded && (
+                            <div className="text-xs text-gray-500 font-light">
+                              Added to Lakbays: {trip.dateAdded}
+                            </div>
+                          )}
                           <Badge className={`w-fit ${getStatusColor(trip.status)}`}>
                             {trip.status}
                           </Badge>
@@ -389,6 +414,11 @@ export const TripsPage = (): JSX.Element => {
                               {trip.duration}
                             </div>
                           </div>
+                          {trip.dateAdded && (
+                            <div className="text-xs text-gray-500 font-light">
+                              Added to Lakbays: {trip.dateAdded}
+                            </div>
+                          )}
                           <Badge className={`w-fit ${getStatusColor(trip.status)} flex items-center space-x-1`}>
                             <Bookmark className="w-3 h-3" />
                             <span>{trip.status}</span>
@@ -483,6 +513,11 @@ export const TripsPage = (): JSX.Element => {
                               </div>
                             )}
                           </div>
+                          {trip.dateAdded && (
+                            <div className="text-xs text-gray-500 font-light">
+                              Added to Lakbays: {trip.dateAdded}
+                            </div>
+                          )}
                           <Badge className={`w-fit ${getStatusColor(trip.status)}`}>
                             {trip.status}
                           </Badge>
