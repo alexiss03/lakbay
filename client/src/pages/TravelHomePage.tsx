@@ -97,7 +97,7 @@ export const TravelHomePage = (): JSX.Element => {
                     { id: 6, title: 'Tarsier Sanctuary Visit', location: 'Bohol', image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=120&h=80&fit=crop&auto=format', slug: 'bohol-tarsier' }
                   ].map((tour) => (
                     <Link key={tour.id} href={`/trip/${tour.slug}`} className="group cursor-pointer block">
-                      <div className="flex-shrink-0 w-full h-16 prada-corner-radius overflow-hidden mb-2">
+                      <div className="flex-shrink-0 w-full h-24 prada-corner-radius overflow-hidden mb-2">
                         <img 
                           src={tour.image}
                           alt={tour.title}

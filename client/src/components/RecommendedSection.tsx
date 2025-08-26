@@ -126,7 +126,7 @@ export const RecommendedSection = (): JSX.Element => {
                       <img
                         src={tour.image}
                         alt={tour.title}
-                        className="w-full h-20 object-cover rounded-lg group-hover:scale-105 transition-transform"
+                        className="w-full h-24 object-cover rounded-lg group-hover:scale-105 transition-transform"
                       />
                       <div className="absolute inset-0 bg-black/20 rounded-lg group-hover:bg-black/10 transition-colors" />
                     </div>
