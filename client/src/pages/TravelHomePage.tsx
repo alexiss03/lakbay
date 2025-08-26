@@ -89,14 +89,14 @@ export const TravelHomePage = (): JSX.Element => {
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   {[
-                    { id: 1, title: 'Sunset Beach Trek', location: 'Boracay', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=120&h=80&fit=crop&auto=format' },
-                    { id: 2, title: 'Mountain Sunrise Hike', location: 'Benguet', image: 'https://images.unsplash.com/photo-1464822759844-d150baec0494?w=120&h=80&fit=crop&auto=format' },
-                    { id: 3, title: 'Island Hopping Adventure', location: 'Palawan', image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=120&h=80&fit=crop&auto=format' },
-                    { id: 4, title: 'Cultural Heritage Tour', location: 'Vigan', image: 'https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=120&h=80&fit=crop&auto=format' },
-                    { id: 5, title: 'Surfing Experience', location: 'Siargao', image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=120&h=80&fit=crop&auto=format' },
-                    { id: 6, title: 'Tarsier Sanctuary Visit', location: 'Bohol', image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=120&h=80&fit=crop&auto=format' }
+                    { id: 1, title: 'Sunset Beach Trek', location: 'Boracay', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=120&h=80&fit=crop&auto=format', slug: 'boracay-sunset-trek' },
+                    { id: 2, title: 'Mountain Sunrise Hike', location: 'Benguet', image: 'https://images.unsplash.com/photo-1464822759844-d150baec0494?w=120&h=80&fit=crop&auto=format', slug: 'mount-pulag' },
+                    { id: 3, title: 'Island Hopping Adventure', location: 'Palawan', image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=120&h=80&fit=crop&auto=format', slug: 'palawan-island-hopping' },
+                    { id: 4, title: 'Cultural Heritage Tour', location: 'Vigan', image: 'https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=120&h=80&fit=crop&auto=format', slug: 'vigan-heritage' },
+                    { id: 5, title: 'Surfing Experience', location: 'Siargao', image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=120&h=80&fit=crop&auto=format', slug: 'siargao-surfing' },
+                    { id: 6, title: 'Tarsier Sanctuary Visit', location: 'Bohol', image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=120&h=80&fit=crop&auto=format', slug: 'bohol-tarsier' }
                   ].map((tour) => (
-                    <div key={tour.id} className="group cursor-pointer">
+                    <Link key={tour.id} href={`/trip/${tour.slug}`} className="group cursor-pointer block">
                       <div className="flex-shrink-0 w-full h-16 prada-corner-radius overflow-hidden mb-2">
                         <img 
                           src={tour.image}
@@ -113,7 +113,7 @@ export const TravelHomePage = (): JSX.Element => {
                           {tour.location}
                         </p>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </div>

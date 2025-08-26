@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { PhilippinesMap } from '@/components/PhilippinesMap';
 import { useAuth } from '@/hooks/useAuth';
 import { MapPin } from 'lucide-react';
+import { Link } from 'wouter';
 
 interface TravelHistory {
   province: string;
@@ -32,7 +33,8 @@ export const RecommendedSection = (): JSX.Element => {
       location: 'Boracay',
       price: '₱2,500',
       image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=200&h=120&fit=crop&auto=format',
-      category: 'explore'
+      category: 'explore',
+      slug: 'boracay-sunset-trek'
     },
     {
       id: '2', 
@@ -40,7 +42,8 @@ export const RecommendedSection = (): JSX.Element => {
       location: 'Benguet',
       price: '₱3,800',
       image: 'https://images.unsplash.com/photo-1464822759844-d150baec0494?w=200&h=120&fit=crop&auto=format',
-      category: 'explore'
+      category: 'explore',
+      slug: 'mount-pulag'
     },
     {
       id: '3',
@@ -48,7 +51,8 @@ export const RecommendedSection = (): JSX.Element => {
       location: 'Palawan',
       price: '₱4,200',
       image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200&h=120&fit=crop&auto=format',
-      category: 'explore'
+      category: 'explore',
+      slug: 'palawan-island-hopping'
     },
     {
       id: '4',
@@ -56,7 +60,8 @@ export const RecommendedSection = (): JSX.Element => {
       location: 'Vigan',
       price: '₱2,800',
       image: 'https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=200&h=120&fit=crop&auto=format',
-      category: 'explore'
+      category: 'explore',
+      slug: 'vigan-heritage'
     },
     {
       id: '5',
@@ -64,7 +69,8 @@ export const RecommendedSection = (): JSX.Element => {
       location: 'Siargao',
       price: '₱3,500',
       image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=200&h=120&fit=crop&auto=format',
-      category: 'explore'
+      category: 'explore',
+      slug: 'siargao-surfing'
     },
     {
       id: '6',
@@ -72,7 +78,8 @@ export const RecommendedSection = (): JSX.Element => {
       location: 'Bohol',
       price: '₱1,800',
       image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=200&h=120&fit=crop&auto=format',
-      category: 'explore'
+      category: 'explore',
+      slug: 'bohol-tarsier'
     }
   ];
 
@@ -114,7 +121,7 @@ export const RecommendedSection = (): JSX.Element => {
               </div>
               <div className="grid grid-cols-3 gap-4 mb-6">
                 {recommendedTours.map((tour) => (
-                  <div key={tour.id} className="group cursor-pointer">
+                  <Link key={tour.id} href={`/trip/${tour.slug}`} className="group cursor-pointer block">
                     <div className="relative mb-2">
                       <img
                         src={tour.image}
@@ -135,7 +142,7 @@ export const RecommendedSection = (): JSX.Element => {
                         <span className="text-xs font-medium text-[#D4AF37]">{tour.price}</span>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </Card>
