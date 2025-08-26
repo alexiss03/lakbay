@@ -112,15 +112,29 @@ export const RecommendedSection = (): JSX.Element => {
                   <button className="text-[#D4AF37] hover:underline">explore</button>
                 </div>
               </div>
-              <div className="grid grid-cols-6 gap-2 mb-6">
+              <div className="grid grid-cols-3 gap-4 mb-6">
                 {recommendedTours.map((tour) => (
-                  <div key={tour.id} className="relative group cursor-pointer">
-                    <img
-                      src={tour.image}
-                      alt={tour.title}
-                      className="w-full h-16 object-cover rounded-lg group-hover:scale-105 transition-transform"
-                    />
-                    <div className="absolute inset-0 bg-black/20 rounded-lg group-hover:bg-black/10 transition-colors" />
+                  <div key={tour.id} className="group cursor-pointer">
+                    <div className="relative mb-2">
+                      <img
+                        src={tour.image}
+                        alt={tour.title}
+                        className="w-full h-20 object-cover rounded-lg group-hover:scale-105 transition-transform"
+                      />
+                      <div className="absolute inset-0 bg-black/20 rounded-lg group-hover:bg-black/10 transition-colors" />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="text-sm font-medium text-gray-900 group-hover:text-[#D4AF37] transition-colors line-clamp-1">
+                        {tour.title}
+                      </h4>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-xs text-gray-600">
+                          <MapPin className="w-3 h-3 mr-1" />
+                          {tour.location}
+                        </div>
+                        <span className="text-xs font-medium text-[#D4AF37]">{tour.price}</span>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
