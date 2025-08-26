@@ -87,14 +87,32 @@ export const TravelHomePage = (): JSX.Element => {
                     POPULAR
                   </div>
                 </div>
-                <div className="flex space-x-3 overflow-x-auto">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="flex-shrink-0 w-16 h-16 prada-corner-radius overflow-hidden">
-                      <img 
-                        src={`https://images.unsplash.com/photo-150617009${i}0-6c4444b7${i}3bc?w=100&h=100&fit=crop&auto=format`}
-                        alt={`Tour ${i}`}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      />
+                <div className="grid grid-cols-3 gap-4">
+                  {[
+                    { id: 1, title: 'Sunset Beach Trek', location: 'Boracay', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=120&h=80&fit=crop&auto=format' },
+                    { id: 2, title: 'Mountain Sunrise Hike', location: 'Benguet', image: 'https://images.unsplash.com/photo-1464822759844-d150baec0494?w=120&h=80&fit=crop&auto=format' },
+                    { id: 3, title: 'Island Hopping Adventure', location: 'Palawan', image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=120&h=80&fit=crop&auto=format' },
+                    { id: 4, title: 'Cultural Heritage Tour', location: 'Vigan', image: 'https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=120&h=80&fit=crop&auto=format' },
+                    { id: 5, title: 'Surfing Experience', location: 'Siargao', image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=120&h=80&fit=crop&auto=format' },
+                    { id: 6, title: 'Tarsier Sanctuary Visit', location: 'Bohol', image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=120&h=80&fit=crop&auto=format' }
+                  ].map((tour) => (
+                    <div key={tour.id} className="group cursor-pointer">
+                      <div className="flex-shrink-0 w-full h-16 prada-corner-radius overflow-hidden mb-2">
+                        <img 
+                          src={tour.image}
+                          alt={tour.title}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="text-xs font-medium text-gray-900 group-hover:text-[#D4AF37] transition-colors line-clamp-1">
+                          {tour.title}
+                        </h4>
+                        <p className="text-xs text-gray-600 flex items-center">
+                          <MapPin className="w-3 h-3 mr-1" />
+                          {tour.location}
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>
