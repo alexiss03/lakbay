@@ -23,6 +23,7 @@ import AudioStudioPage from "@/pages/AudioStudioPage";
 import { TrailsPage } from "@/pages/TrailsPage";
 import { ArticleFoodGuidePage } from "@/pages/ArticleFoodGuidePage";
 import { ArticleIslandHoppingPage } from "@/pages/ArticleIslandHoppingPage";
+import { ArticleMountainTribesPage } from "@/pages/ArticleMountainTribesPage";
 
 function Router() {
   return (
@@ -37,6 +38,7 @@ function Router() {
       <Route path="/article/:slug" component={ArticlePage} />
       <Route path="/article/food-guide" component={ArticleFoodGuidePage} />
       <Route path="/article/island-hopping" component={ArticleIslandHoppingPage} />
+      <Route path="/article/mountain-tribes" component={ArticleMountainTribesPage} />
       <Route path="/trip/:id" component={TripDetailPage} />
       <Route path="/shop" component={ShopPage} />
       <Route path="/shop/product/:id" component={ProductDetailPage} />
