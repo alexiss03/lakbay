@@ -336,15 +336,21 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
           {/* Main Content Area */}
           <div className="lg:col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              {/* Tab Navigation */}
-              <TabsList className="grid w-full grid-cols-6">
-                <TabsTrigger value="Event details">Event details</TabsTrigger>
-                <TabsTrigger value="Inclusions">Inclusions</TabsTrigger>
-                <TabsTrigger value="Reviews">Reviews</TabsTrigger>
-                <TabsTrigger value="Things to bring">Things to bring</TabsTrigger>
-                <TabsTrigger value="Reminders">Reminders</TabsTrigger>
-                <TabsTrigger value="Cancellation">Cancellation</TabsTrigger>
-              </TabsList>
+              {/* Dynamic Tab Navigation based on category */}
+              {(() => {
+                const defaultTabs = ["Event details", "Inclusions", "Reviews", "Things to bring", "Reminders", "Cancellation"];
+                const hikingTabs = ["Event details", "Trail", "Inclusions", "Reviews", "Things to bring", "Reminders", "Cancellation"];
+                
+                const tabs = trip.category === 'hiking' ? hikingTabs : defaultTabs;
+
+                return (
+                  <TabsList className={`grid w-full ${tabs.length === 6 ? 'grid-cols-6' : 'grid-cols-7'}`}>
+                    {tabs.map((tab) => (
+                      <TabsTrigger key={tab} value={tab}>{tab}</TabsTrigger>
+                    ))}
+                  </TabsList>
+                );
+              })()}
 
               {/* Tab Contents */}
               <TabsContent value="Event details" className="space-y-6">
@@ -368,6 +374,129 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                     </div>
                   </Card>
                 ))}
+              </TabsContent>
+
+              {/* Trail Tab - for hiking category */}
+              <TabsContent value="Trail" className="space-y-6">
+                <Card className="p-6">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                    <Mountain className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                    3D Trail Visualization
+                  </h2>
+                  
+                  {/* Trail Overview */}
+                  <div className="grid md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                      <h3 className="font-medium text-gray-900 mb-3">Trail Statistics</h3>
+                      <div className="space-y-2 text-sm">
+                        <div>
+                          <span className="text-gray-600">Difficulty:</span>
+                          <p className="font-medium text-gray-900">{trip.trail?.difficulty || "Moderate"}</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Distance:</span>
+                          <p className="font-medium text-gray-900">{trip.trail?.distance || "8.5 km"}</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Elevation Gain:</span>
+                          <p className="font-medium text-gray-900">{trip.trail?.elevationGain || "1,200m"}</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-gray-900 mb-2">Elevation Profile</h4>
+                      <div className="w-full h-32 bg-gradient-to-r from-green-200 via-yellow-200 to-red-200 rounded relative">
+                        <div className="absolute inset-0 flex items-end justify-between px-2 pb-2 text-xs">
+                          <span className="bg-white px-1 rounded">{trip.trail?.startElevation || "1,726"}m</span>
+                          <span className="bg-white px-1 rounded">{trip.trail?.peakElevation || "2,926"}m</span>
+                        </div>
+                        <svg className="w-full h-full" viewBox="0 0 300 100" preserveAspectRatio="none">
+                          <path 
+                            d="M 10,80 Q 50,70 80,60 Q 120,45 150,35 Q 180,30 220,25 Q 260,20 290,15" 
+                            stroke="#D4AF37" 
+                            strokeWidth="2" 
+                            fill="none"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Google Maps Satellite Trail Visualization */}
+                  <div className="mb-6">
+                    <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+                      <MapIcon className="w-4 h-4 mr-2" />
+                      Trail Map - Satellite View
+                    </h3>
+                    {trip.mapCenter && trip.mapCenter.lat && trip.mapCenter.lng ? (
+                      <TrailMap 
+                        trailPoints={trip.trail?.trailPoints || []}
+                        center={trip.mapCenter}
+                        zoom={14}
+                      />
+                    ) : (
+                      <div className="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center">
+                        <span className="text-gray-500">Trail Map Loading...</span>
+                      </div>
+                    )}
+                    
+                    {/* Legend */}
+                    <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                      <h4 className="font-medium text-gray-900 mb-3">Trail Markers</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg">🚀</span>
+                          <span className="text-gray-700">Trailhead</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg">⛺</span>
+                          <span className="text-gray-700">Camping Sites</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg">🏁</span>
+                          <span className="text-gray-700">Checkpoints</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-lg">🏔️</span>
+                          <span className="text-gray-700">Summit</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Trail Points Details */}
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-4">Trail Points</h3>
+                    <div className="space-y-4">
+                      {(trip.trail?.trailPoints || []).map((point, index) => (
+                        <div key={index} className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${
+                            point.type === 'trailhead' ? 'bg-green-500' :
+                            point.type === 'campsite' ? 'bg-orange-500' :
+                            point.type === 'summit' ? 'bg-red-500' :
+                            'bg-blue-500'
+                          }`}>
+                            {point.type === 'campsite' && (
+                              <span className="text-xs">⛺</span>
+                            )}
+                            {point.type === 'summit' && (
+                              <span className="text-xs">🏔️</span>
+                            )}
+                            {(point.type === 'trailhead' || point.type === 'checkpoint') && (
+                              <span className="text-xs">{index + 1}</span>
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-medium text-gray-900">{point.name}</h4>
+                            <p className="text-sm text-gray-600">{point.description}</p>
+                            <p className="text-xs text-gray-500">Elevation: {point.elevation}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </Card>
               </TabsContent>
 
               <TabsContent value="Inclusions" className="space-y-6">
