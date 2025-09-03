@@ -13,7 +13,7 @@ import { RecommendedSection } from "@/components/RecommendedSection";
 import { PhilippinesMap } from "@/components/PhilippinesMap";
 
 export const TravelHomePage = (): JSX.Element => {
-  const [activeTab, setActiveTab] = useState("Astronomy");
+  const [activeTab, setActiveTab] = useState("Private");
   
   // Sample travel history data for the interactive map
   const travelHistory = [
@@ -371,22 +371,22 @@ export const TravelHomePage = (): JSX.Element => {
         </div>
       </section>
 
-      {/* Niche Events */}
+      {/* Trip Categories */}
       <section className="px-8 py-16 bg-white">
-        <h2 className="prada-heading text-3xl text-black mb-6 font-light">DISCOVER NICHE EVENTS</h2>
-        <p className="text-gray-600 mb-12 font-light tracking-wide">Experience unique, specialized adventures tailored for passionate enthusiasts and curious explorers</p>
+        <h2 className="prada-heading text-3xl text-black mb-6 font-light">EXPLORE EVENT CATEGORIES</h2>
+        <p className="text-gray-600 mb-12 font-light tracking-wide">Join exciting events, meet fellow adventurers, and create unforgettable memories</p>
         
-        {/* Niche Categories Grid */}
+        {/* Categories Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
           {[
-            { name: "Astronomical Tours", icon: "🌟", description: "Stargazing & celestial events", count: "6 events" },
-            { name: "Foraging Expeditions", icon: "🍄", description: "Wild food hunting adventures", count: "8 events" },
-            { name: "Archaeological Digs", icon: "🏺", description: "Historical site excavations", count: "4 events" },
-            { name: "Bird Photography", icon: "📸", description: "Endemic species documentation", count: "12 events" },
-            { name: "Cave Spelunking", icon: "🕳️", description: "Underground exploration", count: "7 events" },
-            { name: "Traditional Crafts", icon: "🎨", description: "Indigenous artisan workshops", count: "15 events" },
-            { name: "Marine Biology", icon: "🐠", description: "Underwater research trips", count: "9 events" },
-            { name: "Language Immersion", icon: "🗣️", description: "Local dialect learning", count: "11 events" }
+            { name: "Private Events", icon: "👑", description: "Exclusive VIP experiences", count: "8 events" },
+            { name: "Joiner Trips", icon: "👥", description: "Meet new adventurers", count: "15 events" },
+            { name: "Community Meetups", icon: "🤝", description: "Local gatherings & activities", count: "12 events" },
+            { name: "Mystery Adventures", icon: "❓", description: "Secret destinations revealed", count: "6 events" },
+            { name: "Festival Events", icon: "🎉", description: "Cultural celebrations", count: "10 events" },
+            { name: "Virtual Experiences", icon: "💻", description: "Online tours & workshops", count: "20 events" },
+            { name: "Online Quizzes", icon: "🧠", description: "Interactive knowledge challenges", count: "25 quizzes" },
+            { name: "Wellness Retreats", icon: "🧘", description: "Mindfulness & health experiences", count: "14 retreats" }
           ].map((category, index) => (
             <div key={index} className="prada-card p-6 cursor-pointer group transition-all duration-300">
               <div className="text-center">
@@ -400,7 +400,7 @@ export const TravelHomePage = (): JSX.Element => {
         </div>
         
         <div className="flex space-x-12 mb-12 border-b border-gray-100">
-          {["Astronomy", "Foraging", "Archaeology", "Photography", "Spelunking", "Crafts", "Marine", "Language"].map((tab) => (
+          {["Private", "Joiner", "Meetups", "Mystery", "Events", "Virtual", "Wellness", "Online Quizzes"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -415,12 +415,12 @@ export const TravelHomePage = (): JSX.Element => {
           ))}
         </div>
 
-        {/* Niche Event Content */}
+        {/* Tab Content */}
         <div className="grid grid-cols-3 gap-6">
-          {activeTab === "Astronomy" && [
-            { title: "Perseid Meteor Shower Observatory", location: "Benguet Observatory", price: "₱4,500", image: "1464822759844-d150baec0494", link: "/trip/meteor-shower", category: "astronomy" },
-            { title: "Solar Eclipse Viewing Expedition", location: "Batanes", price: "₱8,000", image: "1506905925346-21bda4d32df4", link: "/trip/solar-eclipse", category: "astronomy" },
-            { title: "Dark Sky Photography Workshop", location: "Mount Pulag", price: "₱6,200", image: "1609137144813-7d9921338f24", link: "/trip/dark-sky-photo", category: "astronomy" }
+          {activeTab === "Private" && [
+            { title: "Exclusive Mount Pulag VIP Trek", location: "Benguet", price: "₱25,000", image: "1464822759844-d150baec0494", link: "/trip/mount-pulag-private", category: "private" },
+            { title: "Private Bohol Island Tour", location: "Bohol", price: "₱18,000", image: "1506905925346-21bda4d32df4", link: "/trip/bohol-private", category: "private" },
+            { title: "Luxury Vigan Heritage Experience", location: "Ilocos Sur", price: "₱22,000", image: "1609137144813-7d9921338f24", link: "/trip/vigan-private", category: "private" }
           ].map((trip, i) => (
             <Link key={i} href={trip.link}>
               <div className="prada-card overflow-hidden group cursor-pointer">
@@ -431,7 +431,7 @@ export const TravelHomePage = (): JSX.Element => {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                   />
                   <div className="absolute top-4 right-4">
-                    <span className="bg-purple-600 text-white text-xs px-3 py-1 font-light tracking-wider" style={{borderRadius: '1px'}}>{trip.category.toUpperCase()}</span>
+                    <span className="prada-gold-accent text-xs px-3 py-1 font-light tracking-wider" style={{borderRadius: '1px'}}>{trip.category.toUpperCase()}</span>
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                   <div className="absolute bottom-4 left-4 text-white">
@@ -444,10 +444,10 @@ export const TravelHomePage = (): JSX.Element => {
             </Link>
           ))}
 
-          {activeTab === "Foraging" && [
-            { title: "Wild Mushroom Hunting Expedition", location: "Cordillera Mountains", price: "₱3,800", image: "1464822759844-d150baec0494", link: "/trip/mushroom-foraging" },
-            { title: "Edible Plant Identification Tour", location: "Bohol Forest", price: "₱2,900", image: "1544551763-46a013bb70d5", link: "/trip/plant-foraging" },
-            { title: "Traditional Herbal Medicine Walk", location: "Palawan Rainforest", price: "₱4,200", image: "1507525428034-b723cf961d3e", link: "/trip/herbal-walk" }
+          {activeTab === "Joiner" && [
+            { title: "Mount Pulag Group Trek", location: "Benguet", price: "₱3,500", image: "1464822759844-d150baec0494", link: "/trip/mount-pulag-joiner" },
+            { title: "Siargao Surf Camp", location: "Siargao", price: "₱4,800", image: "1544551763-46a013bb70d5", link: "/trip/siargao-joiner" },
+            { title: "Palawan Island Hopping", location: "Palawan", price: "₱5,200", image: "1507525428034-b723cf961d3e", link: "/trip/palawan-joiner" }
           ].map((trip, i) => (
             <Link key={i} href={trip.link}>
               <div className="prada-card overflow-hidden group cursor-pointer">
@@ -458,7 +458,7 @@ export const TravelHomePage = (): JSX.Element => {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                   />
                   <div className="absolute top-4 right-4">
-                    <span className="bg-green-700 text-white text-xs px-3 py-1 font-light tracking-wider" style={{borderRadius: '1px'}}>FORAGING</span>
+                    <span className="bg-green-600 text-white text-xs px-3 py-1 font-light tracking-wider" style={{borderRadius: '1px'}}>JOINER</span>
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                   <div className="absolute bottom-4 left-4 text-white">
@@ -471,62 +471,8 @@ export const TravelHomePage = (): JSX.Element => {
             </Link>
           ))}
 
-          {activeTab === "Archaeology" && [
-            { title: "Pre-Colonial Site Excavation", location: "Cagayan Valley", price: "₱5,500", image: "1441974231531-c6227db76b6e", link: "/trip/archaeological-dig" },
-            { title: "Spanish Colonial Ruins Tour", location: "Intramuros", price: "₱3,200", image: "1609137144813-7d9921338f24", link: "/trip/colonial-ruins" },
-            { title: "Ancient Pottery Workshop", location: "Vigan", price: "₱2,800", image: "1506905925346-21bda4d32df4", link: "/trip/pottery-archaeology" }
-          ].map((trip, i) => (
-            <Link key={i} href={trip.link}>
-              <div className="prada-card overflow-hidden group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
-                    src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
-                    alt={trip.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                  />
-                  <div className="absolute top-4 right-4">
-                    <span className="bg-amber-600 text-white text-xs px-3 py-1 font-light tracking-wider" style={{borderRadius: '1px'}}>ARCHAEOLOGY</span>
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                  <div className="absolute bottom-4 left-4 text-white">
-                    <h3 className="font-light text-sm mb-1 tracking-wide">{trip.title}</h3>
-                    <p className="text-xs opacity-90 font-light">{trip.location}</p>
-                    <p className="text-sm font-light tracking-wider mt-1">{trip.price}</p>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
-
-          {activeTab === "Photography" && [
-            { title: "Endemic Bird Photography Safari", location: "Mount Makiling", price: "₱4,800", image: "1544551763-46a013bb70d5", link: "/trip/bird-photography" },
-            { title: "Underwater Macro Photography", location: "Anilao", price: "₱6,500", image: "1507525428034-b723cf961d3e", link: "/trip/macro-photography" },
-            { title: "Cultural Portrait Documentation", location: "Ifugao", price: "₱5,200", image: "1464822759844-d150baec0494", link: "/trip/portrait-documentation" }
-          ].map((trip, i) => (
-            <Link key={i} href={trip.link}>
-              <div className="prada-card overflow-hidden group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
-                    src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
-                    alt={trip.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                  />
-                  <div className="absolute top-4 right-4">
-                    <span className="bg-indigo-600 text-white text-xs px-3 py-1 font-light tracking-wider" style={{borderRadius: '1px'}}>PHOTOGRAPHY</span>
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                  <div className="absolute bottom-4 left-4 text-white">
-                    <h3 className="font-light text-sm mb-1 tracking-wide">{trip.title}</h3>
-                    <p className="text-xs opacity-90 font-light">{trip.location}</p>
-                    <p className="text-sm font-light tracking-wider mt-1">{trip.price}</p>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
-
-          {activeTab === "Spelunking" && [
-            { title: "Underground River Cave System", location: "Palawan", price: "₱7,200", image: "1441974231531-c6227db76b6e", link: "/trip/cave-spelunking" },
+          {activeTab === "Meetups" && [
+            { title: "Manila Hiking Meetup", location: "Metro Manila", price: "₱500", image: "1441974231531-c6227db76b6e", link: "/trip/manila-meetup" },
             { title: "Cebu Photography Walk", location: "Cebu City", price: "₱300", image: "1506905925346-21bda4d32df4", link: "/trip/cebu-meetup" },
             { title: "Baguio Coffee Tour", location: "Baguio", price: "₱800", image: "1609137144813-7d9921338f24", link: "/trip/baguio-meetup" }
           ].map((trip, i) => (
@@ -693,6 +639,65 @@ export const TravelHomePage = (): JSX.Element => {
                       <p className="text-sm font-light tracking-wider text-[#D4AF37]">{quiz.price}</p>
                       <span className="text-xs opacity-75">Pass: {quiz.passingScore}</span>
                     </div>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Discover Niche Events Section */}
+      <section className="px-8 py-16 bg-gray-50">
+        <h2 className="prada-heading text-3xl text-black mb-6 font-light">DISCOVER NICHE EVENTS</h2>
+        <p className="text-gray-600 mb-12 font-light tracking-wide">Experience unique, specialized adventures tailored for passionate enthusiasts and curious explorers</p>
+        
+        {/* Niche Categories Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+          {[
+            { name: "Astronomical Tours", icon: "🌟", description: "Stargazing & celestial events", count: "6 events" },
+            { name: "Foraging Expeditions", icon: "🍄", description: "Wild food hunting adventures", count: "8 events" },
+            { name: "Archaeological Digs", icon: "🏺", description: "Historical site excavations", count: "4 events" },
+            { name: "Bird Photography", icon: "📸", description: "Endemic species documentation", count: "12 events" },
+            { name: "Cave Spelunking", icon: "🕳️", description: "Underground exploration", count: "7 events" },
+            { name: "Traditional Crafts", icon: "🎨", description: "Indigenous artisan workshops", count: "15 events" },
+            { name: "Marine Biology", icon: "🐠", description: "Underwater research trips", count: "9 events" },
+            { name: "Language Immersion", icon: "🗣️", description: "Local dialect learning", count: "11 events" }
+          ].map((category, index) => (
+            <div key={index} className="prada-card p-6 cursor-pointer group transition-all duration-300">
+              <div className="text-center">
+                <div className="text-3xl mb-3">{category.icon}</div>
+                <h3 className="font-light text-black mb-2 group-hover:text-[#D4AF37] transition-colors tracking-wide text-sm">{category.name.toUpperCase()}</h3>
+                <p className="text-xs text-gray-600 mb-3 font-light">{category.description}</p>
+                <span className="text-xs text-[#D4AF37] font-light tracking-wider">{category.count}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Featured Niche Events */}
+        <div className="grid grid-cols-3 gap-6">
+          {[
+            { title: "Perseid Meteor Shower Observatory", location: "Benguet Observatory", price: "₱4,500", image: "1464822759844-d150baec0494", link: "/trip/meteor-shower", category: "astronomy" },
+            { title: "Wild Mushroom Hunting Expedition", location: "Cordillera Mountains", price: "₱3,800", image: "1506905925346-21bda4d32df4", link: "/trip/mushroom-foraging", category: "foraging" },
+            { title: "Pre-Colonial Site Excavation", location: "Cagayan Valley", price: "₱5,500", image: "1441974231531-c6227db76b6e", link: "/trip/archaeological-dig", category: "archaeology" }
+          ].map((event, i) => (
+            <Link key={i} href={event.link}>
+              <div className="prada-card overflow-hidden group cursor-pointer">
+                <div className="relative aspect-[4/3]">
+                  <img 
+                    src={`https://images.unsplash.com/photo-${event.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={event.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-purple-600 text-white text-xs px-3 py-1 font-light tracking-wider" style={{borderRadius: '1px'}}>{event.category.toUpperCase()}</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h3 className="font-light text-sm mb-1 tracking-wide">{event.title}</h3>
+                    <p className="text-xs opacity-90 font-light">{event.location}</p>
+                    <p className="text-sm font-light tracking-wider mt-1">{event.price}</p>
                   </div>
                 </div>
               </div>
