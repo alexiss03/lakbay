@@ -178,43 +178,35 @@ export const ChatPage = (): JSX.Element => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center space-x-2">
-              <span className="text-2xl font-bold text-[#D4AF37]">Lakbay</span>
-            </Link>
-            
-            <nav className="hidden md:flex space-x-8">
-              <Link href="/" className="text-gray-600 hover:text-[#D4AF37] transition-colors">
-                Home
-              </Link>
-              <Link href="/trips" className="text-gray-600 hover:text-[#D4AF37] transition-colors">
-                Trips
-              </Link>
-              <Link href="/chats" className="text-[#D4AF37] font-medium">
-                Chats
-              </Link>
-              <Link href="/trails" className="text-gray-600 hover:text-[#D4AF37] transition-colors">
-                Trails
-              </Link>
-              <span className="text-gray-600 hover:text-[#D4AF37] transition-colors cursor-pointer">
-                Story
-              </span>
-              <Link href="/shop" className="text-gray-600 hover:text-[#D4AF37] transition-colors">
-                Shop
-              </Link>
-              <span className="text-gray-600 hover:text-[#D4AF37] transition-colors cursor-pointer">
-                Corporate
-              </span>
-            </nav>
-
-            <div className="flex items-center space-x-4">
-              <Button variant="outline">Sign In</Button>
-              <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black">
-                Sign Up
+      <header className="bg-white px-8 py-6 border-b border-gray-100">
+        <div className="flex items-center justify-between">
+          {/* Left: Logo placeholder */}
+          <div className="w-8 h-8 bg-black" style={{borderRadius: '1px'}}></div>
+          
+          {/* Center: Navigation */}
+          <nav className="flex items-center space-x-12">
+            <Link href="/" className="prada-nav text-gray-700 hover:text-black transition-colors">Home</Link>
+            <Link href="/trips" className="prada-nav text-gray-700 hover:text-black transition-colors">Trips</Link>
+            <Link href="/chats" className="prada-nav text-black hover:text-gray-600 transition-colors">Chats</Link>
+            <Link href="/trails" className="prada-nav text-gray-700 hover:text-black transition-colors">Trails</Link>
+            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</a>
+            <Link href="/shop" className="prada-nav text-gray-700 hover:text-black transition-colors">Shop</Link>
+            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</a>
+          </nav>
+          
+          {/* Right: Buttons and Language */}
+          <div className="flex items-center space-x-3">
+            <Link href="/login">
+              <Button variant="outline" className="prada-button h-9 px-6 text-xs font-light border-black text-black hover:bg-black hover:text-white">
+                LOG IN
               </Button>
-            </div>
+            </Link>
+            <Link href="/signup">
+              <Button className="prada-button prada-gold-accent h-9 px-6 text-xs font-light">
+                REGISTER
+              </Button>
+            </Link>
+            <span className="text-xs text-gray-500 font-light ml-4">EN</span>
           </div>
         </div>
       </header>
