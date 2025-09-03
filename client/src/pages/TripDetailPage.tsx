@@ -1377,6 +1377,53 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
     };
   }
 
+  // DEFAULT FALLBACK - If no specific route matches, return a default trip
+  return {
+    title: "Palawan Beach Experience",
+    duration: "April 12-15, 2025",
+    price: "PHP 12500 per person",
+    category: "private",
+    heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=400&fit=crop&auto=format",
+    host: {
+      name: "Maria Santos",
+      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&auto=format",
+      bio: "Local guide and nature enthusiast with 8 years of experience leading eco-tours in Palawan."
+    },
+    itinerary: [
+      {
+        day: 1,
+        title: "Island Hopping Adventure",
+        description: "Explore pristine beaches and hidden lagoons. Visit Snake Island, Helicopter Island, and Secret Beach with snorkeling included.",
+        image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop&auto=format"
+      },
+      {
+        day: 2,
+        title: "Underground River Tour",
+        description: "UNESCO World Heritage Site experience through Puerto Princesa Underground River with stunning rock formations.",
+        image: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=300&h=200&fit=crop&auto=format"
+      },
+      {
+        day: 3,
+        title: "Beach Relaxation and Departure",
+        description: "Final beach time, local market visit, and departure preparations with traditional Filipino lunch.",
+        image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=200&fit=crop&auto=format"
+      }
+    ],
+    accommodation: {
+      title: "Palawan Beach Resort",
+      images: [
+        "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=250&h=150&fit=crop&auto=format",
+        "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+        "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+        "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+      ],
+      description: "Beachfront resort with modern amenities, swimming pool, and direct access to pristine beaches."
+    },
+    meetingPlace: "El Nido Airport, Palawan",
+    mapCenter: { lat: 11.1854, lng: 119.4094 }
+  };
+  }
+
   const trip = getTripData();
   
   // Ensure we have a valid trip object
