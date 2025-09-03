@@ -331,7 +331,7 @@ export const TravelHomePage = (): JSX.Element => {
       <section className="px-8 py-16">
         <h2 className="prada-heading text-3xl text-black mb-12 font-light">TRENDING ARTICLES</h2>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
           <Link href="/article/hidden-gems">
             <div className="prada-card overflow-hidden group cursor-pointer max-w-[400px] mx-auto">
               <div className="relative aspect-[16/5] overflow-hidden">
