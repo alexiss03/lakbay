@@ -809,6 +809,486 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
       mapCenter: { lat: 11.1854, lng: 119.4094 }
     };
   }
+
+  // ASTRONOMY CATEGORY
+  if (location.includes("meteor-shower")) {
+    return {
+      title: "Perseid Meteor Shower Observatory",
+      duration: "August 11-13, 2025",
+      price: "PHP 4500 per person",
+      category: "astronomy",
+      heroImage: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=1200&h=400&fit=crop&auto=format",
+      host: {
+        name: "Dr. Elena Reyes",
+        avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b789?w=100&h=100&fit=crop&auto=format",
+        bio: "Astrophysicist and stargazing guide with 15 years of experience in celestial observation and education."
+      },
+      itinerary: [
+        {
+          day: 1,
+          title: "Observatory Setup and Equipment Training",
+          description: "Arrive at Benguet Observatory, equipment orientation with professional telescopes, and evening constellation identification session.",
+          image: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 2,
+          title: "Peak Meteor Shower Viewing",
+          description: "Prime viewing of the Perseid meteor shower with up to 60 meteors per hour. Professional astrophotography workshop and celestial tracking techniques.",
+          image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 3,
+          title: "Solar System Exploration and Departure", 
+          description: "Morning planetary observation, solar telescope demonstration, and review of captured photographs. Certificate presentation.",
+          image: "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=300&h=200&fit=crop&auto=format"
+        }
+      ],
+      accommodation: {
+        title: "Observatory Lodge",
+        images: [
+          "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+        ],
+        description: "Dark-sky certified accommodation with minimal light pollution, heated rooms, and 24-hour access to observation deck."
+      },
+      meetingPlace: "Benguet Observatory, La Trinidad",
+      mapCenter: { lat: 16.4023, lng: 120.5930 }
+    };
+  }
+
+  if (location.includes("solar-eclipse")) {
+    return {
+      title: "Solar Eclipse Viewing Expedition",
+      duration: "April 8-10, 2025",
+      price: "PHP 8000 per person",
+      category: "astronomy",
+      heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=400&fit=crop&auto=format",
+      host: {
+        name: "Prof. Miguel Santos",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&auto=format", 
+        bio: "Astronomy professor and eclipse expert who has witnessed 12 total solar eclipses across different continents."
+      },
+      itinerary: [
+        {
+          day: 1,
+          title: "Eclipse Science and Safety Workshop",
+          description: "Comprehensive workshop on eclipse mechanics, safe viewing techniques, and specialized equipment preparation. Practice sessions with eclipse glasses and solar filters.",
+          image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 2,
+          title: "Total Solar Eclipse Experience",
+          description: "Witness the rare total solar eclipse from Batanes' optimal viewing location. Duration: 2 minutes 30 seconds of totality with professional guidance throughout.",
+          image: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 3,
+          title: "Post-Eclipse Analysis and Cultural Tour",
+          description: "Review captured eclipse data and photographs. Explore Batanes cultural sites and traditional Ivatan architecture.",
+          image: "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=300&h=200&fit=crop&auto=format"
+        }
+      ],
+      accommodation: {
+        title: "Batanes Heritage Lodge",
+        images: [
+          "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+        ],
+        description: "Traditional stone houses with modern amenities, perfect viewing location with unobstructed horizon."
+      },
+      meetingPlace: "Basco Airport, Batanes",
+      mapCenter: { lat: 20.4471, lng: 121.9699 }
+    };
+  }
+
+  if (location.includes("dark-sky-photo")) {
+    return {
+      title: "Dark Sky Photography Workshop",
+      duration: "September 22-24, 2025",
+      price: "PHP 6200 per person", 
+      category: "astronomy",
+      heroImage: "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=1200&h=400&fit=crop&auto=format",
+      host: {
+        name: "Carlos Rivera",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&auto=format",
+        bio: "Award-winning astrophotographer and workshop instructor specializing in night sky and landscape photography."
+      },
+      itinerary: [
+        {
+          day: 1,
+          title: "Camera Settings and Equipment Workshop",
+          description: "Master camera settings for night photography, understand ISO, aperture, and exposure for stellar photography. Equipment check and calibration.",
+          image: "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 2,
+          title: "Milky Way and Star Trail Photography",
+          description: "Capture stunning Milky Way images from Mount Pulag's dark sky sanctuary. Learn star trail techniques and time-lapse photography.",
+          image: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 3,
+          title: "Post-Processing and Portfolio Review",
+          description: "Professional editing techniques for astrophotography using Lightroom and Photoshop. Portfolio review and critique session.",
+          image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop&auto=format"
+        }
+      ],
+      accommodation: {
+        title: "Mount Pulag Eco-Lodge",
+        images: [
+          "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+        ],
+        description: "High-altitude accommodation with minimal light pollution, heated cabins, and dedicated photography areas."
+      },
+      meetingPlace: "Babadak Ranger Station, Kabayan, Benguet",
+      mapCenter: { lat: 16.5964, lng: 120.8897 }
+    };
+  }
+
+  // FORAGING CATEGORY
+  if (location.includes("mushroom-foraging")) {
+    return {
+      title: "Wild Mushroom Hunting Expedition",
+      duration: "November 15-17, 2025",
+      price: "PHP 3800 per person",
+      category: "foraging",
+      heroImage: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=1200&h=400&fit=crop&auto=format",
+      host: {
+        name: "Maria Fernandez",
+        avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b789?w=100&h=100&fit=crop&auto=format",
+        bio: "Mycologist and foraging expert with 20 years of experience in identifying edible mushrooms and forest ecology."
+      },
+      itinerary: [
+        {
+          day: 1,
+          title: "Mushroom Identification Workshop",
+          description: "Learn to identify safe, edible mushrooms native to the Cordillera region. Understand toxic varieties and safety protocols.",
+          image: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 2,
+          title: "Forest Foraging Expedition", 
+          description: "Guided foraging through mountain forests. Collect oyster mushrooms, shiitake variants, and other safe species under expert supervision.",
+          image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 3,
+          title: "Cooking and Preservation Workshop",
+          description: "Learn traditional and modern techniques for preparing and preserving wild mushrooms. Cooking class with local recipes.",
+          image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=300&h=200&fit=crop&auto=format"
+        }
+      ],
+      accommodation: {
+        title: "Forest Eco-Camp",
+        images: [
+          "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+        ],
+        description: "Sustainable forest camping with comfortable cabins, outdoor kitchen facilities, and guided nature walks."
+      },
+      meetingPlace: "Baguio City Tourism Center",
+      mapCenter: { lat: 16.4023, lng: 120.5930 }
+    };
+  }
+
+  if (location.includes("plant-foraging")) {
+    return {
+      title: "Edible Plant Identification Tour",
+      duration: "October 5-7, 2025",
+      price: "PHP 2900 per person",
+      category: "foraging",
+      heroImage: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1200&h=400&fit=crop&auto=format",
+      host: {
+        name: "Dr. Rosa Santos",
+        avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b789?w=100&h=100&fit=crop&auto=format",
+        bio: "Ethnobotanist and survival expert specializing in Philippine native plants and traditional food sources."
+      },
+      itinerary: [
+        {
+          day: 1,
+          title: "Forest Plants and Safety Guidelines",
+          description: "Introduction to edible plants in Bohol forests. Learn safety protocols, sustainable harvesting, and plant identification techniques.",
+          image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 2,
+          title: "Guided Foraging Experience",
+          description: "Hands-on foraging for wild vegetables, fruits, and herbs. Identify malunggay, kamote tops, and other native edibles.",
+          image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 3,
+          title: "Traditional Preparation Methods",
+          description: "Learn indigenous cooking techniques and nutritional benefits. Prepare traditional dishes using foraged ingredients.",
+          image: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=300&h=200&fit=crop&auto=format"
+        }
+      ],
+      accommodation: {
+        title: "Bohol Forest Lodge",
+        images: [
+          "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+        ],
+        description: "Eco-friendly accommodation in the heart of Bohol's forest reserve with organic gardens and sustainable practices."
+      },
+      meetingPlace: "Loboc River Tourism Center, Bohol",
+      mapCenter: { lat: 9.6350, lng: 124.0311 }
+    };
+  }
+
+  if (location.includes("herbal-walk")) {
+    return {
+      title: "Traditional Herbal Medicine Walk",
+      duration: "December 1-3, 2025",
+      price: "PHP 4200 per person",
+      category: "foraging",
+      heroImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=400&fit=crop&auto=format",
+      host: {
+        name: "Manang Teresa",
+        avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b789?w=100&h=100&fit=crop&auto=format",
+        bio: "Traditional healer and herbalist with 30 years of experience in Philippine medicinal plants and indigenous healing practices."
+      },
+      itinerary: [
+        {
+          day: 1,
+          title: "Introduction to Medicinal Plants",
+          description: "Learn about traditional Filipino herbal medicine. Identify common medicinal plants and their therapeutic properties.",
+          image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 2,
+          title: "Rainforest Medicine Walk",
+          description: "Guided walk through Palawan rainforest to collect medicinal herbs. Learn traditional harvesting methods and plant conservation.",
+          image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 3,
+          title: "Herbal Preparation Workshop",
+          description: "Traditional methods for preparing herbal teas, poultices, and remedies. Create your own herbal medicine kit.",
+          image: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=300&h=200&fit=crop&auto=format"
+        }
+      ],
+      accommodation: {
+        title: "Palawan Eco-Village",
+        images: [
+          "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+        ],
+        description: "Traditional Filipino village accommodation with authentic nipa huts, organic gardens, and healing sanctuary."
+      },
+      meetingPlace: "Puerto Princesa City Proper",
+      mapCenter: { lat: 9.7392, lng: 118.7395 }
+    };
+  }
+
+  // ARCHAEOLOGY CATEGORY
+  if (location.includes("archaeological-dig")) {
+    return {
+      title: "Pre-Colonial Site Excavation",
+      duration: "March 18-22, 2025",
+      price: "PHP 5500 per person",
+      category: "archaeology",
+      heroImage: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=400&fit=crop&auto=format",
+      host: {
+        name: "Dr. Antonio Cruz",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&auto=format",
+        bio: "Archaeologist specializing in pre-colonial Philippines with 18 years of field experience and multiple published excavations."
+      },
+      itinerary: [
+        {
+          day: 1,
+          title: "Archaeological Methods Training",
+          description: "Learn proper excavation techniques, documentation methods, and artifact preservation. Introduction to site stratigraphy.",
+          image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 2,
+          title: "Hands-on Excavation Work",
+          description: "Active participation in ongoing excavation of pre-colonial settlement. Discover pottery shards, tools, and ancient artifacts.",
+          image: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 3,
+          title: "Artifact Analysis and Recording",
+          description: "Clean, catalog, and analyze discovered artifacts. Learn dating techniques and cultural interpretation methods.",
+          image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 4,
+          title: "Site Documentation and Presentation",
+          description: "Complete site mapping, photography, and documentation. Present findings to the team and receive participation certificate.",
+          image: "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=300&h=200&fit=crop&auto=format"
+        }
+      ],
+      accommodation: {
+        title: "Archaeological Field Station",
+        images: [
+          "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+        ],
+        description: "Research station with laboratory facilities, artifact storage, and comfortable dormitory-style accommodation."
+      },
+      meetingPlace: "Cagayan Valley Archaeological Museum",
+      mapCenter: { lat: 17.6132, lng: 121.7270 }
+    };
+  }
+
+  // SPELUNKING CATEGORY
+  if (location.includes("cave-spelunking")) {
+    return {
+      title: "Underground River Cave System",
+      duration: "May 10-12, 2025",
+      price: "PHP 7200 per person",
+      category: "spelunking",
+      heroImage: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=400&fit=crop&auto=format",
+      host: {
+        name: "Ramon Dela Cruz",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&auto=format",
+        bio: "Professional spelunker and cave rescue specialist with 15 years of underground exploration experience."
+      },
+      itinerary: [
+        {
+          day: 1,
+          title: "Cave Safety and Equipment Training",
+          description: "Comprehensive safety briefing, equipment familiarization, and basic caving techniques. Practice rope work and emergency procedures.",
+          image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 2,
+          title: "Underground River Exploration",
+          description: "Navigate through Palawan's spectacular underground river cave system. Discover hidden chambers, rock formations, and underground wildlife.",
+          image: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 3,
+          title: "Advanced Cave Systems",
+          description: "Explore deeper, more challenging cave sections. Learn advanced navigation and cave conservation principles.",
+          image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop&auto=format"
+        }
+      ],
+      accommodation: {
+        title: "Puerto Princesa Cave Lodge",
+        images: [
+          "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+        ],
+        description: "Specialized accommodation for cavers with equipment storage, drying facilities, and gear rental services."
+      },
+      meetingPlace: "Puerto Princesa Underground River Visitor Center",
+      mapCenter: { lat: 10.1666, lng: 118.9142 }
+    };
+  }
+
+  if (location.includes("limestone-caves")) {
+    return {
+      title: "Limestone Cave Exploration",
+      duration: "June 14-16, 2025",
+      price: "PHP 3800 per person",
+      category: "spelunking",
+      heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=400&fit=crop&auto=format",
+      host: {
+        name: "Grace Mendoza",
+        avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b789?w=100&h=100&fit=crop&auto=format",
+        bio: "Cave guide and geologist specializing in limestone formations and cave ecology of the Cordillera region."
+      },
+      itinerary: [
+        {
+          day: 1,
+          title: "Geology and Cave Formation Workshop",
+          description: "Learn about limestone cave formation, stalactites, stalagmites, and unique geological features of Sagada caves.",
+          image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 2,
+          title: "Sumaguing Cave Exploration",
+          description: "Navigate through Sagada's famous Sumaguing Cave with its stunning limestone formations, underground pools, and narrow passages.",
+          image: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 3,
+          title: "Lumiang Cave and Echo Valley",
+          description: "Explore Lumiang Cave's burial caves and visit Echo Valley. Learn about local burial traditions and cave conservation.",
+          image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=200&fit=crop&auto=format"
+        }
+      ],
+      accommodation: {
+        title: "Sagada Mountain Lodge",
+        images: [
+          "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+        ],
+        description: "Traditional mountain lodge with fireplace, local cuisine, and stunning views of the surrounding valleys."
+      },
+      meetingPlace: "Sagada Tourism Office, Mountain Province",
+      mapCenter: { lat: 17.0760, lng: 120.9026 }
+    };
+  }
+
+  if (location.includes("cave-photography")) {
+    return {
+      title: "Advanced Cave Photography Tour",
+      duration: "July 20-22, 2025",
+      price: "PHP 5400 per person",
+      category: "spelunking",
+      heroImage: "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=1200&h=400&fit=crop&auto=format",
+      host: {
+        name: "Luis Rodriguez",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&auto=format",
+        bio: "Professional cave photographer and technical diving specialist with international cave photography awards."
+      },
+      itinerary: [
+        {
+          day: 1,
+          title: "Cave Photography Techniques Workshop",
+          description: "Master low-light photography, flash techniques, and specialized equipment for cave environments. Safety protocols for photographing underground.",
+          image: "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 2,
+          title: "Hinagdanan Cave Photo Session",
+          description: "Capture stunning images of Bohol's famous underground lake and limestone formations. Practice composition and lighting techniques.",
+          image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300&h=200&fit=crop&auto=format"
+        },
+        {
+          day: 3,
+          title: "Portfolio Development and Critique",
+          description: "Image review and editing workshop. Learn post-processing techniques specific to cave photography and portfolio presentation.",
+          image: "https://images.unsplash.com/photo-1464822759844-d150baec0494?w=300&h=200&fit=crop&auto=format"
+        }
+      ],
+      accommodation: {
+        title: "Bohol Cave Resort",
+        images: [
+          "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=250&h=150&fit=crop&auto=format",
+          "https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=250&h=150&fit=crop&auto=format"
+        ],
+        description: "Photography-friendly accommodation with dark room facilities, equipment storage, and high-speed internet for image transfer."
+      },
+      meetingPlace: "Panglao Island Tourism Center, Bohol",
+      mapCenter: { lat: 9.5340, lng: 123.7675 }
+    };
+  }
   
   // ONLINE QUIZ CATEGORY
   if (location.includes("philippines-geography-quiz") || location.includes("quiz")) {
