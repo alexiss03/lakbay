@@ -1,323 +1,238 @@
 import React from 'react';
-import { Link } from 'wouter';
-import { ArrowLeft, Clock, User, MapPin, Anchor } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useLocation, Link } from 'wouter';
 
 export const ArticleIslandHoppingPage = (): JSX.Element => {
+  const article = {
+    title: "Best Island Hopping Routes in Visayas",
+    category: "Adventure Guide",
+    author: "Jose Cruz",
+    date: "January 12, 2025",
+    readTime: "15 min read",
+    heroImage: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=600&fit=crop&auto=format",
+    content: [
+      {
+        type: "paragraph",
+        text: "The Visayas region boasts some of the most breathtaking island hopping experiences in Southeast Asia. With over 6,000 islands scattered across crystal-clear waters, this tropical paradise offers endless opportunities for adventure, relaxation, and discovery of pristine beaches and vibrant marine life."
+      },
+      {
+        type: "heading",
+        text: "Bohol and Panglao: The Classic Route"
+      },
+      {
+        type: "paragraph",
+        text: "Starting from Panglao, this route takes you to Virgin Island's powdery white sands, Balicasag Island's world-class diving spots, and includes dolphin watching at Pamilacan Island. Each stop offers unique experiences from snorkeling with sea turtles to enjoying fresh seafood prepared by local fishermen."
+      },
+      {
+        type: "image",
+        src: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=500&fit=crop&auto=format",
+        caption: "Crystal clear waters surrounding Virgin Island in Bohol"
+      },
+      {
+        type: "heading",
+        text: "Siquijor: The Mystical Island Circuit"
+      },
+      {
+        type: "paragraph",
+        text: "Known as the 'Island of Fire,' Siquijor combines beach hopping with cultural immersion. Visit Salagdoong Beach for cliff jumping, explore the centuries-old Balete Tree, and discover hidden waterfalls like Cambugahay Falls where you can swing on rope swings into turquoise pools."
+      },
+      {
+        type: "quote",
+        text: "Island hopping in the Visayas isn't just about the destinations – it's about the journey between pristine waters and the stories shared with fellow travelers.",
+        author: "Local Tour Guide"
+      },
+      {
+        type: "heading",
+        text: "Planning Your Island Adventure"
+      },
+      {
+        type: "paragraph",
+        text: "The best time for island hopping is during the dry season from November to April when seas are calm and visibility is at its peak. Budget around ₱2,500-4,000 per person for a full day tour including boat transfers, snorkeling gear, and fresh seafood lunch prepared on the beach."
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className="sticky top-0 bg-white border-b border-gray-200 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <div className="flex items-center">
-              <Link href="/">
-                <span className="text-2xl font-bold text-[#D4AF37] cursor-pointer">Lakbay</span>
-              </Link>
-            </div>
-
-            {/* Navigation Links */}
-            <div className="hidden md:flex space-x-8">
-              <Link href="/" className="text-gray-700 hover:text-[#D4AF37] transition-colors">Home</Link>
-              <Link href="/trips" className="text-gray-700 hover:text-[#D4AF37] transition-colors">Trips</Link>
-              <Link href="/chats" className="text-gray-700 hover:text-[#D4AF37] transition-colors">Chats</Link>
-              <Link href="/trails" className="text-gray-700 hover:text-[#D4AF37] transition-colors">Trails</Link>
-              <Link href="/story" className="text-gray-700 hover:text-[#D4AF37] transition-colors">Story</Link>
-              <Link href="/shop" className="text-gray-700 hover:text-[#D4AF37] transition-colors">Shop</Link>
-              <Link href="/corporate" className="text-gray-700 hover:text-[#D4AF37] transition-colors">Corporate</Link>
-            </div>
+      {/* Header */}
+      <header className="bg-white px-8 py-4 border-b border-gray-100">
+        <div className="flex items-center justify-between">
+          <Link href="/">
+            <div className="w-8 h-8 bg-gray-300 rounded cursor-pointer"></div>
+          </Link>
+          
+          <nav className="flex items-center space-x-8">
+            <Link href="/" className="text-gray-900 font-medium">Home</Link>
+            <Link href="/trips" className="text-gray-700 hover:text-gray-900">Trips</Link>
+            <Link href="/chats" className="text-gray-700 hover:text-gray-900">Chats</Link>
+            <Link href="/trails" className="text-gray-700 hover:text-gray-900">Trails</Link>
+            <a href="#" className="text-gray-700 hover:text-gray-900">Story</a>
+            <Link href="/shop" className="text-gray-700 hover:text-gray-900">Shop</Link>
+            <a href="#" className="text-gray-700 hover:text-gray-900">Corporate</a>
+          </nav>
+          
+          <div className="flex items-center space-x-4">
+            <Button variant="outline" className="text-sm">Log in</Button>
+            <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black text-sm">Register</Button>
+            <span className="text-sm text-gray-700">EN</span>
           </div>
         </div>
-      </nav>
+      </header>
 
       {/* Article Content */}
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        {/* Back Button */}
-        <Link href="/">
-          <button className="flex items-center text-gray-600 hover:text-[#D4AF37] mb-8 transition-colors">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
-          </button>
-        </Link>
+      <article className="max-w-4xl mx-auto px-8 py-12">
+        {/* Breadcrumb */}
+        <nav className="text-sm text-gray-500 mb-6">
+          <Link href="/" className="hover:text-gray-700">Home</Link>
+          <span className="mx-2">/</span>
+          <span>Articles</span>
+          <span className="mx-2">/</span>
+          <span className="text-gray-900">{article.title}</span>
+        </nav>
+
+        {/* Article Header */}
+        <header className="mb-8">
+          <div className="mb-4">
+            <span className="inline-block px-3 py-1 bg-[#D4AF37] text-black text-sm rounded">
+              {article.category}
+            </span>
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+            {article.title}
+          </h1>
+          
+          <div className="flex items-center text-gray-600 text-sm space-x-6">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+              <span>By {article.author}</span>
+            </div>
+            <span>{article.date}</span>
+            <span>{article.readTime}</span>
+          </div>
+        </header>
 
         {/* Hero Image */}
-        <div className="relative aspect-[16/9] rounded-lg overflow-hidden mb-8">
+        <div className="mb-12">
           <img 
-            src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=450&fit=crop&auto=format" 
-            alt="Island Hopping Visayas"
-            className="w-full h-full object-cover"
+            src={article.heroImage}
+            alt="Island Hopping Guide"
+            className="w-full h-96 object-cover rounded-lg"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-          <div className="absolute bottom-6 left-6 text-white">
-            <span className="inline-block px-3 py-1 bg-[#D4AF37] text-black text-xs font-light tracking-wider mb-3 rounded-sm">
-              ADVENTURE GUIDE
-            </span>
-            <h1 className="text-4xl font-light mb-2">Best Island Hopping Routes in Visayas</h1>
-            <p className="text-lg opacity-90">Explore pristine islands and crystal clear waters</p>
-          </div>
-        </div>
-
-        {/* Article Meta */}
-        <div className="flex items-center space-x-6 text-sm text-gray-600 mb-8 pb-6 border-b border-gray-200">
-          <div className="flex items-center">
-            <User className="w-4 h-4 mr-2" />
-            <span>Jose Cruz</span>
-          </div>
-          <div className="flex items-center">
-            <Clock className="w-4 h-4 mr-2" />
-            <span>15 min read</span>
-          </div>
-          <div className="flex items-center">
-            <MapPin className="w-4 h-4 mr-2" />
-            <span>Visayas, Philippines</span>
-          </div>
         </div>
 
         {/* Article Content */}
-        <div className="prose prose-lg max-w-none">
-          <p className="text-xl text-gray-700 mb-8 leading-relaxed">
-            The Visayas region offers some of the most spectacular island hopping experiences in the Philippines. With over 6,000 islands scattered across crystal-clear waters, this tropical paradise provides endless opportunities for adventure, relaxation, and discovery.
-          </p>
-
-          <h2 className="text-2xl font-semibold text-gray-900 mt-12 mb-6">Classic Island Hopping Routes</h2>
-          
-          <div className="space-y-8 mb-12">
-            <div className="bg-blue-50 p-6 rounded-lg">
-              <div className="flex items-center mb-4">
-                <Anchor className="w-6 h-6 text-blue-600 mr-3" />
-                <h3 className="text-xl font-semibold">Bohol Island Hopping Circuit</h3>
-              </div>
-              <p className="text-gray-700 mb-4">
-                Start from Panglao and explore the stunning islands around Bohol. This route combines white sand beaches, snorkeling spots, and cultural experiences.
-              </p>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-semibold mb-2 text-blue-800">Route Highlights:</h4>
-                  <ul className="text-sm text-gray-700 space-y-1">
-                    <li>• Virgin Island (Pungtud Island)</li>
-                    <li>• Balicasag Island Marine Sanctuary</li>
-                    <li>• Dolphin watching at Pamilacan</li>
-                    <li>• Hinagdanan Cave exploration</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2 text-blue-800">Duration & Cost:</h4>
-                  <p className="text-sm text-gray-700">Full day tour (8-10 hours)</p>
-                  <p className="text-lg font-bold text-[#D4AF37]">₱2,500-3,500 per person</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-green-50 p-6 rounded-lg">
-              <div className="flex items-center mb-4">
-                <Anchor className="w-6 h-6 text-green-600 mr-3" />
-                <h3 className="text-xl font-semibold">Siquijor Mystical Island Tour</h3>
-              </div>
-              <p className="text-gray-700 mb-4">
-                Discover the enchanting "Island of Fire" with its pristine beaches, mystical folklore, and healing traditions.
-              </p>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-semibold mb-2 text-green-800">Route Highlights:</h4>
-                  <ul className="text-sm text-gray-700 space-y-1">
-                    <li>• Salagdoong Beach cliff jumping</li>
-                    <li>• Cambugahay Falls swimming</li>
-                    <li>• Lazi Church and Convent</li>
-                    <li>• Balete Tree healing sanctuary</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2 text-green-800">Duration & Cost:</h4>
-                  <p className="text-sm text-gray-700">Full day island tour (10-12 hours)</p>
-                  <p className="text-lg font-bold text-[#D4AF37]">₱3,000-4,200 per person</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-orange-50 p-6 rounded-lg">
-              <div className="flex items-center mb-4">
-                <Anchor className="w-6 h-6 text-orange-600 mr-3" />
-                <h3 className="text-xl font-semibold">Negros Oriental Coastal Adventure</h3>
-              </div>
-              <p className="text-gray-700 mb-4">
-                Explore the diverse coastline of Negros Oriental, from marine sanctuaries to volcanic lakes and hot springs.
-              </p>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-semibold mb-2 text-orange-800">Route Highlights:</h4>
-                  <ul className="text-sm text-gray-700 space-y-1">
-                    <li>• Apo Island Marine Reserve</li>
-                    <li>• Manjuyod White Sandbar</li>
-                    <li>• Twin Lakes of Balinsasayao</li>
-                    <li>• Pulangbato Falls</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2 text-orange-800">Duration & Cost:</h4>
-                  <p className="text-sm text-gray-700">2-3 day adventure tour</p>
-                  <p className="text-lg font-bold text-[#D4AF37]">₱8,500-12,000 per person</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <h2 className="text-2xl font-semibold text-gray-900 mt-12 mb-6">Planning Your Island Hopping Adventure</h2>
-          
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Best Time to Visit</h3>
-              <div className="space-y-3">
-                <div className="border-l-4 border-[#D4AF37] pl-4">
-                  <h4 className="font-semibold text-green-700">Dry Season (Nov-May)</h4>
-                  <p className="text-sm text-gray-600">Ideal weather, calm seas, perfect visibility</p>
-                </div>
-                <div className="border-l-4 border-gray-300 pl-4">
-                  <h4 className="font-semibold text-orange-600">Wet Season (Jun-Oct)</h4>
-                  <p className="text-sm text-gray-600">Lower prices, fewer crowds, occasional storms</p>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="text-lg font-semibold mb-4">What to Pack</h3>
-              <ul className="text-sm text-gray-700 space-y-2">
-                <li>• Waterproof bags for electronics</li>
-                <li>• Reef-safe sunscreen (SPF 50+)</li>
-                <li>• Snorkeling gear (optional)</li>
-                <li>• Quick-dry clothing</li>
-                <li>• Underwater camera</li>
-                <li>• Cash for entrance fees and meals</li>
-              </ul>
-            </div>
-          </div>
-
-          <h2 className="text-2xl font-semibold text-gray-900 mt-12 mb-6">Budget Breakdown</h2>
-          
-          <div className="bg-gray-50 p-6 rounded-lg mb-8">
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <h4 className="font-semibold mb-2">Budget Tour</h4>
-                <p className="text-3xl font-bold text-[#D4AF37] mb-2">₱2,000</p>
-                <p className="text-xs text-gray-600 mb-3">per person/day</p>
-                <ul className="text-xs text-gray-700 space-y-1">
-                  <li>Shared boat tours</li>
-                  <li>Basic snorkeling gear</li>
-                  <li>Local lunch included</li>
-                  <li>3-4 island stops</li>
-                </ul>
-              </div>
-              
-              <div className="text-center border-2 border-[#D4AF37] rounded-lg p-4">
-                <h4 className="font-semibold mb-2 text-[#D4AF37]">Standard Tour</h4>
-                <p className="text-3xl font-bold text-[#D4AF37] mb-2">₱3,500</p>
-                <p className="text-xs text-gray-600 mb-3">per person/day</p>
-                <ul className="text-xs text-gray-700 space-y-1">
-                  <li>Private boat option</li>
-                  <li>Quality snorkeling gear</li>
-                  <li>Seafood lunch</li>
-                  <li>5-6 island stops</li>
-                  <li>Photo service</li>
-                </ul>
-              </div>
-              
-              <div className="text-center">
-                <h4 className="font-semibold mb-2">Luxury Tour</h4>
-                <p className="text-3xl font-bold text-[#D4AF37] mb-2">₱6,000</p>
-                <p className="text-xs text-gray-600 mb-3">per person/day</p>
-                <ul className="text-xs text-gray-700 space-y-1">
-                  <li>Premium yacht charter</li>
-                  <li>Professional gear</li>
-                  <li>Gourmet meals</li>
-                  <li>Unlimited stops</li>
-                  <li>Drone photography</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <h2 className="text-2xl font-semibold text-gray-900 mt-12 mb-6">Marine Life & Snorkeling Spots</h2>
-          
-          <div className="space-y-6 mb-8">
-            <div className="bg-blue-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold mb-3 text-blue-900">Top Snorkeling Destinations</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-semibold mb-2">Balicasag Island</h4>
-                  <p className="text-sm text-gray-700 mb-1">Marine sanctuary with sea turtles, colorful coral gardens, and diverse fish species.</p>
-                  <p className="text-xs text-blue-600">Visibility: 15-25 meters</p>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2">Apo Island</h4>
-                  <p className="text-sm text-gray-700 mb-1">Protected marine reserve known for sea turtle encounters and pristine coral reefs.</p>
-                  <p className="text-xs text-blue-600">Visibility: 20-30 meters</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-yellow-50 p-6 rounded-lg mb-8">
-            <h3 className="text-lg font-semibold mb-3 text-yellow-900">Safety & Conservation Tips</h3>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-semibold mb-2 text-yellow-800">Safety Guidelines</h4>
-                <ul className="space-y-1 text-sm text-yellow-700">
-                  <li>• Always wear life jackets on boats</li>
-                  <li>• Check weather conditions before departure</li>
-                  <li>• Stay with your group while snorkeling</li>
-                  <li>• Inform guides of swimming ability</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2 text-yellow-800">Eco-Friendly Practices</h4>
-                <ul className="space-y-1 text-sm text-yellow-700">
-                  <li>• Use reef-safe sunscreen only</li>
-                  <li>• Don't touch or step on coral</li>
-                  <li>• Take only photos, leave only bubbles</li>
-                  <li>• Support local conservation efforts</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <p className="text-gray-700 text-lg leading-relaxed">
-            Island hopping in the Visayas is more than just a vacation—it's a journey through some of the world's most biodiverse marine ecosystems and culturally rich communities. Whether you're seeking adventure, relaxation, or cultural immersion, these island routes offer unforgettable experiences that will leave you planning your next Philippine adventure before you've even returned home.
-          </p>
+        <div className="prose prose-lg max-w-none space-y-8">
+          {article.content.map((item, index) => {
+            switch (item.type) {
+              case 'paragraph':
+                return (
+                  <p key={index} className="text-gray-700 leading-relaxed text-lg">
+                    {item.text}
+                  </p>
+                );
+              case 'heading':
+                return (
+                  <h2 key={index} className="text-2xl font-bold text-gray-900 mt-12 mb-6">
+                    {item.text}
+                  </h2>
+                );
+              case 'image':
+                return (
+                  <figure key={index} className="my-8">
+                    <img 
+                      src={item.src} 
+                      alt={item.caption}
+                      className="w-full h-64 object-cover rounded-lg"
+                    />
+                    {item.caption && (
+                      <figcaption className="text-center text-gray-600 text-sm mt-2">
+                        {item.caption}
+                      </figcaption>
+                    )}
+                  </figure>
+                );
+              case 'quote':
+                return (
+                  <blockquote key={index} className="border-l-4 border-[#D4AF37] pl-6 my-8 italic text-gray-700">
+                    <p className="text-xl mb-2">"{item.text}"</p>
+                    {item.author && (
+                      <cite className="text-sm text-gray-600">— {item.author}</cite>
+                    )}
+                  </blockquote>
+                );
+              default:
+                return null;
+            }
+          })}
         </div>
 
-        {/* Related Articles */}
-        <div className="mt-16 pt-8 border-t border-gray-200">
-          <h3 className="text-xl font-semibold mb-6">Related Articles</h3>
+
+        
+        {/* Footer */}
+        <footer className="mt-16 pt-12 border-t border-gray-200">
+          <div className="text-center">
+            <div className="mb-8">
+              <div className="flex justify-center items-center mb-4">
+                <div className="w-12 h-12 bg-gray-300 rounded"></div>
+              </div>
+              
+              <p className="text-gray-600 max-w-md mx-auto">
+                Discover the best island hopping routes and hidden beaches across the beautiful Visayas region with our comprehensive travel guides.
+              </p>
+            </div>
+            
+            <Link href="/">
+              <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black">
+                Back to Home
+              </Button>
+            </Link>
+          </div>
+        </footer>
+      </article>
+
+      {/* Related Articles */}
+      <section className="bg-gray-50 py-12">
+        <div className="max-w-4xl mx-auto px-8">
+          <h3 className="text-2xl font-bold text-gray-900 mb-8">Related Articles</h3>
+          
           <div className="grid md:grid-cols-2 gap-6">
             <Link href="/article/food-guide">
-              <div className="group cursor-pointer">
-                <div className="aspect-[16/9] rounded-lg overflow-hidden mb-3">
-                  <img 
-                    src="https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=400&h=225&fit=crop&auto=format" 
-                    alt="Food Guide"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+              <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                <img 
+                  src="https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=400&h=200&fit=crop&auto=format"
+                  alt="Food Guide"
+                  className="w-full h-32 object-cover"
+                />
+                <div className="p-4">
+                  <span className="inline-block px-2 py-1 bg-[#D4AF37] text-black text-xs rounded mb-2">
+                    Culinary Guide
+                  </span>
+                  <h4 className="font-semibold text-gray-900 mb-2">Ultimate Filipino Food Guide for Travelers</h4>
+                  <p className="text-gray-600 text-sm">Discover authentic Filipino flavors and hidden culinary gems...</p>
                 </div>
-                <h4 className="font-semibold group-hover:text-[#D4AF37] transition-colors">Ultimate Food Guide to Cebu</h4>
-                <p className="text-sm text-gray-600 mt-1">Taste authentic Filipino flavors and local specialties</p>
               </div>
             </Link>
             
             <Link href="/article/hidden-gems">
-              <div className="group cursor-pointer">
-                <div className="aspect-[16/9] rounded-lg overflow-hidden mb-3">
-                  <img 
-                    src="https://images.unsplash.com/photo-1464822759844-d150baec0494?w=400&h=225&fit=crop&auto=format" 
-                    alt="Hidden Gems"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+              <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                <img 
+                  src="https://images.unsplash.com/photo-1464822759844-d150baec0494?w=400&h=200&fit=crop&auto=format"
+                  alt="Hidden Gems"
+                  className="w-full h-32 object-cover"
+                />
+                <div className="p-4">
+                  <span className="inline-block px-2 py-1 bg-[#D4AF37] text-black text-xs rounded mb-2">
+                    Lakbay Exclusive
+                  </span>
+                  <h4 className="font-semibold text-gray-900 mb-2">Top 5 Hidden Gems in the Philippines</h4>
+                  <p className="text-gray-600 text-sm">Discover untouched destinations that showcase the country's natural beauty...</p>
                 </div>
-                <h4 className="font-semibold group-hover:text-[#D4AF37] transition-colors">Top 5 Hidden Gems in the Philippines</h4>
-                <p className="text-sm text-gray-600 mt-1">Discover untouched destinations off the beaten path</p>
               </div>
             </Link>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 };
