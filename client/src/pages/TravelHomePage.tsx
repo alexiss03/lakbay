@@ -14,6 +14,7 @@ import { PhilippinesMap } from "@/components/PhilippinesMap";
 
 export const TravelHomePage = (): JSX.Element => {
   const [activeTab, setActiveTab] = useState("Private");
+  const [nicheActiveTab, setNicheActiveTab] = useState("Astronomy");
   
   // Sample travel history data for the interactive map
   const travelHistory = [
@@ -626,35 +627,39 @@ export const TravelHomePage = (): JSX.Element => {
         <h2 className="prada-heading text-3xl text-black mb-6 font-light">DISCOVER NICHE EVENTS</h2>
         <p className="text-gray-600 mb-12 font-light tracking-wide">Experience unique, specialized adventures tailored for passionate enthusiasts and curious explorers</p>
         
-        {/* Niche Categories Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+        {/* Niche Categories Navigation */}
+        <div className="flex space-x-8 mb-12 border-b border-gray-100 overflow-x-auto">
           {[
-            { name: "Astronomical Tours", icon: "🌟", description: "Stargazing & celestial events", count: "6 events" },
-            { name: "Foraging Expeditions", icon: "🍄", description: "Wild food hunting adventures", count: "8 events" },
-            { name: "Archaeological Digs", icon: "🏺", description: "Historical site excavations", count: "4 events" },
-            { name: "Bird Photography", icon: "📸", description: "Endemic species documentation", count: "12 events" },
-            { name: "Cave Spelunking", icon: "🕳️", description: "Underground exploration", count: "7 events" },
-            { name: "Traditional Crafts", icon: "🎨", description: "Indigenous artisan workshops", count: "15 events" },
-            { name: "Marine Biology", icon: "🐠", description: "Underwater research trips", count: "9 events" },
-            { name: "Language Immersion", icon: "🗣️", description: "Local dialect learning", count: "11 events" }
-          ].map((category, index) => (
-            <div key={index} className="prada-card p-6 cursor-pointer group transition-all duration-300">
-              <div className="text-center">
-                <div className="text-3xl mb-3">{category.icon}</div>
-                <h3 className="font-light text-black mb-2 group-hover:text-[#D4AF37] transition-colors tracking-wide text-sm">{category.name.toUpperCase()}</h3>
-                <p className="text-xs text-gray-600 mb-3 font-light">{category.description}</p>
-                <span className="text-xs text-[#D4AF37] font-light tracking-wider">{category.count}</span>
-              </div>
-            </div>
+            { name: "Astronomy", label: "Astronomical Tours", icon: "🌟" },
+            { name: "Foraging", label: "Foraging Expeditions", icon: "🍄" },
+            { name: "Archaeology", label: "Archaeological Digs", icon: "🏺" },
+            { name: "Photography", label: "Bird Photography", icon: "📸" },
+            { name: "Spelunking", label: "Cave Spelunking", icon: "🕳️" },
+            { name: "Crafts", label: "Traditional Crafts", icon: "🎨" },
+            { name: "Marine", label: "Marine Biology", icon: "🐠" },
+            { name: "Language", label: "Language Immersion", icon: "🗣️" }
+          ].map((tab) => (
+            <button
+              key={tab.name}
+              onClick={() => setNicheActiveTab(tab.name)}
+              className={`flex items-center space-x-2 pb-4 transition-all duration-200 whitespace-nowrap ${
+                nicheActiveTab === tab.name
+                  ? "text-black font-light border-b border-[#D4AF37]"
+                  : "text-gray-500 hover:text-black"
+              }`}
+            >
+              <span className="text-lg">{tab.icon}</span>
+              <span className="prada-nav text-xs tracking-wider">{tab.label.toUpperCase()}</span>
+            </button>
           ))}
         </div>
 
-        {/* Featured Niche Events */}
+        {/* Niche Events Content */}
         <div className="grid grid-cols-3 gap-6">
-          {[
+          {nicheActiveTab === "Astronomy" && [
             { title: "Perseid Meteor Shower Observatory", location: "Benguet Observatory", price: "₱4,500", image: "1464822759844-d150baec0494", link: "/trip/meteor-shower", category: "astronomy" },
-            { title: "Wild Mushroom Hunting Expedition", location: "Cordillera Mountains", price: "₱3,800", image: "1506905925346-21bda4d32df4", link: "/trip/mushroom-foraging", category: "foraging" },
-            { title: "Pre-Colonial Site Excavation", location: "Cagayan Valley", price: "₱5,500", image: "1441974231531-c6227db76b6e", link: "/trip/archaeological-dig", category: "archaeology" }
+            { title: "Solar Eclipse Viewing Expedition", location: "Batanes", price: "₱8,000", image: "1506905925346-21bda4d32df4", link: "/trip/solar-eclipse", category: "astronomy" },
+            { title: "Dark Sky Photography Workshop", location: "Mount Pulag", price: "₱6,200", image: "1609137144813-7d9921338f24", link: "/trip/dark-sky-photo", category: "astronomy" }
           ].map((event, i) => (
             <Link key={i} href={event.link}>
               <div className="prada-card overflow-hidden group cursor-pointer">
@@ -666,6 +671,195 @@ export const TravelHomePage = (): JSX.Element => {
                   />
                   <div className="absolute top-4 right-4">
                     <span className="bg-purple-600 text-white text-xs px-3 py-1 font-light tracking-wider" style={{borderRadius: '1px'}}>{event.category.toUpperCase()}</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h3 className="font-light text-sm mb-1 tracking-wide">{event.title}</h3>
+                    <p className="text-xs opacity-90 font-light">{event.location}</p>
+                    <p className="text-sm font-light tracking-wider mt-1">{event.price}</p>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+
+          {nicheActiveTab === "Foraging" && [
+            { title: "Wild Mushroom Hunting Expedition", location: "Cordillera Mountains", price: "₱3,800", image: "1464822759844-d150baec0494", link: "/trip/mushroom-foraging", category: "foraging" },
+            { title: "Edible Plant Identification Tour", location: "Bohol Forest", price: "₱2,900", image: "1544551763-46a013bb70d5", link: "/trip/plant-foraging", category: "foraging" },
+            { title: "Traditional Herbal Medicine Walk", location: "Palawan Rainforest", price: "₱4,200", image: "1507525428034-b723cf961d3e", link: "/trip/herbal-walk", category: "foraging" }
+          ].map((event, i) => (
+            <Link key={i} href={event.link}>
+              <div className="prada-card overflow-hidden group cursor-pointer">
+                <div className="relative aspect-[4/3]">
+                  <img 
+                    src={`https://images.unsplash.com/photo-${event.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={event.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-green-700 text-white text-xs px-3 py-1 font-light tracking-wider" style={{borderRadius: '1px'}}>{event.category.toUpperCase()}</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h3 className="font-light text-sm mb-1 tracking-wide">{event.title}</h3>
+                    <p className="text-xs opacity-90 font-light">{event.location}</p>
+                    <p className="text-sm font-light tracking-wider mt-1">{event.price}</p>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+
+          {nicheActiveTab === "Archaeology" && [
+            { title: "Pre-Colonial Site Excavation", location: "Cagayan Valley", price: "₱5,500", image: "1441974231531-c6227db76b6e", link: "/trip/archaeological-dig", category: "archaeology" },
+            { title: "Spanish Colonial Ruins Tour", location: "Intramuros", price: "₱3,200", image: "1609137144813-7d9921338f24", link: "/trip/colonial-ruins", category: "archaeology" },
+            { title: "Ancient Pottery Workshop", location: "Vigan", price: "₱2,800", image: "1506905925346-21bda4d32df4", link: "/trip/pottery-archaeology", category: "archaeology" }
+          ].map((event, i) => (
+            <Link key={i} href={event.link}>
+              <div className="prada-card overflow-hidden group cursor-pointer">
+                <div className="relative aspect-[4/3]">
+                  <img 
+                    src={`https://images.unsplash.com/photo-${event.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={event.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-amber-600 text-white text-xs px-3 py-1 font-light tracking-wider" style={{borderRadius: '1px'}}>{event.category.toUpperCase()}</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h3 className="font-light text-sm mb-1 tracking-wide">{event.title}</h3>
+                    <p className="text-xs opacity-90 font-light">{event.location}</p>
+                    <p className="text-sm font-light tracking-wider mt-1">{event.price}</p>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+
+          {nicheActiveTab === "Photography" && [
+            { title: "Endemic Bird Photography Safari", location: "Mount Makiling", price: "₱4,800", image: "1544551763-46a013bb70d5", link: "/trip/bird-photography", category: "photography" },
+            { title: "Underwater Macro Photography", location: "Anilao", price: "₱6,500", image: "1507525428034-b723cf961d3e", link: "/trip/macro-photography", category: "photography" },
+            { title: "Cultural Portrait Documentation", location: "Ifugao", price: "₱5,200", image: "1464822759844-d150baec0494", link: "/trip/portrait-documentation", category: "photography" }
+          ].map((event, i) => (
+            <Link key={i} href={event.link}>
+              <div className="prada-card overflow-hidden group cursor-pointer">
+                <div className="relative aspect-[4/3]">
+                  <img 
+                    src={`https://images.unsplash.com/photo-${event.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={event.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-indigo-600 text-white text-xs px-3 py-1 font-light tracking-wider" style={{borderRadius: '1px'}}>{event.category.toUpperCase()}</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h3 className="font-light text-sm mb-1 tracking-wide">{event.title}</h3>
+                    <p className="text-xs opacity-90 font-light">{event.location}</p>
+                    <p className="text-sm font-light tracking-wider mt-1">{event.price}</p>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+
+          {nicheActiveTab === "Spelunking" && [
+            { title: "Underground River Cave System", location: "Palawan", price: "₱7,200", image: "1441974231531-c6227db76b6e", link: "/trip/cave-spelunking", category: "spelunking" },
+            { title: "Limestone Cave Exploration", location: "Sagada", price: "₱3,800", image: "1506905925346-21bda4d32df4", link: "/trip/limestone-caves", category: "spelunking" },
+            { title: "Advanced Cave Photography Tour", location: "Bohol", price: "₱5,400", image: "1609137144813-7d9921338f24", link: "/trip/cave-photography", category: "spelunking" }
+          ].map((event, i) => (
+            <Link key={i} href={event.link}>
+              <div className="prada-card overflow-hidden group cursor-pointer">
+                <div className="relative aspect-[4/3]">
+                  <img 
+                    src={`https://images.unsplash.com/photo-${event.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={event.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-gray-700 text-white text-xs px-3 py-1 font-light tracking-wider" style={{borderRadius: '1px'}}>{event.category.toUpperCase()}</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h3 className="font-light text-sm mb-1 tracking-wide">{event.title}</h3>
+                    <p className="text-xs opacity-90 font-light">{event.location}</p>
+                    <p className="text-sm font-light tracking-wider mt-1">{event.price}</p>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+
+          {nicheActiveTab === "Crafts" && [
+            { title: "Ifugao Basket Weaving Workshop", location: "Banaue", price: "₱2,800", image: "1464822759844-d150baec0494", link: "/trip/basket-weaving", category: "crafts" },
+            { title: "Traditional Pottery Making", location: "Vigan", price: "₱3,200", image: "1609137144813-7d9921338f24", link: "/trip/pottery-making", category: "crafts" },
+            { title: "Mindanao Textile Artisan Course", location: "Davao", price: "₱4,500", image: "1506905925346-21bda4d32df4", link: "/trip/textile-crafts", category: "crafts" }
+          ].map((event, i) => (
+            <Link key={i} href={event.link}>
+              <div className="prada-card overflow-hidden group cursor-pointer">
+                <div className="relative aspect-[4/3]">
+                  <img 
+                    src={`https://images.unsplash.com/photo-${event.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={event.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-pink-600 text-white text-xs px-3 py-1 font-light tracking-wider" style={{borderRadius: '1px'}}>{event.category.toUpperCase()}</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h3 className="font-light text-sm mb-1 tracking-wide">{event.title}</h3>
+                    <p className="text-xs opacity-90 font-light">{event.location}</p>
+                    <p className="text-sm font-light tracking-wider mt-1">{event.price}</p>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+
+          {nicheActiveTab === "Marine" && [
+            { title: "Coral Research Expedition", location: "Apo Island", price: "₱8,500", image: "1507525428034-b723cf961d3e", link: "/trip/coral-research", category: "marine" },
+            { title: "Marine Species Documentation", location: "Batangas", price: "₱6,200", image: "1544551763-46a013bb70d5", link: "/trip/marine-documentation", category: "marine" },
+            { title: "Underwater Ecosystem Study", location: "Donsol", price: "₱7,800", image: "1441974231531-c6227db76b6e", link: "/trip/ecosystem-study", category: "marine" }
+          ].map((event, i) => (
+            <Link key={i} href={event.link}>
+              <div className="prada-card overflow-hidden group cursor-pointer">
+                <div className="relative aspect-[4/3]">
+                  <img 
+                    src={`https://images.unsplash.com/photo-${event.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={event.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-blue-600 text-white text-xs px-3 py-1 font-light tracking-wider" style={{borderRadius: '1px'}}>{event.category.toUpperCase()}</span>
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h3 className="font-light text-sm mb-1 tracking-wide">{event.title}</h3>
+                    <p className="text-xs opacity-90 font-light">{event.location}</p>
+                    <p className="text-sm font-light tracking-wider mt-1">{event.price}</p>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+
+          {nicheActiveTab === "Language" && [
+            { title: "Tagalog Immersion Experience", location: "Manila", price: "₱2,500", image: "1609137144813-7d9921338f24", link: "/trip/tagalog-immersion", category: "language" },
+            { title: "Cebuano Cultural Language Tour", location: "Cebu", price: "₱3,200", image: "1506905925346-21bda4d32df4", link: "/trip/cebuano-language", category: "language" },
+            { title: "Ilocano Heritage Language Study", location: "Vigan", price: "₱2,800", image: "1464822759844-d150baec0494", link: "/trip/ilocano-heritage", category: "language" }
+          ].map((event, i) => (
+            <Link key={i} href={event.link}>
+              <div className="prada-card overflow-hidden group cursor-pointer">
+                <div className="relative aspect-[4/3]">
+                  <img 
+                    src={`https://images.unsplash.com/photo-${event.image}?w=400&h=300&fit=crop&auto=format`}
+                    alt={event.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-teal-600 text-white text-xs px-3 py-1 font-light tracking-wider" style={{borderRadius: '1px'}}>{event.category.toUpperCase()}</span>
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                   <div className="absolute bottom-4 left-4 text-white">
