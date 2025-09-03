@@ -371,34 +371,8 @@ export const TravelHomePage = (): JSX.Element => {
         </div>
       </section>
 
-      {/* Trip Categories */}
+      {/* Event Tabs */}
       <section className="px-8 py-16 bg-white">
-        <h2 className="prada-heading text-3xl text-black mb-6 font-light">EXPLORE EVENT CATEGORIES</h2>
-        <p className="text-gray-600 mb-12 font-light tracking-wide">Join exciting events, meet fellow adventurers, and create unforgettable memories</p>
-        
-        {/* Categories Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-          {[
-            { name: "Private Events", icon: "👑", description: "Exclusive VIP experiences", count: "8 events" },
-            { name: "Joiner Trips", icon: "👥", description: "Meet new adventurers", count: "15 events" },
-            { name: "Community Meetups", icon: "🤝", description: "Local gatherings & activities", count: "12 events" },
-            { name: "Mystery Adventures", icon: "❓", description: "Secret destinations revealed", count: "6 events" },
-            { name: "Festival Events", icon: "🎉", description: "Cultural celebrations", count: "10 events" },
-            { name: "Virtual Experiences", icon: "💻", description: "Online tours & workshops", count: "20 events" },
-            { name: "Online Quizzes", icon: "🧠", description: "Interactive knowledge challenges", count: "25 quizzes" },
-            { name: "Wellness Retreats", icon: "🧘", description: "Mindfulness & health experiences", count: "14 retreats" }
-          ].map((category, index) => (
-            <div key={index} className="prada-card p-6 cursor-pointer group transition-all duration-300">
-              <div className="text-center">
-                <div className="text-3xl mb-3">{category.icon}</div>
-                <h3 className="font-light text-black mb-2 group-hover:text-[#D4AF37] transition-colors tracking-wide text-sm">{category.name.toUpperCase()}</h3>
-                <p className="text-xs text-gray-600 mb-3 font-light">{category.description}</p>
-                <span className="text-xs text-[#D4AF37] font-light tracking-wider">{category.count}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-        
         <div className="flex space-x-12 mb-12 border-b border-gray-100">
           {["Private", "Joiner", "Meetups", "Mystery", "Events", "Virtual", "Wellness", "Online Quizzes"].map((tab) => (
             <button
