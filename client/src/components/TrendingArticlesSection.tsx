@@ -97,7 +97,7 @@ export const TrendingArticlesSection = (): JSX.Element => {
           
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {trendingArticles.map((article) => (
-              <div key={article.id} className="group cursor-pointer">
+              <div key={article.id} className="group cursor-pointer max-w-[400px] mx-auto">
                 <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105">
                   <div className="relative">
                     <img
