@@ -1834,11 +1834,17 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                       <MapIcon className="w-4 h-4 mr-2" />
                       Trail Map - Satellite View
                     </h3>
-                    <TrailMap 
-                      trailPoints={trip.trail?.trailPoints || []}
-                      center={trip.mapCenter}
-                      zoom={14}
-                    />
+                    {trip.mapCenter && trip.mapCenter.lat && trip.mapCenter.lng ? (
+                      <TrailMap 
+                        trailPoints={trip.trail?.trailPoints || []}
+                        center={trip.mapCenter}
+                        zoom={14}
+                      />
+                    ) : (
+                      <div className="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center">
+                        <span className="text-gray-500">Trail Map Loading...</span>
+                      </div>
+                    )}
                     
                     {/* Legend */}
                     <div className="mt-4 p-4 bg-gray-50 rounded-lg">
