@@ -35,10 +35,10 @@ function Router() {
       <Route path="/trips" component={TripsPage} />
       <Route path="/chats" component={ChatPage} />
       <Route path="/trails" component={TrailsPage} />
-      <Route path="/article/:slug" component={ArticlePage} />
       <Route path="/article/food-guide" component={ArticleFoodGuidePage} />
       <Route path="/article/island-hopping" component={ArticleIslandHoppingPage} />
       <Route path="/article/mountain-tribes" component={ArticleMountainTribesPage} />
+      <Route path="/article/:slug" component={ArticlePage} />
       <Route path="/trip/:id" component={TripDetailPage} />
       <Route path="/shop" component={ShopPage} />
       <Route path="/shop/product/:id" component={ProductDetailPage} />
