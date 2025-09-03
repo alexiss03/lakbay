@@ -1342,6 +1342,8 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
     return <div>Loading...</div>;
   }
 
+  // Removed debug console log
+
   // Type guard for quiz trips
   const isQuizTrip = (trip: any): trip is QuizTrip => {
     return trip.category === "online-quiz" && trip.quiz;
@@ -3062,7 +3064,10 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
             duration: trip.duration,
             price: trip.price,
             category: trip.category,
-            host: trip.host,
+            host: {
+              name: trip.host?.name || '',
+              bio: trip.host?.bio || ''
+            },
             itinerary: trip.itinerary || [],
             meetingPlace: trip.meetingPlace
           }}
