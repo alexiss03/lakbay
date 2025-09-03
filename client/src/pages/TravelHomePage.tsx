@@ -331,9 +331,9 @@ export const TravelHomePage = (): JSX.Element => {
       <section className="px-8 py-16">
         <h2 className="prada-heading text-3xl text-black mb-12 font-light">TRENDING ARTICLES</h2>
         
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <Link href="/article/hidden-gems">
-            <div className="prada-card overflow-hidden group cursor-pointer">
+            <div className="prada-card overflow-hidden group cursor-pointer max-w-[400px] mx-auto">
               <div className="relative aspect-[16/5] overflow-hidden">
                 <img 
                   src="https://images.unsplash.com/photo-1464822759844-d150baec0494?w=600&h=200&fit=crop&auto=format" 
@@ -352,7 +352,7 @@ export const TravelHomePage = (): JSX.Element => {
           </Link>
           
           <Link href="/article/mountain-tribes">
-            <div className="prada-card overflow-hidden group cursor-pointer">
+            <div className="prada-card overflow-hidden group cursor-pointer max-w-[400px] mx-auto">
               <div className="relative aspect-[16/5] overflow-hidden">
                 <img 
                   src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=200&fit=crop&auto=format" 
@@ -365,6 +365,44 @@ export const TravelHomePage = (): JSX.Element => {
                     CULTURAL GUIDE
                   </span>
                   <h3 className="text-base font-light tracking-wide">Ancient Traditions of Mountain Tribes</h3>
+                </div>
+              </div>
+            </div>
+          </Link>
+
+          <Link href="/article/food-guide">
+            <div className="prada-card overflow-hidden group cursor-pointer max-w-[400px] mx-auto">
+              <div className="relative aspect-[16/5] overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=600&h=200&fit=crop&auto=format" 
+                  alt="Food Guide"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                <div className="absolute bottom-4 left-4 text-white">
+                  <span className="inline-block px-3 py-1 prada-gold-accent text-xs font-light tracking-wider mb-2" style={{borderRadius: '1px'}}>
+                    CULINARY GUIDE
+                  </span>
+                  <h3 className="text-base font-light tracking-wide">Ultimate Food Guide to Cebu</h3>
+                </div>
+              </div>
+            </div>
+          </Link>
+
+          <Link href="/article/island-hopping">
+            <div className="prada-card overflow-hidden group cursor-pointer max-w-[400px] mx-auto">
+              <div className="relative aspect-[16/5] overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&h=200&fit=crop&auto=format" 
+                  alt="Island Hopping"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                <div className="absolute bottom-4 left-4 text-white">
+                  <span className="inline-block px-3 py-1 prada-gold-accent text-xs font-light tracking-wider mb-2" style={{borderRadius: '1px'}}>
+                    ADVENTURE GUIDE
+                  </span>
+                  <h3 className="text-base font-light tracking-wide">Best Island Hopping Routes in Visayas</h3>
                 </div>
               </div>
             </div>
