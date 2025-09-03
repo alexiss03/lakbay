@@ -1422,7 +1422,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
     meetingPlace: "El Nido Airport, Palawan",
     mapCenter: { lat: 11.1854, lng: 119.4094 }
   };
-  }
+  } // End of getTripData function
 
   const trip = getTripData();
   
