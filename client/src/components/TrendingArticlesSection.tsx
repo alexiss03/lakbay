@@ -95,7 +95,7 @@ export const TrendingArticlesSection = (): JSX.Element => {
           </h2>
           <p className="text-gray-600 mb-8">Discover the latest travel insights and stories from fellow adventurers</p>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {trendingArticles.map((article) => (
               <div key={article.id} className="group cursor-pointer">
                 <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105">
