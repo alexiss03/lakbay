@@ -2952,7 +2952,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                     Daily Audio Guides
                   </h3>
                   
-                  {trip.itinerary.map((day, index) => (
+                  {trip.itinerary && trip.itinerary.map((day, index) => (
                     <div key={index} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center">
