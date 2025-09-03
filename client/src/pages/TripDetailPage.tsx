@@ -105,96 +105,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
     }
   }, [toast]);
 
-  const handlePayMongoPayment = async () => {
-    setIsProcessing(true);
-    
-    try {
-      // Calculate total amount
-      const guestCount = parseInt(guests.split(" ")[0]);
-      const basePrice = parseInt(trip.price.replace(/[^\d]/g, ""));
-      const totalAmount = basePrice * guestCount * 100; // PayMongo expects amount in centavos
-      
-      // Create PayMongo payment intent
-      const response = await fetch('/api/create-payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: totalAmount,
-          currency: 'PHP',
-          description: `${trip.title} - ${guests}`,
-          statement_descriptor: 'Lakbay Travel',
-          metadata: {
-            trip_id: location.split('/')[2],
-            check_in: checkIn,
-            check_out: checkOut,
-            guests: guestCount
-          }
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        // Redirect to PayMongo checkout
-        window.location.href = data.checkout_url;
-      } else {
-        throw new Error(data.error || 'Payment creation failed');
-      }
-    } catch (error) {
-      console.error('Payment error:', error);
-      toast({
-        title: "Payment Error",
-        description: "Unable to process payment. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleReservation = async () => {
-    setIsProcessing(true);
-    
-    try {
-      // Create reservation without payment
-      const response = await fetch('/api/create-reservation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          trip_id: location.split('/')[2],
-          check_in: checkIn,
-          check_out: checkOut,
-          guests: parseInt(guests.split(" ")[0]),
-          status: 'reserved'
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setIsBooked(true); // Mark trip as booked
-        toast({
-          title: "Reservation Confirmed",
-          description: "Your trip has been reserved. Complete payment within 24 hours.",
-        });
-      } else {
-        throw new Error(data.error || 'Reservation failed');
-      }
-    } catch (error) {
-      console.error('Reservation error:', error);
-      toast({
-        title: "Reservation Error", 
-        description: "Unable to create reservation. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsProcessing(false);
-    }
-  };
+  // Payment and reservation handlers will be defined after trip data is available
 
   // Audio book functionality
   const handlePlayAudio = (trackIndex: number) => {
@@ -1434,6 +1345,98 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
   // Type guard for quiz trips
   const isQuizTrip = (trip: any): trip is QuizTrip => {
     return trip.category === "online-quiz" && trip.quiz;
+  };
+
+  // Payment handler - now that trip is available
+  const handlePayMongoPayment = async () => {
+    setIsProcessing(true);
+    
+    try {
+      // Calculate total amount
+      const guestCount = parseInt(guests.split(" ")[0]);
+      const basePrice = parseInt(trip.price.replace(/[^\d]/g, ""));
+      const totalAmount = basePrice * guestCount * 100; // PayMongo expects amount in centavos
+      
+      // Create PayMongo payment intent
+      const response = await fetch('/api/create-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: totalAmount,
+          currency: 'PHP',
+          description: `${trip.title} - ${guests}`,
+          statement_descriptor: 'Lakbay Travel',
+          metadata: {
+            trip_id: location.split('/')[2],
+            check_in: checkIn,
+            check_out: checkOut,
+            guests: guestCount
+          }
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Redirect to PayMongo checkout
+        window.location.href = data.checkout_url;
+      } else {
+        throw new Error(data.error || 'Payment creation failed');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast({
+        title: "Payment Error",
+        description: "Unable to process payment. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleReservation = async () => {
+    setIsProcessing(true);
+    
+    try {
+      // Create reservation without payment
+      const response = await fetch('/api/create-reservation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          trip_id: location.split('/')[2],
+          guests: parseInt(guests.split(" ")[0]),
+          check_in: checkIn,
+          check_out: checkOut,
+          amount: parseInt(trip.price.replace(/[^\d]/g, "")) * parseInt(guests.split(" ")[0])
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setIsBooked(true); // Mark trip as booked
+        toast({
+          title: "Reservation Confirmed!",
+          description: "Your trip has been reserved. Complete payment within 24 hours.",
+        });
+      } else {
+        throw new Error(data.error || 'Reservation failed');
+      }
+    } catch (error) {
+      console.error('Reservation error:', error);
+      toast({
+        title: "Reservation Error",
+        description: "Unable to create reservation. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
