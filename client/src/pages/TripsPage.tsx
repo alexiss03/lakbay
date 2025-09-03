@@ -134,83 +134,39 @@ export const TripsPage = (): JSX.Element => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Top Navigation */}
-      <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <div className="flex items-center">
-              <Link href="/">
-                <h1 className="prada-heading text-2xl text-black font-light tracking-wider">LAKBAY</h1>
-              </Link>
-            </div>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              <Link href="/" className="prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
-                HOME
-              </Link>
-              <Link href="/trips" className="prada-nav-link text-sm font-light tracking-wider text-black">
-                MY TRIPS
-              </Link>
-              <Link href="/chats" className="prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
-                CHATS
-              </Link>
-              <Link href="/trails" className="prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
-                TRAILS
-              </Link>
-              <span className="prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors cursor-pointer">
-                STORY
-              </span>
-              <Link href="/shop" className="prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
-                SHOP
-              </Link>
-              <span className="prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors cursor-pointer">
-                CORPORATE
-              </span>
-            </div>
-
-            {/* Mobile menu button */}
-            <div className="md:hidden">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-gray-700 hover:text-black"
-              >
-                {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-              </button>
-            </div>
+      {/* Header */}
+      <header className="bg-white px-8 py-6 border-b border-gray-100">
+        <div className="flex items-center justify-between">
+          {/* Left: Logo placeholder */}
+          <div className="w-8 h-8 bg-black" style={{borderRadius: '1px'}}></div>
+          
+          {/* Center: Navigation */}
+          <nav className="flex items-center space-x-12">
+            <Link href="/" className="prada-nav text-gray-700 hover:text-black transition-colors">Home</Link>
+            <Link href="/trips" className="prada-nav text-black hover:text-gray-600 transition-colors">Trips</Link>
+            <Link href="/chats" className="prada-nav text-gray-700 hover:text-black transition-colors">Chats</Link>
+            <Link href="/trails" className="prada-nav text-gray-700 hover:text-black transition-colors">Trails</Link>
+            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</a>
+            <Link href="/shop" className="prada-nav text-gray-700 hover:text-black transition-colors">Shop</Link>
+            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</a>
+          </nav>
+          
+          {/* Right: Buttons and Language */}
+          <div className="flex items-center space-x-3">
+            <Link href="/login">
+              <Button variant="outline" className="prada-button h-9 px-6 text-xs font-light border-black text-black hover:bg-black hover:text-white">
+                LOG IN
+              </Button>
+            </Link>
+            <Link href="/signup">
+              <Button className="prada-button prada-gold-accent h-9 px-6 text-xs font-light">
+                REGISTER
+              </Button>
+            </Link>
+            <span className="text-xs text-gray-500 font-light ml-4">EN</span>
           </div>
-
-          {/* Mobile Navigation */}
-          {isMenuOpen && (
-            <div className="md:hidden py-4 border-t border-gray-100">
-              <div className="space-y-3">
-                <Link href="/" className="block prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
-                  HOME
-                </Link>
-                <Link href="/trips" className="block prada-nav-link text-sm font-light tracking-wider text-black">
-                  MY TRIPS
-                </Link>
-                <Link href="/chats" className="block prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
-                  CHATS
-                </Link>
-                <Link href="/trails" className="block prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
-                  TRAILS
-                </Link>
-                <span className="block prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors cursor-pointer">
-                  STORY
-                </span>
-                <Link href="/shop" className="block prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors">
-                  SHOP
-                </Link>
-                <span className="block prada-nav-link text-sm font-light tracking-wider text-gray-700 hover:text-black transition-colors cursor-pointer">
-                  CORPORATE
-                </span>
-              </div>
-            </div>
-          )}
         </div>
-      </nav>
+      </header>
 
       {/* Header */}
       <div className="bg-white border-b border-gray-100">

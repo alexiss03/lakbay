@@ -65,131 +65,40 @@ export default function ShopPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation Bar */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link href="/" className="flex items-center space-x-2">
-              <span className="text-2xl font-light tracking-wider text-[#D4AF37]">LAKBAY</span>
+      {/* Header */}
+      <header className="bg-white px-8 py-6 border-b border-gray-100">
+        <div className="flex items-center justify-between">
+          {/* Left: Logo placeholder */}
+          <div className="w-8 h-8 bg-black" style={{borderRadius: '1px'}}></div>
+          
+          {/* Center: Navigation */}
+          <nav className="flex items-center space-x-12">
+            <Link href="/" className="prada-nav text-gray-700 hover:text-black transition-colors">Home</Link>
+            <Link href="/trips" className="prada-nav text-gray-700 hover:text-black transition-colors">Trips</Link>
+            <Link href="/chats" className="prada-nav text-gray-700 hover:text-black transition-colors">Chats</Link>
+            <Link href="/trails" className="prada-nav text-gray-700 hover:text-black transition-colors">Trails</Link>
+            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</a>
+            <Link href="/shop" className="prada-nav text-black hover:text-gray-600 transition-colors">Shop</Link>
+            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</a>
+          </nav>
+          
+          {/* Right: Buttons and Language */}
+          <div className="flex items-center space-x-3">
+            <Link href="/login">
+              <Button variant="outline" className="prada-button h-9 px-6 text-xs font-light border-black text-black hover:bg-black hover:text-white">
+                LOG IN
+              </Button>
             </Link>
-
-            {/* Main Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              <Link href="/" className="text-gray-700 hover:text-[#D4AF37] font-light tracking-wide transition-colors">
-                Home
-              </Link>
-              <Link href="/trips" className="text-gray-700 hover:text-[#D4AF37] font-light tracking-wide transition-colors">
-                Trips
-              </Link>
-              <Link href="/chats" className="text-gray-700 hover:text-[#D4AF37] font-light tracking-wide transition-colors">
-                Chats
-              </Link>
-              <Link href="/trails" className="text-gray-700 hover:text-[#D4AF37] font-light tracking-wide transition-colors">
-                Trails
-              </Link>
-              <Link href="/story" className="text-gray-700 hover:text-[#D4AF37] font-light tracking-wide transition-colors">
-                Story
-              </Link>
-              <Link href="/shop" className="text-[#D4AF37] font-medium tracking-wide border-b-2 border-[#D4AF37] pb-1">
-                Shop
-              </Link>
-              <Link href="/corporate" className="text-gray-700 hover:text-[#D4AF37] font-light tracking-wide transition-colors">
-                Corporate
-              </Link>
-            </div>
-
-            {/* Shopping Cart and User Actions */}
-            <div className="flex items-center space-x-4">
-              <Button variant="outline" size="sm" className="relative">
-                <ShoppingCart className="w-4 h-4" />
-                <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-black text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  0
-                </span>
+            <Link href="/signup">
+              <Button className="prada-button prada-gold-accent h-9 px-6 text-xs font-light">
+                REGISTER
               </Button>
-              <Link href="/api/login" className="hidden md:block">
-                <Button size="sm" className="bg-[#D4AF37] hover:bg-[#B8941F] text-black">
-                  Sign In
-                </Button>
-              </Link>
-              
-              {/* Mobile Menu Button */}
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="md:hidden"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              >
-                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </Button>
-            </div>
+            </Link>
+            <span className="text-xs text-gray-500 font-light ml-4">EN</span>
           </div>
         </div>
+      </header>
         
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 bg-white">
-            <div className="px-6 py-4 space-y-4">
-              <Link 
-                href="/" 
-                className="block text-gray-700 hover:text-[#D4AF37] font-light tracking-wide transition-colors py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link 
-                href="/trips" 
-                className="block text-gray-700 hover:text-[#D4AF37] font-light tracking-wide transition-colors py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Trips
-              </Link>
-              <Link 
-                href="/chats" 
-                className="block text-gray-700 hover:text-[#D4AF37] font-light tracking-wide transition-colors py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Chats
-              </Link>
-              <Link 
-                href="/trails" 
-                className="block text-gray-700 hover:text-[#D4AF37] font-light tracking-wide transition-colors py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Trails
-              </Link>
-              <Link 
-                href="/story" 
-                className="block text-gray-700 hover:text-[#D4AF37] font-light tracking-wide transition-colors py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Story
-              </Link>
-              <Link 
-                href="/shop" 
-                className="block text-[#D4AF37] font-medium tracking-wide py-2 border-l-4 border-[#D4AF37] pl-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Shop
-              </Link>
-              <Link 
-                href="/corporate" 
-                className="block text-gray-700 hover:text-[#D4AF37] font-light tracking-wide transition-colors py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Corporate
-              </Link>
-              <div className="pt-4 border-t border-gray-200">
-                <Link href="/api/login" onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full bg-[#D4AF37] hover:bg-[#B8941F] text-black">
-                    Sign In
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
-      </nav>
 
       {/* Header */}
       <div className="bg-white border-b">

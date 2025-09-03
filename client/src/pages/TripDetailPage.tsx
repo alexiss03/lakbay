@@ -912,64 +912,35 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white px-8 py-6 border-b border-gray-200">
+      <header className="bg-white px-8 py-6 border-b border-gray-100">
         <div className="flex items-center justify-between">
-          <Link href="/">
-            <div className="w-8 h-8 bg-black prada-corner-radius cursor-pointer"></div>
-          </Link>
+          {/* Left: Logo placeholder */}
+          <div className="w-8 h-8 bg-black" style={{borderRadius: '1px'}}></div>
           
-          <Tabs value={activeNavTab} onValueChange={setActiveNavTab} className="flex-1">
-            <TabsList className="bg-transparent h-auto p-0 space-x-12 border-none">
-              <TabsTrigger 
-                value="Home" 
-                className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
-              >
-                Home
-              </TabsTrigger>
-              <TabsTrigger 
-                value="Trips" 
-                className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
-              >
-                Trips
-              </TabsTrigger>
-              <TabsTrigger 
-                value="Chats" 
-                className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
-              >
-                Chats
-              </TabsTrigger>
-              <TabsTrigger 
-                value="Trails" 
-                className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
-                onClick={() => window.location.href = '/trails'}
-              >
-                Trails
-              </TabsTrigger>
-              <TabsTrigger 
-                value="Story" 
-                className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
-              >
-                Story
-              </TabsTrigger>
-              <TabsTrigger 
-                value="Shop" 
-                className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
-              >
-                Shop
-              </TabsTrigger>
-              <TabsTrigger 
-                value="Corporate" 
-                className="prada-nav-link data-[state=active]:text-black data-[state=inactive]:text-gray-700 hover:text-black font-light tracking-wider text-xs uppercase bg-transparent border-none shadow-none p-0"
-              >
-                Corporate
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+          {/* Center: Navigation */}
+          <nav className="flex items-center space-x-12">
+            <Link href="/" className="prada-nav text-gray-700 hover:text-black transition-colors">Home</Link>
+            <Link href="/trips" className="prada-nav text-black hover:text-gray-600 transition-colors">Trips</Link>
+            <Link href="/chats" className="prada-nav text-gray-700 hover:text-black transition-colors">Chats</Link>
+            <Link href="/trails" className="prada-nav text-gray-700 hover:text-black transition-colors">Trails</Link>
+            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</a>
+            <Link href="/shop" className="prada-nav text-gray-700 hover:text-black transition-colors">Shop</Link>
+            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</a>
+          </nav>
           
-          <div className="flex items-center space-x-4">
-            <Button variant="outline" className="prada-button border-black text-xs font-light tracking-wider">LOG IN</Button>
-            <Button className="prada-button prada-gold-accent text-xs font-light tracking-wider">REGISTER</Button>
-            <span className="text-xs text-gray-700 font-light tracking-wider">EN</span>
+          {/* Right: Buttons and Language */}
+          <div className="flex items-center space-x-3">
+            <Link href="/login">
+              <Button variant="outline" className="prada-button h-9 px-6 text-xs font-light border-black text-black hover:bg-black hover:text-white">
+                LOG IN
+              </Button>
+            </Link>
+            <Link href="/signup">
+              <Button className="prada-button prada-gold-accent h-9 px-6 text-xs font-light">
+                REGISTER
+              </Button>
+            </Link>
+            <span className="text-xs text-gray-500 font-light ml-4">EN</span>
           </div>
         </div>
       </header>
