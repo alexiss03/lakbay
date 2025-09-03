@@ -21,6 +21,8 @@ import AccommodationDashboard from "@/pages/AccommodationDashboard";
 import ShopDashboard from "@/pages/ShopDashboard";
 import AudioStudioPage from "@/pages/AudioStudioPage";
 import { TrailsPage } from "@/pages/TrailsPage";
+import { ArticleFoodGuidePage } from "@/pages/ArticleFoodGuidePage";
+import { ArticleIslandHoppingPage } from "@/pages/ArticleIslandHoppingPage";
 
 function Router() {
   return (
@@ -33,6 +35,8 @@ function Router() {
       <Route path="/chats" component={ChatPage} />
       <Route path="/trails" component={TrailsPage} />
       <Route path="/article/:slug" component={ArticlePage} />
+      <Route path="/article/food-guide" component={ArticleFoodGuidePage} />
+      <Route path="/article/island-hopping" component={ArticleIslandHoppingPage} />
       <Route path="/trip/:id" component={TripDetailPage} />
       <Route path="/shop" component={ShopPage} />
       <Route path="/shop/product/:id" component={ProductDetailPage} />
