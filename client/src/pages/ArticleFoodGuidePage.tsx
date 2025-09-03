@@ -55,26 +55,35 @@ export const ArticleFoodGuidePage = (): JSX.Element => {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white px-8 py-4 border-b border-gray-100">
+      <header className="bg-white px-8 py-6 border-b border-gray-100">
         <div className="flex items-center justify-between">
-          <Link href="/">
-            <div className="w-8 h-8 bg-gray-300 rounded cursor-pointer"></div>
-          </Link>
+          {/* Left: Logo placeholder */}
+          <div className="w-8 h-8 bg-black" style={{borderRadius: '1px'}}></div>
           
-          <nav className="flex items-center space-x-8">
-            <Link href="/" className="text-gray-900 font-medium">Home</Link>
-            <Link href="/trips" className="text-gray-700 hover:text-gray-900">Trips</Link>
-            <Link href="/chats" className="text-gray-700 hover:text-gray-900">Chats</Link>
-            <Link href="/trails" className="text-gray-700 hover:text-gray-900">Trails</Link>
-            <a href="#" className="text-gray-700 hover:text-gray-900">Story</a>
-            <Link href="/shop" className="text-gray-700 hover:text-gray-900">Shop</Link>
-            <a href="#" className="text-gray-700 hover:text-gray-900">Corporate</a>
+          {/* Center: Navigation */}
+          <nav className="flex items-center space-x-12">
+            <Link href="/" className="prada-nav text-black hover:text-gray-600 transition-colors">Home</Link>
+            <Link href="/trips" className="prada-nav text-gray-700 hover:text-black transition-colors">Trips</Link>
+            <Link href="/chats" className="prada-nav text-gray-700 hover:text-black transition-colors">Chats</Link>
+            <Link href="/trails" className="prada-nav text-gray-700 hover:text-black transition-colors">Trails</Link>
+            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</a>
+            <Link href="/shop" className="prada-nav text-gray-700 hover:text-black transition-colors">Shop</Link>
+            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</a>
           </nav>
           
-          <div className="flex items-center space-x-4">
-            <Button variant="outline" className="text-sm">Log in</Button>
-            <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black text-sm">Register</Button>
-            <span className="text-sm text-gray-700">EN</span>
+          {/* Right: Buttons and Language */}
+          <div className="flex items-center space-x-3">
+            <Link href="/login">
+              <Button variant="outline" className="prada-button h-9 px-6 text-xs font-light border-black text-black hover:bg-black hover:text-white">
+                LOG IN
+              </Button>
+            </Link>
+            <Link href="/signup">
+              <Button className="prada-button prada-gold-accent h-9 px-6 text-xs font-light">
+                REGISTER
+              </Button>
+            </Link>
+            <span className="text-xs text-gray-500 font-light ml-4">EN</span>
           </div>
         </div>
       </header>
