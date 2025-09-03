@@ -1422,7 +1422,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
     meetingPlace: "El Nido Airport, Palawan",
     mapCenter: { lat: 11.1854, lng: 119.4094 }
   };
-  } // End of getTripData function
+  // End of getTripData function
 
   const trip = getTripData();
   
@@ -1535,9 +1535,9 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                   <div className="flex justify-center">
                     <Brain className="w-16 h-16 text-[#D4AF37]" />
                   </div>
-                  <h2 className="prada-heading text-3xl font-light">{trip.quiz.title}</h2>
+                  <h2 className="prada-heading text-3xl font-light">{trip.quiz?.title || 'Quiz'}</h2>
                   <p className="text-gray-600 font-light leading-relaxed max-w-2xl mx-auto">
-                    {trip.quiz.description}
+                    {trip.quiz?.description || 'Test your knowledge'}
                   </p>
                   
                   <div className="grid grid-cols-3 gap-6 max-w-md mx-auto">
@@ -1546,21 +1546,21 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                         <Target className="w-8 h-8 text-[#D4AF37]" />
                       </div>
                       <p className="text-sm text-gray-600 font-light">Questions</p>
-                      <p className="text-lg font-medium">{(trip as QuizTrip).quiz.totalQuestions}</p>
+                      <p className="text-lg font-medium">{trip.quiz?.totalQuestions || 5}</p>
                     </div>
                     <div className="text-center">
                       <div className="flex justify-center mb-2">
                         <Timer className="w-8 h-8 text-[#D4AF37]" />
                       </div>
                       <p className="text-sm text-gray-600 font-light">Time Limit</p>
-                      <p className="text-lg font-medium">{Math.floor((trip as QuizTrip).quiz.timeLimit / 60)} min</p>
+                      <p className="text-lg font-medium">{Math.floor((trip.quiz?.timeLimit || 300) / 60)} min</p>
                     </div>
                     <div className="text-center">
                       <div className="flex justify-center mb-2">
                         <Award className="w-8 h-8 text-[#D4AF37]" />
                       </div>
                       <p className="text-sm text-gray-600 font-light">Pass Score</p>
-                      <p className="text-lg font-medium">{(trip as QuizTrip).quiz.passingScore}%</p>
+                      <p className="text-lg font-medium">{trip.quiz?.passingScore || 70}%</p>
                     </div>
                   </div>
                   
