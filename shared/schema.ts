@@ -247,6 +247,9 @@ export const insertUserSchema = createInsertSchema(users).pick({
   city: true,
   postalCode: true,
   country: true,
+  googleId: true,
+  profileImage: true,
+  authProvider: true,
 });
 
 export const insertCategorySchema = createInsertSchema(categories).omit({

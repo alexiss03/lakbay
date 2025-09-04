@@ -20,11 +20,17 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
+  // Get the current domain from request or environment
+  const getCurrentDomain = () => {
+    // Try to get from environment first, fallback to localhost for development
+    return process.env.REPLIT_DOMAIN || 'localhost:5000';
+  };
+
   // Google OAuth Strategy
   passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID!,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    callbackURL: `https://${process.env.REPLIT_DOMAIN || 'localhost:5000'}/api/auth/google/callback`
+    callbackURL: '/api/auth/google/callback'
   },
   async (accessToken, refreshToken, profile, done) => {
     try {

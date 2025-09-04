@@ -38,12 +38,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   );
 
   app.get('/api/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: '/login?error=auth_failed' }),
+    passport.authenticate('google', { 
+      failureRedirect: '/login?error=auth_failed',
+      failureFlash: false 
+    }),
     (req, res) => {
       // Successful authentication, redirect to home
+      console.log('Google OAuth success for user:', req.user);
       res.redirect('/?auth=success');
     }
   );
+
+  // Add error handling route
+  app.get('/api/auth/error', (req, res) => {
+    console.log('OAuth error:', req.query);
+    res.redirect('/login?error=oauth_error');
+  });
 
   // Get current user
   app.get('/api/auth/user', (req, res) => {

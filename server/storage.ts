@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { eq, and, desc, asc } from "drizzle-orm";
+import { eq, and, desc, asc, sql } from "drizzle-orm";
 import {
   users, categories, products, productVariants, cartItems, orders, orderItems, reviews, wishlistItems,
   type User, type InsertUser, type Category, type InsertCategory, type Product, type InsertProduct,
@@ -161,10 +161,7 @@ export class DatabaseStorage implements IStorage {
   async searchProducts(query: string, limit = 20): Promise<Product[]> {
     // Simple text search - in production, you'd use full-text search
     return await db.select().from(products)
-      .where(and(
-        eq(products.isActive, true),
-        // This is a basic search - in production use proper full-text search
-      ))
+      .where(eq(products.isActive, true))
       .limit(limit);
   }
 
@@ -218,13 +215,13 @@ export class DatabaseStorage implements IStorage {
       .where(and(
         eq(cartItems.userId, insertCartItem.userId!),
         eq(cartItems.productId, insertCartItem.productId!),
-        insertCartItem.variantId ? eq(cartItems.variantId, insertCartItem.variantId) : eq(cartItems.variantId, null)
+        insertCartItem.variantId ? eq(cartItems.variantId, insertCartItem.variantId) : sql`${cartItems.variantId} IS NULL`
       ));
 
     if (existingItem.length > 0) {
       // Update quantity
       const [updated] = await db.update(cartItems)
-        .set({ quantity: existingItem[0].quantity + insertCartItem.quantity })
+        .set({ quantity: existingItem[0].quantity + (insertCartItem.quantity || 1) })
         .where(eq(cartItems.id, existingItem[0].id))
         .returning();
       return updated;
