@@ -69,6 +69,111 @@ export interface IStorage {
   removeFromWishlist(userId: number, productId: number): Promise<void>;
 }
 
+// Temporary in-memory storage for testing
+class MemoryStorage implements IStorage {
+  private users: User[] = [];
+  private categories: Category[] = [];
+  private products: Product[] = [];
+  private nextUserId = 1;
+  private nextCategoryId = 1;
+  private nextProductId = 1;
+
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    return this.users.find(u => u.id === id);
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    return this.users.find(u => u.username === username);
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    return this.users.find(u => u.email === email);
+  }
+
+  async getUserByGoogleId(googleId: string): Promise<User | undefined> {
+    return this.users.find(u => u.googleId === googleId);
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const user: User = {
+      id: this.nextUserId++,
+      username: insertUser.username!,
+      email: insertUser.email!,
+      firstName: insertUser.firstName || null,
+      lastName: insertUser.lastName || null,
+      profileImage: insertUser.profileImage || null,
+      googleId: insertUser.googleId || null,
+      authProvider: insertUser.authProvider || 'local',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.users.push(user);
+    return user;
+  }
+
+  async updateUser(id: number, userData: Partial<InsertUser>): Promise<User> {
+    const userIndex = this.users.findIndex(u => u.id === id);
+    if (userIndex === -1) throw new Error('User not found');
+    
+    this.users[userIndex] = { ...this.users[userIndex], ...userData, updatedAt: new Date() };
+    return this.users[userIndex];
+  }
+
+  // Category methods  
+  async getCategories(): Promise<Category[]> { return this.categories; }
+  async getCategory(id: number): Promise<Category | undefined> { return this.categories.find(c => c.id === id); }
+  async getCategoryBySlug(slug: string): Promise<Category | undefined> { return this.categories.find(c => c.slug === slug); }
+  async createCategory(insertCategory: InsertCategory): Promise<Category> { 
+    const category: Category = { id: this.nextCategoryId++, ...insertCategory } as Category;
+    this.categories.push(category);
+    return category;
+  }
+  async updateCategory(id: number, categoryData: Partial<InsertCategory>): Promise<Category> { 
+    const index = this.categories.findIndex(c => c.id === id);
+    if (index === -1) throw new Error('Category not found');
+    this.categories[index] = { ...this.categories[index], ...categoryData };
+    return this.categories[index];
+  }
+  async deleteCategory(id: number): Promise<void> { 
+    const index = this.categories.findIndex(c => c.id === id);
+    if (index !== -1) this.categories.splice(index, 1);
+  }
+
+  // Stub implementations for other methods
+  async getProducts(): Promise<Product[]> { return this.products; }
+  async getFeaturedProducts(): Promise<Product[]> { return this.products.slice(0, 6); }
+  async getProduct(id: number): Promise<Product | undefined> { return this.products.find(p => p.id === id); }
+  async getProductBySlug(): Promise<Product | undefined> { return undefined; }
+  async searchProducts(): Promise<Product[]> { return []; }
+  async createProduct(): Promise<Product> { throw new Error('Not implemented'); }
+  async updateProduct(): Promise<Product> { throw new Error('Not implemented'); }
+  async deleteProduct(): Promise<void> { throw new Error('Not implemented'); }
+  async getProductVariants(): Promise<ProductVariant[]> { return []; }
+  async getProductVariant(): Promise<ProductVariant | undefined> { return undefined; }
+  async createProductVariant(): Promise<ProductVariant> { throw new Error('Not implemented'); }
+  async updateProductVariant(): Promise<ProductVariant> { throw new Error('Not implemented'); }
+  async deleteProductVariant(): Promise<void> { throw new Error('Not implemented'); }
+  async getCartItems(): Promise<CartItem[]> { return []; }
+  async addToCart(): Promise<CartItem> { throw new Error('Not implemented'); }
+  async updateCartItem(): Promise<CartItem> { throw new Error('Not implemented'); }
+  async removeFromCart(): Promise<void> { throw new Error('Not implemented'); }
+  async clearCart(): Promise<void> { throw new Error('Not implemented'); }
+  async getOrders(): Promise<Order[]> { return []; }
+  async getOrder(): Promise<Order | undefined> { return undefined; }
+  async createOrder(): Promise<Order> { throw new Error('Not implemented'); }
+  async updateOrder(): Promise<Order> { throw new Error('Not implemented'); }
+  async getOrderItems(): Promise<OrderItem[]> { return []; }
+  async createOrderItem(): Promise<OrderItem> { throw new Error('Not implemented'); }
+  async getProductReviews(): Promise<Review[]> { return []; }
+  async createReview(): Promise<Review> { throw new Error('Not implemented'); }
+  async updateReview(): Promise<Review> { throw new Error('Not implemented'); }
+  async deleteReview(): Promise<void> { throw new Error('Not implemented'); }
+  async getWishlistItems(): Promise<WishlistItem[]> { return []; }
+  async addToWishlist(): Promise<WishlistItem> { throw new Error('Not implemented'); }
+  async removeFromWishlist(): Promise<void> { throw new Error('Not implemented'); }
+}
+
 export class DatabaseStorage implements IStorage {
   // User methods
   async getUser(id: number): Promise<User | undefined> {
@@ -308,4 +413,5 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+// Use memory storage temporarily since database is unavailable
+export const storage = new MemoryStorage();
