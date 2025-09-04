@@ -6,7 +6,7 @@ import { relations } from "drizzle-orm";
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+  password: text("password"),
   email: text("email"),
   firstName: text("first_name"),
   lastName: text("last_name"),
@@ -15,6 +15,9 @@ export const users = pgTable("users", {
   city: text("city"),
   postalCode: text("postal_code"),
   country: text("country").default("Philippines"),
+  googleId: text("google_id").unique(),
+  profileImage: text("profile_image"),
+  authProvider: text("auth_provider").default("local"), // 'local', 'google'
   createdAt: timestamp("created_at").defaultNow(),
 });
 

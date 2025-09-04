@@ -1,20 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Calendar, Users, Star, Clock, Brain, Sparkles } from "lucide-react";
-import { Link } from "wouter";
+import { MapPin, Calendar, Users, Star, Clock, Brain, Sparkles, LogOut } from "lucide-react";
+import { Link, useLocation } from "wouter";
 import { ChatWidget } from "@/components/ChatWidget";
 import { TrendingArticlesSection } from "@/components/TrendingArticlesSection";
 import { RecommendedSection } from "@/components/RecommendedSection";
 import { PhilippinesMap } from "@/components/PhilippinesMap";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 export const TravelHomePage = (): JSX.Element => {
   const [activeTab, setActiveTab] = useState("Private");
   const [nicheActiveTab, setNicheActiveTab] = useState("Astronomy");
+  const [location, setLocation] = useLocation();
+  const { user, isAuthenticated, isLoading } = useAuth();
+  const { toast } = useToast();
   
   // Sample travel history data for the interactive map
   const travelHistory = [
@@ -24,6 +29,44 @@ export const TravelHomePage = (): JSX.Element => {
     { province: 'Siargao', region: 'Caraga', visits: 2, lastVisit: '2024-09-12' },
     { province: 'Cebu', region: 'Central Visayas', visits: 4, lastVisit: '2024-08-08' },
   ];
+
+  // Handle auth success from OAuth redirect
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const authStatus = urlParams.get('auth');
+    
+    if (authStatus === 'success') {
+      toast({
+        title: "Welcome to Lakbay!",
+        description: "You have successfully logged in with Google.",
+      });
+      // Clear the URL parameter
+      setLocation('/');
+    }
+  }, [toast, setLocation]);
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Logged Out",
+          description: "You have been successfully logged out.",
+        });
+        window.location.reload(); // Refresh to update auth state
+      }
+    } catch (error) {
+      toast({
+        title: "Logout Failed",
+        description: "Unable to log out. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -45,16 +88,32 @@ export const TravelHomePage = (): JSX.Element => {
           
           {/* Right: Buttons and Language */}
           <div className="flex items-center space-x-3">
-            <Link href="/login">
-              <Button variant="outline" className="prada-button h-9 px-6 text-xs font-light border-black text-black hover:bg-black hover:text-white">
-                LOG IN
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button className="prada-button prada-gold-accent h-9 px-6 text-xs font-light">
-                REGISTER
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <span className="text-sm text-gray-700">Welcome, {user?.firstName || user?.username}!</span>
+                <Button 
+                  variant="outline" 
+                  onClick={handleLogout}
+                  className="prada-button h-9 px-6 text-xs font-light border-black text-black hover:bg-black hover:text-white flex items-center"
+                >
+                  <LogOut className="w-3 h-3 mr-2" />
+                  LOG OUT
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="outline" className="prada-button h-9 px-6 text-xs font-light border-black text-black hover:bg-black hover:text-white">
+                    LOG IN
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button className="prada-button prada-gold-accent h-9 px-6 text-xs font-light">
+                    REGISTER
+                  </Button>
+                </Link>
+              </>
+            )}
             <span className="text-xs text-gray-500 font-light ml-4">EN</span>
           </div>
         </div>

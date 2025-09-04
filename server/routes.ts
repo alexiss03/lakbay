@@ -1,5 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import passport from "passport";
+import { setupAuth, requireAuth, getCurrentUser } from "./auth";
 import adminRoutes from "./routes/admin";
 import hostRoutes from "./routes/host";
 import chatRoutes from "./routes/chat";
@@ -25,6 +27,118 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Setup authentication
+  setupAuth(app);
+
+  // ============ AUTHENTICATION ROUTES ============
+  
+  // Google OAuth routes
+  app.get('/api/auth/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] })
+  );
+
+  app.get('/api/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/login?error=auth_failed' }),
+    (req, res) => {
+      // Successful authentication, redirect to home
+      res.redirect('/?auth=success');
+    }
+  );
+
+  // Get current user
+  app.get('/api/auth/user', (req, res) => {
+    const user = getCurrentUser(req);
+    if (!user) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+    res.json(user);
+  });
+
+  // Logout
+  app.post('/api/auth/logout', (req, res) => {
+    req.logout((err) => {
+      if (err) {
+        return res.status(500).json({ error: 'Logout failed' });
+      }
+      res.json({ success: true });
+    });
+  });
+
+  // Local authentication (email/password)
+  app.post('/api/auth/login', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
+      }
+
+      // For demo purposes, this is a simple check
+      // In production, you'd hash and compare passwords
+      const user = await storage.getUserByEmail(email);
+      
+      if (!user || (user.password && user.password !== password)) {
+        return res.status(401).json({ error: 'Invalid credentials' });
+      }
+
+      // Set user in session
+      req.login(user, (err) => {
+        if (err) {
+          return res.status(500).json({ error: 'Login failed' });
+        }
+        res.json({ success: true, user });
+      });
+
+    } catch (error) {
+      console.error('Login error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // Register new user
+  app.post('/api/auth/register', async (req, res) => {
+    try {
+      const { username, email, password, firstName, lastName } = req.body;
+      
+      if (!username || !email || !password) {
+        return res.status(400).json({ error: 'Username, email, and password are required' });
+      }
+
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) {
+        return res.status(400).json({ error: 'User with this email already exists' });
+      }
+
+      const existingUsername = await storage.getUserByUsername(username);
+      if (existingUsername) {
+        return res.status(400).json({ error: 'Username already taken' });
+      }
+
+      // Create new user
+      const newUser = await storage.createUser({
+        username,
+        email,
+        password, // In production, hash this password
+        firstName: firstName || '',
+        lastName: lastName || '',
+        authProvider: 'local'
+      });
+
+      // Log user in automatically
+      req.login(newUser, (err) => {
+        if (err) {
+          return res.status(500).json({ error: 'Registration successful but login failed' });
+        }
+        res.status(201).json({ success: true, user: newUser });
+      });
+
+    } catch (error) {
+      console.error('Registration error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
   // ============ E-COMMERCE API ROUTES ============
   
   // Categories

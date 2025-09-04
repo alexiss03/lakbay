@@ -49,19 +49,39 @@ export const SignupPage = (): JSX.Element => {
     setIsLoading(true);
 
     try {
-      // Simulate signup API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      toast({
-        title: "Account Created Successfully!",
-        description: "Welcome to Lakbay! You can now start exploring amazing adventures.",
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          username: signupData.username,
+          email: signupData.email,
+          password: signupData.password,
+        }),
       });
-      
-      setLocation("/");
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Account Created Successfully!",
+          description: "Welcome to Lakbay! You can now start exploring amazing adventures.",
+        });
+        
+        setLocation("/");
+      } else {
+        toast({
+          title: "Signup Failed",
+          description: data.error || "Unable to create account. Please try again.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       toast({
         title: "Signup Failed",
-        description: "Unable to create account. Please try again.",
+        description: "Unable to connect to server. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -70,26 +90,29 @@ export const SignupPage = (): JSX.Element => {
   };
 
   const handleSocialSignup = async (provider: 'facebook' | 'google') => {
-    setIsLoading(true);
-    
-    try {
-      // In a real app, this would redirect to the OAuth provider
-      await new Promise(resolve => setTimeout(resolve, 2000));
+    if (provider === 'google') {
+      // Redirect to Google OAuth
+      window.location.href = '/api/auth/google';
+    } else {
+      // Facebook signup - placeholder for future implementation
+      setIsLoading(true);
       
-      toast({
-        title: `${provider === 'facebook' ? 'Facebook' : 'Google'} Signup`,
-        description: `Successfully created account with ${provider === 'facebook' ? 'Facebook' : 'Google'}!`,
-      });
-      
-      setLocation("/");
-    } catch (error) {
-      toast({
-        title: "Social Signup Failed",
-        description: `Unable to signup with ${provider === 'facebook' ? 'Facebook' : 'Google'}. Please try again.`,
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
+      try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        toast({
+          title: "Facebook Signup",
+          description: "Facebook signup coming soon!",
+        });
+      } catch (error) {
+        toast({
+          title: "Social Signup Failed",
+          description: "Unable to signup with Facebook. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 

@@ -32,19 +32,38 @@ export const LoginPage = (): JSX.Element => {
     setIsLoading(true);
 
     try {
-      // Simulate login API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      toast({
-        title: "Login Successful",
-        description: "Welcome back to Lakbay!",
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          email: loginData.usernameOrEmail,
+          password: loginData.password,
+        }),
       });
-      
-      setLocation("/");
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Login Successful",
+          description: "Welcome back to Lakbay!",
+        });
+        
+        setLocation("/");
+      } else {
+        toast({
+          title: "Login Failed",
+          description: data.error || "Invalid credentials. Please try again.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       toast({
         title: "Login Failed",
-        description: "Invalid credentials. Please try again.",
+        description: "Unable to connect to server. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -53,26 +72,29 @@ export const LoginPage = (): JSX.Element => {
   };
 
   const handleSocialLogin = async (provider: 'facebook' | 'google') => {
-    setIsLoading(true);
-    
-    try {
-      // In a real app, this would redirect to the OAuth provider
-      await new Promise(resolve => setTimeout(resolve, 2000));
+    if (provider === 'google') {
+      // Redirect to Google OAuth
+      window.location.href = '/api/auth/google';
+    } else {
+      // Facebook login - placeholder for future implementation
+      setIsLoading(true);
       
-      toast({
-        title: `${provider === 'facebook' ? 'Facebook' : 'Google'} Login`,
-        description: `Successfully logged in with ${provider === 'facebook' ? 'Facebook' : 'Google'}!`,
-      });
-      
-      setLocation("/");
-    } catch (error) {
-      toast({
-        title: "Social Login Failed",
-        description: `Unable to login with ${provider === 'facebook' ? 'Facebook' : 'Google'}. Please try again.`,
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
+      try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        toast({
+          title: "Facebook Login",
+          description: "Facebook login coming soon!",
+        });
+      } catch (error) {
+        toast({
+          title: "Social Login Failed",
+          description: "Unable to login with Facebook. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
