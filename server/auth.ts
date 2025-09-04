@@ -5,14 +5,16 @@ import { storage } from './storage';
 import type { Express } from 'express';
 
 export function setupAuth(app: Express) {
-  // Session middleware
+  // Session middleware - Fixed for Replit environment
   app.use(session({
     secret: process.env.SESSION_SECRET || 'your-secret-key',
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true, // Changed to true for OAuth
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      secure: false, // Disabled for Replit development environment
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      sameSite: 'lax' // Added for OAuth compatibility
     }
   }));
 
