@@ -322,10 +322,8 @@ export const SignupPage = (): JSX.Element => {
           <div className="text-center mt-6">
             <p className="text-sm text-gray-600">
               Already have an account?{" "}
-              <Link href="/login">
-                <a className="text-[#D4AF37] hover:text-[#B8941F] font-medium">
-                  Sign in here
-                </a>
+              <Link href="/login" className="text-[#D4AF37] hover:text-[#B8941F] font-medium">
+                Sign in here
               </Link>
             </p>
           </div>
@@ -335,13 +333,9 @@ export const SignupPage = (): JSX.Element => {
         <div className="text-center mt-6">
           <p className="text-xs text-gray-500">
             By creating an account, you agree to our{" "}
-            <Link href="/terms">
-              <a className="text-[#D4AF37] hover:text-[#B8941F]">Terms of Service</a>
-            </Link>{" "}
+            <Link href="/terms" className="text-[#D4AF37] hover:text-[#B8941F]">Terms of Service</Link>{" "}
             and{" "}
-            <Link href="/privacy">
-              <a className="text-[#D4AF37] hover:text-[#B8941F]">Privacy Policy</a>
-            </Link>
+            <Link href="/privacy" className="text-[#D4AF37] hover:text-[#B8941F]">Privacy Policy</Link>
           </p>
         </div>
       </div>

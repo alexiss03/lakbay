@@ -207,10 +207,8 @@ export const LoginPage = (): JSX.Element => {
 
             {/* Forgot Password Link */}
             <div className="text-right">
-              <Link href="/forgot-password">
-                <a className="text-sm text-[#D4AF37] hover:text-[#B8941F] font-medium">
-                  Forgot your password?
-                </a>
+              <Link href="/forgot-password" className="text-sm text-[#D4AF37] hover:text-[#B8941F] font-medium">
+                Forgot your password?
               </Link>
             </div>
 
@@ -235,10 +233,8 @@ export const LoginPage = (): JSX.Element => {
           <div className="text-center mt-6">
             <p className="text-sm text-gray-600">
               Don't have an account?{" "}
-              <Link href="/signup">
-                <a className="text-[#D4AF37] hover:text-[#B8941F] font-medium">
-                  Sign up for free
-                </a>
+              <Link href="/signup" className="text-[#D4AF37] hover:text-[#B8941F] font-medium">
+                Sign up for free
               </Link>
             </p>
           </div>
@@ -248,13 +244,9 @@ export const LoginPage = (): JSX.Element => {
         <div className="text-center mt-6">
           <p className="text-xs text-gray-500">
             By signing in, you agree to our{" "}
-            <Link href="/terms">
-              <a className="text-[#D4AF37] hover:text-[#B8941F]">Terms of Service</a>
-            </Link>{" "}
+            <Link href="/terms" className="text-[#D4AF37] hover:text-[#B8941F]">Terms of Service</Link>{" "}
             and{" "}
-            <Link href="/privacy">
-              <a className="text-[#D4AF37] hover:text-[#B8941F]">Privacy Policy</a>
-            </Link>
+            <Link href="/privacy" className="text-[#D4AF37] hover:text-[#B8941F]">Privacy Policy</Link>
           </p>
         </div>
       </div>
