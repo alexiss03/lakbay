@@ -73,8 +73,18 @@ export const LoginPage = (): JSX.Element => {
 
   const handleSocialLogin = async (provider: 'facebook' | 'google') => {
     if (provider === 'google') {
-      // Redirect to Google OAuth
-      window.location.href = '/api/auth/google';
+      // Log the attempt and redirect to Google OAuth
+      console.log('Initiating Google OAuth redirect...');
+      try {
+        window.location.href = '/api/auth/google';
+      } catch (error) {
+        console.error('OAuth redirect error:', error);
+        toast({
+          title: "Login Error",
+          description: "Unable to initiate Google login. Please try again.",
+          variant: "destructive",
+        });
+      }
     } else {
       // Facebook login - placeholder for future implementation
       setIsLoading(true);
