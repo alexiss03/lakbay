@@ -86,24 +86,17 @@ export const LoginPage = (): JSX.Element => {
         });
       }
     } else {
-      // Facebook login - placeholder for future implementation
-      setIsLoading(true);
-      
+      // Facebook login - redirect to Facebook OAuth
+      console.log('Initiating Facebook OAuth redirect...');
       try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        toast({
-          title: "Facebook Login",
-          description: "Facebook login coming soon!",
-        });
+        window.location.href = '/api/auth/facebook';
       } catch (error) {
+        console.error('Facebook OAuth redirect error:', error);
         toast({
-          title: "Social Login Failed",
-          description: "Unable to login with Facebook. Please try again.",
+          title: "Login Error",
+          description: "Unable to initiate Facebook login. Please try again.",
           variant: "destructive",
         });
-      } finally {
-        setIsLoading(false);
       }
     }
   };

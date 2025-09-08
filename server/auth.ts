@@ -1,5 +1,6 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { Strategy as FacebookStrategy } from 'passport-facebook';
 import session from 'express-session';
 import { storage } from './storage';
 import type { Express } from 'express';
@@ -52,6 +53,44 @@ export function setupAuth(app: Express) {
         lastName: profile.name?.familyName || '',
         profileImage: profile.photos?.[0]?.value || '',
         authProvider: 'google'
+      });
+
+      return done(null, newUser);
+    } catch (error) {
+      return done(error as Error, undefined);
+    }
+  }));
+
+  // Facebook OAuth Strategy
+  const getFacebookCallbackURL = () => {
+    const domain = 'cf95eddf-2870-43aa-8998-a0b407d82da8-00-a53kb0z62kcn.spock.replit.dev';
+    return `https://${domain}/api/auth/facebook/callback`;
+  };
+
+  passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_APP_ID!,
+    clientSecret: process.env.FACEBOOK_APP_SECRET!,
+    callbackURL: getFacebookCallbackURL(),
+    profileFields: ['id', 'displayName', 'photos', 'email', 'first_name', 'last_name']
+  },
+  async (accessToken, refreshToken, profile, done) => {
+    try {
+      // Check if user already exists
+      let user = await storage.getUserByFacebookId(profile.id);
+      
+      if (user) {
+        return done(null, user);
+      }
+
+      // Create new user
+      const newUser = await storage.createUser({
+        facebookId: profile.id,
+        email: profile.emails?.[0]?.value || '',
+        username: profile.displayName || `facebook_user_${profile.id}`,
+        firstName: profile.name?.givenName || '',
+        lastName: profile.name?.familyName || '',
+        profileImage: profile.photos?.[0]?.value || '',
+        authProvider: 'facebook'
       });
 
       return done(null, newUser);

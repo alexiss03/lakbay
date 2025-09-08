@@ -14,6 +14,7 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByGoogleId(googleId: string): Promise<User | undefined>;
+  getUserByFacebookId(facebookId: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, user: Partial<InsertUser>): Promise<User>;
 
@@ -95,18 +96,28 @@ class MemoryStorage implements IStorage {
     return this.users.find(u => u.googleId === googleId);
   }
 
+  async getUserByFacebookId(facebookId: string): Promise<User | undefined> {
+    return this.users.find(u => u.facebookId === facebookId);
+  }
+
   async createUser(insertUser: InsertUser): Promise<User> {
     const user: User = {
       id: this.nextUserId++,
       username: insertUser.username!,
-      email: insertUser.email!,
+      password: insertUser.password || null,
+      email: insertUser.email || null,
       firstName: insertUser.firstName || null,
       lastName: insertUser.lastName || null,
-      profileImage: insertUser.profileImage || null,
+      phone: insertUser.phone || null,
+      address: insertUser.address || null,
+      city: insertUser.city || null,
+      postalCode: insertUser.postalCode || null,
+      country: insertUser.country || 'Philippines',
       googleId: insertUser.googleId || null,
+      facebookId: insertUser.facebookId || null,
+      profileImage: insertUser.profileImage || null,
       authProvider: insertUser.authProvider || 'local',
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date()
     };
     this.users.push(user);
     return user;

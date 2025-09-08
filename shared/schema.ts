@@ -16,8 +16,9 @@ export const users = pgTable("users", {
   postalCode: text("postal_code"),
   country: text("country").default("Philippines"),
   googleId: text("google_id").unique(),
+  facebookId: text("facebook_id").unique(),
   profileImage: text("profile_image"),
-  authProvider: text("auth_provider").default("local"), // 'local', 'google'
+  authProvider: text("auth_provider").default("local"), // 'local', 'google', 'facebook'
   createdAt: timestamp("created_at").defaultNow(),
 });
 

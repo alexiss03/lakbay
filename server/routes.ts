@@ -72,6 +72,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   );
 
+  // Facebook OAuth routes
+  app.get('/api/auth/facebook',
+    passport.authenticate('facebook', { scope: ['email'] })
+  );
+
+  app.get('/api/auth/facebook/callback',
+    passport.authenticate('facebook', { 
+      failureRedirect: '/login?error=auth_failed',
+      failureFlash: false 
+    }),
+    (req, res) => {
+      // Successful authentication, redirect to home
+      console.log('🎉 Facebook OAuth SUCCESS for user:', JSON.stringify(req.user, null, 2));
+      res.redirect('/?auth=success');
+    }
+  );
+
   // Add a test callback endpoint to debug what Google sends back
   app.get('/api/auth/callback-test', (req, res) => {
     console.log('📝 Callback received with params:', req.query);

@@ -104,24 +104,17 @@ export const SignupPage = (): JSX.Element => {
         });
       }
     } else {
-      // Facebook signup - placeholder for future implementation
-      setIsLoading(true);
-      
+      // Facebook signup - redirect to Facebook OAuth
+      console.log('Initiating Facebook OAuth signup redirect...');
       try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        toast({
-          title: "Facebook Signup",
-          description: "Facebook signup coming soon!",
-        });
+        window.location.href = '/api/auth/facebook';
       } catch (error) {
+        console.error('Facebook OAuth signup redirect error:', error);
         toast({
-          title: "Social Signup Failed",
-          description: "Unable to signup with Facebook. Please try again.",
+          title: "Signup Error",
+          description: "Unable to initiate Facebook signup. Please try again.",
           variant: "destructive",
         });
-      } finally {
-        setIsLoading(false);
       }
     }
   };
