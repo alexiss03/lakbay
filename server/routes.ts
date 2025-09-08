@@ -67,10 +67,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }),
     (req, res) => {
       // Successful authentication, redirect to home
-      console.log('Google OAuth success for user:', req.user);
+      console.log('🎉 Google OAuth SUCCESS for user:', JSON.stringify(req.user, null, 2));
       res.redirect('/?auth=success');
     }
   );
+
+  // Add a test callback endpoint to debug what Google sends back
+  app.get('/api/auth/callback-test', (req, res) => {
+    console.log('📝 Callback received with params:', req.query);
+    res.json({ 
+      message: 'Callback test received',
+      params: req.query,
+      timestamp: new Date().toISOString()
+    });
+  });
 
   // Add error handling route
   app.get('/api/auth/error', (req, res) => {
