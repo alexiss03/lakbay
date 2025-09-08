@@ -91,8 +91,18 @@ export const SignupPage = (): JSX.Element => {
 
   const handleSocialSignup = async (provider: 'facebook' | 'google') => {
     if (provider === 'google') {
-      // Redirect to Google OAuth
-      window.location.href = '/api/auth/google';
+      // Log and redirect to Google OAuth
+      console.log('Initiating Google OAuth signup redirect...');
+      try {
+        window.location.href = '/api/auth/google';
+      } catch (error) {
+        console.error('OAuth signup redirect error:', error);
+        toast({
+          title: "Signup Error",
+          description: "Unable to initiate Google signup. Please try again.",
+          variant: "destructive",
+        });
+      }
     } else {
       // Facebook signup - placeholder for future implementation
       setIsLoading(true);

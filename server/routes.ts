@@ -32,6 +32,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // ============ AUTHENTICATION ROUTES ============
   
+  // Debug endpoint to show OAuth configuration
+  app.get('/api/auth/debug', (req, res) => {
+    const domain = 'cf95eddf-2870-43aa-8998-a0b407d82da8-00-a53kb0z62kcn.spock.replit.dev';
+    const callbackURL = `https://${domain}/api/auth/google/callback`;
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=${encodeURIComponent(callbackURL)}&scope=profile%20email&client_id=${clientId}`;
+    
+    res.json({
+      domain,
+      callbackURL,
+      clientId: clientId?.slice(0, 20) + '...', // Hide most of client ID for security
+      googleAuthUrl,
+      instructions: {
+        step1: 'Go to Google Cloud Console',
+        step2: 'Navigate to APIs & Services > Credentials',
+        step3: `Find your OAuth 2.0 Client ID: ${clientId?.slice(0, 20)}...`,
+        step4: 'Add these exact values:',
+        authorizedJavaScriptOrigins: [`https://${domain}`],
+        authorizedRedirectURIs: [callbackURL]
+      }
+    });
+  });
+  
   // Google OAuth routes
   app.get('/api/auth/google',
     passport.authenticate('google', { scope: ['profile', 'email'] })
