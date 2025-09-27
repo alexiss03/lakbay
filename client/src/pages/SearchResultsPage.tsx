@@ -193,9 +193,12 @@ export const SearchResultsPage = (): JSX.Element => {
         tour.title.toLowerCase().includes(query.toLowerCase()) ||
         tour.location.toLowerCase().includes(query.toLowerCase()) ||
         tour.category.toLowerCase().includes(query.toLowerCase()) ||
-        tour.description.toLowerCase().includes(query.toLowerCase())
+        tour.description.toLowerCase().includes(query.toLowerCase()) ||
+        tour.slug.toLowerCase().includes(query.toLowerCase()) ||
+        tour.destination.toLowerCase().includes(query.toLowerCase())
       );
       
+      console.log(`Search for "${query}" found ${results.length} results:`, results.map(r => r.title));
       setSearchResults(results);
       setIsLoading(false);
     }, 500);
