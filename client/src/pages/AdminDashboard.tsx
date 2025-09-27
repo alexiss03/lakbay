@@ -83,7 +83,7 @@ const AdminDashboard = () => {
   const { data: tours = [], isLoading: toursLoading } = useQuery({
     queryKey: ['/api/admin/tours', { status: selectedFilter, limit: 50 }],
     queryFn: () => apiRequest('GET', `/api/admin/tours?status=${selectedFilter}&limit=50`),
-  });
+  }) as { data: Tour[], isLoading: boolean };
 
   const [users] = useState<User[]>([
     {
@@ -149,7 +149,7 @@ const AdminDashboard = () => {
       }
     };
 
-    return statusConfig[type][status] || 'bg-gray-100 text-gray-800';
+    return statusConfig[type][status as keyof typeof statusConfig[typeof type]] || 'bg-gray-100 text-gray-800';
   };
 
   return (
@@ -236,8 +236,8 @@ const AdminDashboard = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-600 font-light">Total Tours</p>
-                      <p className="text-3xl font-light text-gray-900 mt-1">{analytics?.totalTours || 0}</p>
-                      <p className="text-sm text-green-600 mt-2">Active: {analytics?.activeTours || 0}</p>
+                      <p className="text-3xl font-light text-gray-900 mt-1">{(analytics as any)?.totalTours || 0}</p>
+                      <p className="text-sm text-green-600 mt-2">Active: {(analytics as any)?.activeTours || 0}</p>
                     </div>
                     <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                       <MapPin className="w-6 h-6 text-blue-600" />
@@ -249,8 +249,8 @@ const AdminDashboard = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-600 font-light">Active Users</p>
-                      <p className="text-3xl font-light text-gray-900 mt-1">{analytics?.activeUsers || 0}</p>
-                      <p className="text-sm text-gray-600 mt-2">Total: {analytics?.totalUsers || 0}</p>
+                      <p className="text-3xl font-light text-gray-900 mt-1">{(analytics as any)?.activeUsers || 0}</p>
+                      <p className="text-sm text-gray-600 mt-2">Total: {(analytics as any)?.totalUsers || 0}</p>
                     </div>
                     <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                       <Users className="w-6 h-6 text-green-600" />
@@ -262,7 +262,7 @@ const AdminDashboard = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-600 font-light">Monthly Revenue</p>
-                      <p className="text-3xl font-light text-gray-900 mt-1">₱{(analytics?.monthlyRevenue || 0).toLocaleString()}</p>
+                      <p className="text-3xl font-light text-gray-900 mt-1">₱{((analytics as any)?.monthlyRevenue || 0).toLocaleString()}</p>
                       <p className="text-sm text-gray-600 mt-2">This month</p>
                     </div>
                     <div className="w-12 h-12 bg-[#D4AF37] bg-opacity-20 rounded-full flex items-center justify-center">
@@ -275,8 +275,8 @@ const AdminDashboard = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-600 font-light">Total Bookings</p>
-                      <p className="text-3xl font-light text-gray-900 mt-1">{analytics?.totalBookings || 0}</p>
-                      <p className="text-sm text-gray-600 mt-2">Monthly: {analytics?.monthlyBookings || 0}</p>
+                      <p className="text-3xl font-light text-gray-900 mt-1">{(analytics as any)?.totalBookings || 0}</p>
+                      <p className="text-sm text-gray-600 mt-2">Monthly: {(analytics as any)?.monthlyBookings || 0}</p>
                     </div>
                     <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
                       <Calendar className="w-6 h-6 text-purple-600" />
@@ -291,7 +291,7 @@ const AdminDashboard = () => {
               <Card className="prada-card p-6">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Recent Tours</h3>
                 <div className="space-y-4">
-                  {tours.map((tour) => (
+                  {(tours || []).map((tour: Tour) => (
                     <div key={tour.id} className="flex items-center space-x-4">
                       <img
                         src={tour.hostAvatar}
@@ -372,7 +372,7 @@ const AdminDashboard = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {tours.map((tour) => (
+                    {(tours || []).map((tour: Tour) => (
                       <tr key={tour.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">{tour.title}</div>
