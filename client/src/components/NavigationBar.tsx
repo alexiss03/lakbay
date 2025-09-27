@@ -20,9 +20,9 @@ export const NavigationBar = ({ currentPage }: NavigationBarProps): JSX.Element 
   };
 
   return (
-    <div className="flex items-center justify-between w-full">
-      {/* Search Bar */}
-      <form onSubmit={handleSearch} className="flex items-center space-x-2">
+    <div className="flex items-center justify-center w-full relative">
+      {/* Search Bar - Positioned on the left */}
+      <form onSubmit={handleSearch} className="flex items-center space-x-2 absolute left-0">
         <Input
           type="text"
           placeholder="Search tours..."
@@ -42,8 +42,8 @@ export const NavigationBar = ({ currentPage }: NavigationBarProps): JSX.Element 
         </Button>
       </form>
 
-      {/* Navigation Links */}
-      <nav className="flex items-center space-x-12">
+      {/* Navigation Links - Centered */}
+      <nav className="flex items-center justify-center space-x-8">
         <Link 
           href="/" 
           className={`prada-nav transition-colors ${
