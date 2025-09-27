@@ -293,6 +293,45 @@ export const insertWishlistItemSchema = createInsertSchema(wishlistItems).omit({
   createdAt: true,
 });
 
+// Tours/Lakbay table
+export const tours = pgTable("tours", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description"),
+  category: text("category").notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  currency: text("currency").default("PHP"),
+  hostName: text("host_name").notNull(),
+  hostAvatar: text("host_avatar"),
+  hostBio: text("host_bio"),
+  maxParticipants: integer("max_participants").default(1),
+  duration: text("duration"),
+  location: text("location"),
+  heroImage: text("hero_image"),
+  featured: boolean("featured").default(false),
+  status: text("status").default("pending"), // active, inactive, pending
+  meetingPlace: text("meeting_place"),
+  accommodation: jsonb("accommodation"), // {name, description}
+  mapCenter: jsonb("map_center"), // {lat, lng}
+  itinerary: jsonb("itinerary"), // array of daily activities
+  trail: jsonb("trail"), // trail info for hiking tours
+  
+  // Tab content fields
+  inclusions: text("inclusions").array(), // What's included
+  thingsToBring: text("things_to_bring").array(), // Things to bring
+  reminders: text("reminders").array(), // Important reminders
+  cancellationPolicy: text("cancellation_policy"), // Cancellation terms
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertTourSchema = createInsertSchema(tours).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -312,3 +351,5 @@ export type InsertReview = z.infer<typeof insertReviewSchema>;
 export type Review = typeof reviews.$inferSelect;
 export type InsertWishlistItem = z.infer<typeof insertWishlistItemSchema>;
 export type WishlistItem = typeof wishlistItems.$inferSelect;
+export type InsertTour = z.infer<typeof insertTourSchema>;
+export type Tour = typeof tours.$inferSelect;
