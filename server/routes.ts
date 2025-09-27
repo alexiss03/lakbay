@@ -10,7 +10,6 @@ import accommodationRoutes from "./routes/accommodation";
 import shopRoutes from "./routes/shop";
 import audioRoutes from "./routes/audio";
 import { storage } from "./storage";
-import Stripe from "stripe";
 import { 
   insertCategorySchema, insertProductSchema, insertCartItemSchema, 
   insertOrderSchema, insertReviewSchema, insertWishlistItemSchema,
@@ -22,10 +21,6 @@ import { z } from "zod";
 const PAYMONGO_SECRET_KEY = process.env.PAYMONGO_SECRET_KEY;
 const PAYMONGO_BASE_URL = 'https://api.paymongo.com/v1';
 
-// Stripe configuration
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-07-30.basil",
-});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication
@@ -396,29 +391,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Stripe Payment Intent
-  app.post('/api/create-payment-intent', async (req, res) => {
-    try {
-      const { amount, currency = 'php', metadata = {} } = req.body;
-      
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(amount * 100), // Convert to centavos/cents
-        currency: currency.toLowerCase(),
-        metadata,
-        automatic_payment_methods: {
-          enabled: true,
-        },
-      });
-
-      res.json({
-        clientSecret: paymentIntent.client_secret,
-        paymentIntentId: paymentIntent.id
-      });
-    } catch (error) {
-      console.error('Error creating payment intent:', error);
-      res.status(500).json({ error: 'Failed to create payment intent' });
-    }
-  });
 
   // Orders
   app.get('/api/orders/:userId', async (req, res) => {
