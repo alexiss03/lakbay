@@ -85,8 +85,8 @@ class MemoryStorage implements IStorage {
   }
 
   private async initializeDefaultUsers() {
-    const bcrypt = require('bcryptjs');
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    const bcrypt = await import('bcryptjs');
+    const hashedPassword = await bcrypt.default.hash('admin123', 10);
     
     // Add default admin user
     this.users.push({
@@ -111,7 +111,7 @@ class MemoryStorage implements IStorage {
     });
 
     // Add a regular test user
-    const regularPassword = await bcrypt.hash('user123', 10);
+    const regularPassword = await bcrypt.default.hash('user123', 10);
     this.users.push({
       id: this.nextUserId++,
       username: 'testuser',
