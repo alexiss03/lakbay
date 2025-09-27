@@ -145,21 +145,24 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose, isOpen: externalI
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogTrigger asChild>
-        <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black">
-          {isEdit ? (
-            <>
-              <Edit className="w-4 h-4 mr-2" />
-              Edit Tour
-            </>
-          ) : (
-            <>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Tour
-            </>
-          )}
-        </Button>
-      </DialogTrigger>
+      {/* Only show trigger button when not externally controlled */}
+      {externalIsOpen === undefined && (
+        <DialogTrigger asChild>
+          <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black">
+            {isEdit ? (
+              <>
+                <Edit className="w-4 h-4 mr-2" />
+                Edit Tour
+              </>
+            ) : (
+              <>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Tour
+              </>
+            )}
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
