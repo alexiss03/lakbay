@@ -80,10 +80,13 @@ const AdminDashboard = () => {
   });
 
   // Fetch tours data  
-  const { data: tours = [], isLoading: toursLoading } = useQuery({
+  const { data: toursData, isLoading: toursLoading } = useQuery({
     queryKey: ['/api/admin/tours', { status: selectedFilter, limit: 50 }],
     queryFn: () => apiRequest('GET', `/api/admin/tours?status=${selectedFilter}&limit=50`),
-  }) as { data: Tour[], isLoading: boolean };
+  });
+  
+  // Ensure tours is always an array
+  const tours: Tour[] = Array.isArray(toursData) ? toursData : [];
 
   const [users] = useState<User[]>([
     {
