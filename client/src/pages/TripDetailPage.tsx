@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { ChatWidget } from "@/components/ChatWidget";
 import { TrailMap } from "@/components/TrailMap";
 import { AdminAudioModal } from "@/components/AdminAudioModal";
@@ -56,8 +57,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
   const [currentAudioTrack, setCurrentAudioTrack] = useState<number | null>(null);
   const [showAudioModal, setShowAudioModal] = useState(false);
   
-  // Mock admin check - in real app this would come from auth context
-  const isAdmin = true; // For demo purposes
+  const { isAdmin } = useAuth();
   const [activeNavTab, setActiveNavTab] = useState("Home");
   
   // Quiz state
