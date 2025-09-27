@@ -61,43 +61,47 @@ export function setupAuth(app: Express) {
     }
   }));
 
-  // Facebook OAuth Strategy
-  const getFacebookCallbackURL = () => {
-    const domain = 'cf95eddf-2870-43aa-8998-a0b407d82da8-00-a53kb0z62kcn.spock.replit.dev';
-    return `https://${domain}/api/auth/facebook/callback`;
-  };
+  // Facebook OAuth Strategy - Only initialize if credentials are available
+  if (process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET) {
+    const getFacebookCallbackURL = () => {
+      const domain = 'cf95eddf-2870-43aa-8998-a0b407d82da8-00-a53kb0z62kcn.spock.replit.dev';
+      return `https://${domain}/api/auth/facebook/callback`;
+    };
 
-  passport.use(new FacebookStrategy({
-    clientID: process.env.FACEBOOK_APP_ID!,
-    clientSecret: process.env.FACEBOOK_APP_SECRET!,
-    callbackURL: getFacebookCallbackURL(),
-    profileFields: ['id', 'displayName', 'photos', 'email', 'first_name', 'last_name']
-  },
-  async (accessToken, refreshToken, profile, done) => {
-    try {
-      // Check if user already exists
-      let user = await storage.getUserByFacebookId(profile.id);
-      
-      if (user) {
-        return done(null, user);
+    passport.use(new FacebookStrategy({
+      clientID: process.env.FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_APP_SECRET,
+      callbackURL: getFacebookCallbackURL(),
+      profileFields: ['id', 'displayName', 'photos', 'email', 'first_name', 'last_name']
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        // Check if user already exists
+        let user = await storage.getUserByFacebookId(profile.id);
+        
+        if (user) {
+          return done(null, user);
+        }
+
+        // Create new user
+        const newUser = await storage.createUser({
+          facebookId: profile.id,
+          email: profile.emails?.[0]?.value || '',
+          username: profile.displayName || `facebook_user_${profile.id}`,
+          firstName: profile.name?.givenName || '',
+          lastName: profile.name?.familyName || '',
+          profileImage: profile.photos?.[0]?.value || '',
+          authProvider: 'facebook'
+        });
+
+        return done(null, newUser);
+      } catch (error) {
+        return done(error as Error, undefined);
       }
-
-      // Create new user
-      const newUser = await storage.createUser({
-        facebookId: profile.id,
-        email: profile.emails?.[0]?.value || '',
-        username: profile.displayName || `facebook_user_${profile.id}`,
-        firstName: profile.name?.givenName || '',
-        lastName: profile.name?.familyName || '',
-        profileImage: profile.photos?.[0]?.value || '',
-        authProvider: 'facebook'
-      });
-
-      return done(null, newUser);
-    } catch (error) {
-      return done(error as Error, undefined);
-    }
-  }));
+    }));
+  } else {
+    console.log('⚠️  Facebook OAuth disabled - FACEBOOK_APP_ID and FACEBOOK_APP_SECRET not provided');
+  }
 
   // Serialize/deserialize user for session
   passport.serializeUser((user: any, done) => {
