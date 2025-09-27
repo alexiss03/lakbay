@@ -22,7 +22,7 @@ interface Tour {
 }
 
 export const SearchResultsPage = (): JSX.Element => {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -144,7 +144,7 @@ export const SearchResultsPage = (): JSX.Element => {
   ];
 
   useEffect(() => {
-    // Get search query from URL
+    // Get search query from URL - this will run whenever the location changes
     const params = new URLSearchParams(window.location.search);
     const query = params.get('q') || '';
     setSearchQuery(query);
@@ -152,7 +152,7 @@ export const SearchResultsPage = (): JSX.Element => {
     if (query) {
       performSearch(query);
     }
-  }, []);
+  }, [location]); // Watch for location changes
 
   const performSearch = (query: string) => {
     setIsLoading(true);
