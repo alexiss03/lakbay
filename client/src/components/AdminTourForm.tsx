@@ -25,12 +25,20 @@ const tourFormSchema = z.object({
   currency: z.string().default("PHP"),
   hostName: z.string().min(1, "Host name is required"),
   hostAvatar: z.string().optional(),
+  hostBio: z.string().optional(),
   maxParticipants: z.number().min(1, "Must have at least 1 participant"),
   duration: z.string().optional(),
   location: z.string().optional(),
   heroImage: z.string().optional(),
   featured: z.boolean().default(false),
-  status: z.enum(["active", "inactive", "pending"]).default("pending")
+  status: z.enum(["active", "inactive", "pending"]).default("pending"),
+  meetingPlace: z.string().optional(),
+  
+  // Tab content fields
+  inclusions: z.string().optional(),
+  thingsToBring: z.string().optional(),
+  reminders: z.string().optional(),
+  cancellationPolicy: z.string().optional()
 });
 
 type TourFormData = z.infer<typeof tourFormSchema>;
@@ -56,12 +64,18 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose }: AdminTourFormPr
       currency: tour?.currency || 'PHP',
       hostName: tour?.hostName || '',
       hostAvatar: tour?.hostAvatar || '',
+      hostBio: tour?.hostBio || '',
       maxParticipants: tour?.maxParticipants || 1,
       duration: tour?.duration || '',
       location: tour?.location || '',
       heroImage: tour?.heroImage || '',
       featured: tour?.featured || false,
-      status: tour?.status || 'pending'
+      status: tour?.status || 'pending',
+      meetingPlace: tour?.meetingPlace || '',
+      inclusions: tour?.inclusions?.join('\n') || '',
+      thingsToBring: tour?.thingsToBring?.join('\n') || '',
+      reminders: tour?.reminders?.join('\n') || '',
+      cancellationPolicy: tour?.cancellationPolicy || ''
     }
   });
 
@@ -92,11 +106,18 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose }: AdminTourFormPr
   });
 
   const onSubmit = (data: TourFormData) => {
-    createTourMutation.mutate({
+    // Convert string fields to arrays (split by newlines and filter empty lines)
+    const processedData = {
       ...data,
       price: parseFloat(data.price),
-      maxParticipants: Number(data.maxParticipants)
-    } as any);
+      maxParticipants: Number(data.maxParticipants),
+      inclusions: data.inclusions ? data.inclusions.split('\n').filter(line => line.trim()) : [],
+      thingsToBring: data.thingsToBring ? data.thingsToBring.split('\n').filter(line => line.trim()) : [],
+      reminders: data.reminders ? data.reminders.split('\n').filter(line => line.trim()) : [],
+      cancellationPolicy: data.cancellationPolicy || ''
+    };
+    
+    createTourMutation.mutate(processedData as any);
   };
 
   const categories = [
@@ -317,6 +338,52 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose }: AdminTourFormPr
                   />
                   <Label htmlFor="featured">Featured Tour</Label>
                 </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Tab Content */}
+          <Card className="p-4">
+            <h3 className="font-medium mb-4">Tab Content</h3>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="inclusions">Inclusions (one per line)</Label>
+                <Textarea
+                  id="inclusions"
+                  {...form.register('inclusions')}
+                  placeholder="Professional guide&#10;Transportation&#10;Meals&#10;Equipment"
+                  rows={4}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="thingsToBring">Things to Bring (one per line)</Label>
+                <Textarea
+                  id="thingsToBring"
+                  {...form.register('thingsToBring')}
+                  placeholder="Comfortable hiking shoes&#10;Sun protection&#10;Water bottle&#10;Personal medications"
+                  rows={4}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="reminders">Important Reminders (one per line)</Label>
+                <Textarea
+                  id="reminders"
+                  {...form.register('reminders')}
+                  placeholder="Arrive 30 minutes early&#10;Weather dependent activity&#10;Age limit applies"
+                  rows={3}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="cancellationPolicy">Cancellation Policy</Label>
+                <Textarea
+                  id="cancellationPolicy"
+                  {...form.register('cancellationPolicy')}
+                  placeholder="Full refund if cancelled 24 hours in advance. 50% refund if cancelled 12 hours in advance. No refund for no-shows."
+                  rows={3}
+                />
               </div>
             </div>
           </Card>
