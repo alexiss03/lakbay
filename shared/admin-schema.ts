@@ -29,7 +29,7 @@ export const adminTours = pgTable("admin_tours", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
-  category: varchar("category", { length: 100 }).notNull(),
+  category: text("category").notNull(), // JSON array as text
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   currency: varchar("currency", { length: 3 }).default("PHP"),
   status: tourStatusEnum("status").default("pending"),
