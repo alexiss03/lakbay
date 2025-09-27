@@ -11,6 +11,7 @@ import { ChatWidget } from "@/components/ChatWidget";
 import { TrendingArticlesSection } from "@/components/TrendingArticlesSection";
 import { RecommendedSection } from "@/components/RecommendedSection";
 import { PhilippinesMap } from "@/components/PhilippinesMap";
+import { NavigationBar } from "@/components/NavigationBar";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 
@@ -75,16 +76,8 @@ export const TravelHomePage = (): JSX.Element => {
           {/* Left: Logo placeholder */}
           <div className="w-8 h-8 bg-black" style={{borderRadius: '1px'}}></div>
           
-          {/* Center: Navigation */}
-          <nav className="flex items-center space-x-12">
-            <Link href="/" className="prada-nav text-black hover:text-gray-600 transition-colors">Home</Link>
-            <Link href="/trips" className="prada-nav text-gray-700 hover:text-black transition-colors">Trips</Link>
-            <Link href="/chats" className="prada-nav text-gray-700 hover:text-black transition-colors">Chats</Link>
-            <Link href="/trails" className="prada-nav text-gray-700 hover:text-black transition-colors">Trails</Link>
-            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</a>
-            <Link href="/shop" className="prada-nav text-gray-700 hover:text-black transition-colors">Shop</Link>
-            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</a>
-          </nav>
+          {/* Center: Navigation with Search */}
+          <NavigationBar currentPage="home" />
           
           {/* Right: Buttons and Language */}
           <div className="flex items-center space-x-3">

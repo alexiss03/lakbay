@@ -21,6 +21,7 @@ import AccommodationDashboard from "@/pages/AccommodationDashboard";
 import ShopDashboard from "@/pages/ShopDashboard";
 import AudioStudioPage from "@/pages/AudioStudioPage";
 import { TrailsPage } from "@/pages/TrailsPage";
+import { SearchResultsPage } from "@/pages/SearchResultsPage";
 import { ArticleFoodGuidePage } from "@/pages/ArticleFoodGuidePage";
 import { ArticleIslandHoppingPage } from "@/pages/ArticleIslandHoppingPage";
 import { ArticleMountainTribesPage } from "@/pages/ArticleMountainTribesPage";
@@ -35,6 +36,7 @@ function Router() {
       <Route path="/trips" component={TripsPage} />
       <Route path="/chats" component={ChatPage} />
       <Route path="/trails" component={TrailsPage} />
+      <Route path="/search" component={SearchResultsPage} />
       <Route path="/article/food-guide" component={ArticleFoodGuidePage} />
       <Route path="/article/island-hopping" component={ArticleIslandHoppingPage} />
       <Route path="/article/mountain-tribes" component={ArticleMountainTribesPage} />

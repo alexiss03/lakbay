@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { NavigationBar } from "@/components/NavigationBar";
 import { Calendar, MapPin, Users, Clock, Star, Bookmark, Menu, X } from "lucide-react";
 
 export const TripsPage = (): JSX.Element => {
@@ -141,15 +142,7 @@ export const TripsPage = (): JSX.Element => {
           <div className="w-8 h-8 bg-black" style={{borderRadius: '1px'}}></div>
           
           {/* Center: Navigation */}
-          <nav className="flex items-center space-x-12">
-            <Link href="/" className="prada-nav text-gray-700 hover:text-black transition-colors">Home</Link>
-            <Link href="/trips" className="prada-nav text-black hover:text-gray-600 transition-colors">Trips</Link>
-            <Link href="/chats" className="prada-nav text-gray-700 hover:text-black transition-colors">Chats</Link>
-            <Link href="/trails" className="prada-nav text-gray-700 hover:text-black transition-colors">Trails</Link>
-            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</a>
-            <Link href="/shop" className="prada-nav text-gray-700 hover:text-black transition-colors">Shop</Link>
-            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</a>
-          </nav>
+          <NavigationBar currentPage="trips" />
           
           {/* Right: Buttons and Language */}
           <div className="flex items-center space-x-3">
