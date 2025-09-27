@@ -13,6 +13,7 @@ import { TripsPage } from "@/pages/TripsPage";
 import { ChatPage } from "@/pages/ChatPage";
 import { LoginPage } from "@/pages/LoginPage";
 import { SignupPage } from "@/pages/SignupPage";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import ShopPage from "@/pages/ShopPage";
 import ProductDetailPage from "@/pages/ProductDetailPage";
 import AdminDashboard from "@/pages/AdminDashboard";
@@ -44,7 +45,11 @@ function Router() {
       <Route path="/trip/:id" component={TripDetailPage} />
       <Route path="/shop" component={ShopPage} />
       <Route path="/shop/product/:id" component={ProductDetailPage} />
-      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin">
+        <ProtectedRoute requireAdmin={true}>
+          <AdminDashboard />
+        </ProtectedRoute>
+      </Route>
       <Route path="/host" component={HostDashboard} />
       <Route path="/accommodation" component={AccommodationDashboard} />
       <Route path="/shop-manager" component={ShopDashboard} />

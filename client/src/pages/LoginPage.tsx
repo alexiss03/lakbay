@@ -19,6 +19,12 @@ export const LoginPage = (): JSX.Element => {
   });
   const { toast } = useToast();
 
+  // Get redirect URL from query params
+  const getRedirectUrl = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('redirect') || '/';
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setLoginData(prev => ({
@@ -39,7 +45,7 @@ export const LoginPage = (): JSX.Element => {
         },
         credentials: 'include',
         body: JSON.stringify({
-          email: loginData.usernameOrEmail,
+          username: loginData.usernameOrEmail,
           password: loginData.password,
         }),
       });
@@ -52,7 +58,9 @@ export const LoginPage = (): JSX.Element => {
           description: "Welcome back to Lakbay!",
         });
         
-        setLocation("/");
+        // Redirect to the intended page or home
+        const redirectUrl = getRedirectUrl();
+        setLocation(redirectUrl);
       } else {
         toast({
           title: "Login Failed",
