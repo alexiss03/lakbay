@@ -26,7 +26,6 @@ export const SearchResultsPage = (): JSX.Element => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentUrl, setCurrentUrl] = useState(window.location.href);
 
   // Sample tour data for search
   const allTours: Tour[] = [
@@ -144,49 +143,48 @@ export const SearchResultsPage = (): JSX.Element => {
     }
   ];
 
-  // Effect to monitor URL changes - this will detect any URL change
+  // Effect to handle initial URL and popstate changes
   useEffect(() => {
-    const checkUrlChange = () => {
-      const newUrl = window.location.href;
-      if (newUrl !== currentUrl) {
-        setCurrentUrl(newUrl);
-        const params = new URLSearchParams(window.location.search);
-        const query = params.get('q') || '';
-        
-        console.log(`🌐 URL DEBUG: Setting searchQuery to "${query}" and triggering search`);
-        setSearchQuery(query);
+    const handleUrlChange = () => {
+      const params = new URLSearchParams(window.location.search);
+      const query = params.get('q') || '';
+      
+      setSearchQuery(query);
 
-        if (query) {
-          performSearch(query);
-        } else {
-          console.log(`🌐 URL DEBUG: Empty query - clearing search results`);
-          setSearchResults([]);
-        }
+      if (query) {
+        performSearch(query);
+      } else {
+        setSearchResults([]);
       }
     };
 
-    // Check for URL changes on mount
-    checkUrlChange();
+    // Handle initial load
+    handleUrlChange();
 
-    // Set up interval to check for URL changes
-    const intervalId = setInterval(checkUrlChange, 100);
-
-    // Also listen for popstate events
-    const handlePopState = () => {
-      setTimeout(checkUrlChange, 50); // Small delay to ensure URL is updated
-    };
-
-    window.addEventListener('popstate', handlePopState);
+    // Listen for browser back/forward
+    window.addEventListener('popstate', handleUrlChange);
 
     return () => {
-      clearInterval(intervalId);
-      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('popstate', handleUrlChange);
     };
-  }, [currentUrl]);
+  }, []); // Empty dependency array - only run on mount
+
+  // Effect to handle wouter location changes  
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const query = params.get('q') || '';
+    
+    if (query !== searchQuery) {
+      setSearchQuery(query);
+      if (query) {
+        performSearch(query);
+      } else {
+        setSearchResults([]);
+      }
+    }
+  }, [location]); // Depend on wouter location changes
 
   const performSearch = (query: string) => {
-    console.log(`🔍 SEARCH DEBUG: performSearch called with query: "${query}"`);
-    console.log(`📊 Current searchResults state:`, searchResults.length, 'items');
     setIsLoading(true);
     
     // Simulate API call delay
@@ -200,15 +198,8 @@ export const SearchResultsPage = (): JSX.Element => {
         tour.destination.toLowerCase().includes(query.toLowerCase())
       );
       
-      console.log(`🎯 SEARCH DEBUG: Found ${results.length} results for "${query}"`);
-      if (results.length > 0) {
-        console.log(`📋 SEARCH DEBUG: Results:`, results.map(t => `"${t.title}" (${t.location})`));
-      }
-      
       setSearchResults(results);
       setIsLoading(false);
-      
-      console.log(`✅ SEARCH DEBUG: Updated searchResults state to ${results.length} items`);
     }, 500);
   };
 
