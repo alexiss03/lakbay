@@ -16,6 +16,7 @@ import {
   type Category, type Product, type CartItem 
 } from "@shared/schema";
 import { z } from "zod";
+import { isSearchable } from "@shared/status-transitions";
 
 // PayMongo API configuration
 const PAYMONGO_SECRET_KEY = process.env.PAYMONGO_SECRET_KEY;
@@ -744,6 +745,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Register audio routes
   app.use('/api', audioRoutes);
+
+  // Public trips endpoint with status visibility filtering
+  app.get('/api/trips', async (req, res) => {
+    try {
+      const { category, limit = "20", offset = "0", featured } = req.query;
+      
+      // Import admin tours schema for public display
+      const { adminTours } = await import('@shared/admin-schema');
+      const { db } = await import('./db');
+      const { eq, desc, and, inArray } = await import('drizzle-orm');
+      
+      const conditions = [];
+      
+      // Only show trips with searchable status
+      const searchableStatuses = ['active', 'ongoing', 'completed'];
+      conditions.push(inArray(adminTours.status, searchableStatuses));
+      
+      if (category && category !== "all") {
+        // Since category is stored as JSON array, use like query
+        conditions.push(eq(adminTours.category, category as string));
+      }
+      
+      if (featured === 'true') {
+        conditions.push(eq(adminTours.featured, true));
+      }
+
+      let query = db.select().from(adminTours);
+      
+      if (conditions.length > 0) {
+        query = query.where(and(...conditions));
+      }
+
+      const trips = await query
+        .orderBy(desc(adminTours.createdAt))
+        .limit(parseInt(limit as string))
+        .offset(parseInt(offset as string));
+
+      res.json(trips);
+    } catch (error) {
+      console.error("Error fetching public trips:", error);
+      res.status(500).json({ error: "Failed to fetch trips" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

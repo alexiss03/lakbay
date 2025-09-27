@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { AdminStatusActions } from '@/components/AdminStatusActions';
 import { 
   Users, 
   MapPin, 
@@ -34,12 +35,15 @@ interface Tour {
   title: string;
   category: string;
   price: string;
-  status: 'active' | 'inactive' | 'pending';
+  status: 'pending_approval' | 'active' | 'ongoing' | 'completed' | 'declined' | 'for_revision' | 'for_reevaluation';
   bookingsCount: number;
   revenue: string;
   rating: string;
   hostName: string;
   hostAvatar: string;
+  startAt?: string;
+  endAt?: string;
+  adminNotes?: string;
   createdAt: string;
 }
 
@@ -392,9 +396,15 @@ const AdminDashboard = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{tour.bookingsCount}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₱{parseFloat(tour.revenue).toLocaleString()}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <Badge className={getStatusBadge(tour.status, 'tour')}>
-                            {tour.status}
-                          </Badge>
+                          <AdminStatusActions 
+                            tour={{
+                              id: tour.id,
+                              status: tour.status,
+                              title: tour.title,
+                              adminNotes: tour.adminNotes
+                            }}
+                            userRole="admin"
+                          />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                           <Button size="sm" variant="outline">
