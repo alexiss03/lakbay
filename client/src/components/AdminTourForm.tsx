@@ -20,7 +20,7 @@ import { Plus, Edit, X } from 'lucide-react';
 const tourFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
-  category: z.string().min(1, "Category is required"),
+  category: z.array(z.string()).min(1, "At least one category is required"),
   price: z.string().min(1, "Price is required"),
   currency: z.string().default("PHP"),
   hostName: z.string().min(1, "Host name is required"),
@@ -73,7 +73,7 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose, isOpen: externalI
     defaultValues: {
       title: tour?.title || '',
       description: tour?.description || '',
-      category: tour?.category || '',
+      category: tour?.category ? (Array.isArray(tour.category) ? tour.category : JSON.parse(tour.category)) : [],
       price: tour?.price?.toString() || '',
       currency: tour?.currency || 'PHP',
       hostName: tour?.hostName || '',
@@ -124,6 +124,7 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose, isOpen: externalI
       ...data,
       price: parseFloat(data.price),
       maxParticipants: Number(data.maxParticipants),
+      category: JSON.stringify(data.category), // Convert category array to JSON string
       inclusions: data.inclusions ? data.inclusions.split('\n').filter(line => line.trim()) : [],
       thingsToBring: data.thingsToBring ? data.thingsToBring.split('\n').filter(line => line.trim()) : [],
       reminders: data.reminders ? data.reminders.split('\n').filter(line => line.trim()) : [],
@@ -203,22 +204,50 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose, isOpen: externalI
               </div>
 
               <div>
-                <Label htmlFor="category">Category *</Label>
-                <Select
-                  value={form.watch('category')}
-                  onValueChange={(value) => form.setValue('category', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category.toLowerCase().replace(/\s+/g, '-')}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="category">Categories *</Label>
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {form.watch('category').map((categoryValue: string) => {
+                      const categoryLabel = categories.find(cat => cat.toLowerCase().replace(/\s+/g, '-') === categoryValue) || categoryValue;
+                      return (
+                        <Badge 
+                          key={categoryValue}
+                          variant="secondary" 
+                          className="bg-[#D4AF37] text-black hover:bg-[#B8941F] cursor-pointer"
+                          onClick={() => {
+                            const currentCategories = form.watch('category');
+                            form.setValue('category', currentCategories.filter((cat: string) => cat !== categoryValue));
+                          }}
+                        >
+                          {categoryLabel}
+                          <X className="w-3 h-3 ml-1" />
+                        </Badge>
+                      );
+                    })}
+                  </div>
+                  <Select
+                    value=""
+                    onValueChange={(value) => {
+                      const currentCategories = form.watch('category');
+                      if (!currentCategories.includes(value)) {
+                        form.setValue('category', [...currentCategories, value]);
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Add categories" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories
+                        .filter(category => !form.watch('category').includes(category.toLowerCase().replace(/\s+/g, '-')))
+                        .map((category) => (
+                          <SelectItem key={category} value={category.toLowerCase().replace(/\s+/g, '-')}>
+                            {category}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 {form.formState.errors.category && (
                   <p className="text-sm text-red-600 mt-1">{form.formState.errors.category.message}</p>
                 )}
