@@ -79,6 +79,61 @@ class MemoryStorage implements IStorage {
   private nextCategoryId = 1;
   private nextProductId = 1;
 
+  constructor() {
+    // Create a default admin user for testing
+    this.initializeDefaultUsers();
+  }
+
+  private async initializeDefaultUsers() {
+    const bcrypt = require('bcryptjs');
+    const hashedPassword = await bcrypt.hash('admin123', 10);
+    
+    // Add default admin user
+    this.users.push({
+      id: this.nextUserId++,
+      username: 'admin',
+      password: hashedPassword,
+      email: 'admin@example.com',
+      firstName: 'Admin',
+      lastName: 'User',
+      phone: null,
+      address: null,
+      city: null,
+      postalCode: null,
+      country: 'Philippines',
+      googleId: null,
+      facebookId: null,
+      profileImage: null,
+      authProvider: 'local',
+      role: 'admin',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    // Add a regular test user
+    const regularPassword = await bcrypt.hash('user123', 10);
+    this.users.push({
+      id: this.nextUserId++,
+      username: 'testuser',
+      password: regularPassword,
+      email: 'user@example.com',
+      firstName: 'Test',
+      lastName: 'User',
+      phone: null,
+      address: null,
+      city: null,
+      postalCode: null,
+      country: 'Philippines',
+      googleId: null,
+      facebookId: null,
+      profileImage: null,
+      authProvider: 'local',
+      role: 'user',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+  }
+
   // User methods
   async getUser(id: number): Promise<User | undefined> {
     return this.users.find(u => u.id === id);
@@ -114,10 +169,12 @@ class MemoryStorage implements IStorage {
       postalCode: insertUser.postalCode || null,
       country: insertUser.country || 'Philippines',
       googleId: insertUser.googleId || null,
-      facebookId: insertUser.facebookId || null,
+      facebookId: (insertUser as any).facebookId || null,
       profileImage: insertUser.profileImage || null,
       authProvider: insertUser.authProvider || 'local',
-      createdAt: new Date()
+      role: insertUser.role || 'user',
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
     this.users.push(user);
     return user;
@@ -204,6 +261,11 @@ export class DatabaseStorage implements IStorage {
 
   async getUserByGoogleId(googleId: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.googleId, googleId));
+    return user || undefined;
+  }
+
+  async getUserByFacebookId(facebookId: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.facebookId, facebookId));
     return user || undefined;
   }
 
