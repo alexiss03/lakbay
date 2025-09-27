@@ -185,6 +185,7 @@ export const SearchResultsPage = (): JSX.Element => {
   }, [currentUrl]);
 
   const performSearch = (query: string) => {
+    console.log('🔍 performSearch called with query:', query);
     setIsLoading(true);
     
     // Simulate API call delay
@@ -197,6 +198,9 @@ export const SearchResultsPage = (): JSX.Element => {
         tour.slug.toLowerCase().includes(query.toLowerCase()) ||
         tour.destination.toLowerCase().includes(query.toLowerCase())
       );
+      
+      console.log('🎯 Search results for', query, ':', results.length, 'tours found');
+      console.log('📋 Results:', results.map(t => t.title + ' - ' + t.location));
       
       setSearchResults(results);
       setIsLoading(false);
