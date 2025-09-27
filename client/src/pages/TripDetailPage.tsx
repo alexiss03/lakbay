@@ -10,8 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ChatWidget } from "@/components/ChatWidget";
 import { TrailMap } from "@/components/TrailMap";
 import { AdminAudioModal } from "@/components/AdminAudioModal";
-import { AdminTourForm } from "@/components/AdminTourForm";
-import { MapPin, Star, Clock, Users, Calendar, Shield, AlertTriangle, CheckCircle2, Mountain, TrendingUp, MapIcon, Headphones, Play, Pause, Download, Volume2, Utensils, Package, Brain, Award, Timer, Target, ShoppingCart, Heart, Search, Monitor, Edit } from "lucide-react";
+import { MapPin, Star, Clock, Users, Calendar, Shield, AlertTriangle, CheckCircle2, Mountain, TrendingUp, MapIcon, Headphones, Play, Pause, Download, Volume2, Utensils, Package, Brain, Award, Timer, Target, ShoppingCart, Heart, Search, Monitor } from "lucide-react";
 
 interface TripDetailPageProps {
   params?: {
@@ -56,7 +55,6 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentAudioTrack, setCurrentAudioTrack] = useState<number | null>(null);
   const [showAudioModal, setShowAudioModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
   
   // Mock admin check - in real app this would come from auth context
   const isAdmin = true; // For demo purposes
@@ -623,17 +621,9 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
           <p className="text-lg font-light tracking-wide opacity-90">{trip.duration}</p>
         </div>
         
-        {/* Admin Controls */}
+        {/* Admin Audio Generation Button */}
         {isAdmin && (
-          <div className="absolute top-4 right-4 flex space-x-2">
-            <Button
-              onClick={() => setShowEditModal(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-light tracking-wider prada-corner-radius flex items-center gap-2"
-              size="sm"
-            >
-              <Edit className="w-4 h-4" />
-              Edit Tour
-            </Button>
+          <div className="absolute top-4 right-4">
             <Button
               onClick={() => setShowAudioModal(true)}
               className="bg-[#D4AF37] hover:bg-[#B8941F] text-black text-xs font-light tracking-wider prada-corner-radius flex items-center gap-2"
@@ -1070,16 +1060,6 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
 
       {/* Chat Widget */}
       <ChatWidget />
-
-      {/* Admin Edit Tour Modal */}
-      {isAdmin && (
-        <AdminTourForm
-          tour={trip}
-          isEdit={true}
-          isOpen={showEditModal}
-          onClose={() => setShowEditModal(false)}
-        />
-      )}
 
       {/* Admin Audio Modal */}
       {isAdmin && (
