@@ -26,6 +26,7 @@ export const SearchResultsPage = (): JSX.Element => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentUrl, setCurrentUrl] = useState(window.location.href);
 
   // Sample tour data for search
   const allTours: Tour[] = [
@@ -143,16 +144,45 @@ export const SearchResultsPage = (): JSX.Element => {
     }
   ];
 
+  // Effect to monitor URL changes - this will detect any URL change
   useEffect(() => {
-    // Get search query from URL - this will run whenever the location changes
-    const params = new URLSearchParams(window.location.search);
-    const query = params.get('q') || '';
-    setSearchQuery(query);
+    const checkUrlChange = () => {
+      const newUrl = window.location.href;
+      if (newUrl !== currentUrl) {
+        setCurrentUrl(newUrl);
+        const params = new URLSearchParams(window.location.search);
+        const query = params.get('q') || '';
+        
+        console.log('URL changed to:', newUrl, 'query:', query);
+        setSearchQuery(query);
 
-    if (query) {
-      performSearch(query);
-    }
-  }, [location]); // Watch for location changes
+        if (query) {
+          performSearch(query);
+        } else {
+          setSearchResults([]);
+        }
+      }
+    };
+
+    // Check for URL changes on mount
+    checkUrlChange();
+
+    // Set up interval to check for URL changes
+    const intervalId = setInterval(checkUrlChange, 100);
+
+    // Also listen for popstate events
+    const handlePopState = () => {
+      console.log('PopState event detected');
+      setTimeout(checkUrlChange, 50); // Small delay to ensure URL is updated
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      clearInterval(intervalId);
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [currentUrl]);
 
   const performSearch = (query: string) => {
     setIsLoading(true);
