@@ -153,7 +153,6 @@ export const SearchResultsPage = (): JSX.Element => {
         const params = new URLSearchParams(window.location.search);
         const query = params.get('q') || '';
         
-        console.log('URL changed to:', newUrl, 'query:', query);
         setSearchQuery(query);
 
         if (query) {
@@ -172,7 +171,6 @@ export const SearchResultsPage = (): JSX.Element => {
 
     // Also listen for popstate events
     const handlePopState = () => {
-      console.log('PopState event detected');
       setTimeout(checkUrlChange, 50); // Small delay to ensure URL is updated
     };
 
@@ -185,7 +183,6 @@ export const SearchResultsPage = (): JSX.Element => {
   }, [currentUrl]);
 
   const performSearch = (query: string) => {
-    console.log('🔍 performSearch called with query:', query);
     setIsLoading(true);
     
     // Simulate API call delay
@@ -198,9 +195,6 @@ export const SearchResultsPage = (): JSX.Element => {
         tour.slug.toLowerCase().includes(query.toLowerCase()) ||
         tour.destination.toLowerCase().includes(query.toLowerCase())
       );
-      
-      console.log('🎯 Search results for', query, ':', results.length, 'tours found');
-      console.log('📋 Results:', results.map(t => t.title + ' - ' + t.location));
       
       setSearchResults(results);
       setIsLoading(false);
