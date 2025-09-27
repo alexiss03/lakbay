@@ -198,7 +198,6 @@ export const SearchResultsPage = (): JSX.Element => {
         tour.destination.toLowerCase().includes(query.toLowerCase())
       );
       
-      console.log(`Search for "${query}" found ${results.length} results:`, results.map(r => r.title));
       setSearchResults(results);
       setIsLoading(false);
     }, 500);
