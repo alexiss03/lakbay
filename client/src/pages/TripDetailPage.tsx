@@ -1076,6 +1076,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
         <AdminTourForm
           tour={trip}
           isEdit={true}
+          isOpen={showEditModal}
           onClose={() => setShowEditModal(false)}
         />
       )}

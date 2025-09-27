@@ -47,10 +47,24 @@ interface AdminTourFormProps {
   tour?: any; // Tour data for editing
   isEdit?: boolean;
   onClose?: () => void;
+  isOpen?: boolean; // External dialog control
 }
 
-export const AdminTourForm = ({ tour, isEdit = false, onClose }: AdminTourFormProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+export const AdminTourForm = ({ tour, isEdit = false, onClose, isOpen: externalIsOpen }: AdminTourFormProps) => {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  
+  // Use external control if provided, otherwise use internal state
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
+  
+  const handleClose = () => {
+    if (externalIsOpen !== undefined) {
+      // Externally controlled - call onClose prop
+      onClose?.();
+    } else {
+      // Internally controlled - use internal state
+      setInternalIsOpen(false);
+    }
+  };
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -92,8 +106,7 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose }: AdminTourFormPr
         title: isEdit ? "Tour Updated" : "Tour Created",
         description: `Tour has been ${isEdit ? 'updated' : 'created'} successfully.`,
       });
-      setIsOpen(false);
-      onClose?.();
+      handleClose();
       form.reset();
     },
     onError: (error: any) => {
@@ -131,7 +144,7 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose }: AdminTourFormPr
   ];
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogTrigger asChild>
         <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black">
           {isEdit ? (
