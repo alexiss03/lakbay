@@ -686,6 +686,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin user promotion endpoint
+  app.post('/api/auth/promote-user', requireAuth, async (req, res) => {
+    try {
+      const currentUser = getCurrentUser(req);
+      
+      // Check if current user is admin
+      if (!currentUser || currentUser.role !== 'admin') {
+        return res.status(403).json({ error: 'Admin access required' });
+      }
+
+      const { userId, role } = req.body;
+      
+      if (!userId || !role) {
+        return res.status(400).json({ error: 'User ID and role are required' });
+      }
+
+      if (!['user', 'host', 'admin'].includes(role)) {
+        return res.status(400).json({ error: 'Invalid role. Must be user, host, or admin' });
+      }
+
+      // Get the user to be updated
+      const userToUpdate = await storage.getUser(userId);
+      if (!userToUpdate) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      // Update user role
+      const updatedUser = await storage.updateUser(userId, { role });
+      
+      res.json({ 
+        success: true, 
+        message: `User ${userToUpdate.username} has been promoted to ${role}`,
+        user: {
+          id: updatedUser.id,
+          username: updatedUser.username,
+          email: updatedUser.email,
+          role: updatedUser.role
+        }
+      });
+
+    } catch (error) {
+      console.error('User promotion error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // Get all users (admin only)
+  app.get('/api/auth/users', requireAuth, async (req, res) => {
+    try {
+      const currentUser = getCurrentUser(req);
+      
+      // Check if current user is admin
+      if (!currentUser || currentUser.role !== 'admin') {
+        return res.status(403).json({ error: 'Admin access required' });
+      }
+
+      // For this demo, let's return the in-memory users if using MemoryStorage
+      // In a real database setup, you'd query all users
+      res.json({ 
+        success: true, 
+        users: [] // This would be populated with actual user data
+      });
+
+    } catch (error) {
+      console.error('Get users error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
   // Register admin routes
   app.use('/api/admin', adminRoutes);
   
