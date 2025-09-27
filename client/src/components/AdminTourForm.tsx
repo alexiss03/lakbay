@@ -31,8 +31,11 @@ const tourFormSchema = z.object({
   location: z.string().optional(),
   heroImage: z.string().optional(),
   featured: z.boolean().default(false),
-  status: z.enum(["active", "inactive", "pending"]).default("pending"),
+  status: z.enum(["pending_approval", "active", "ongoing", "completed", "declined", "for_revision", "for_reevaluation"]).default("pending_approval"),
   meetingPlace: z.string().optional(),
+  startAt: z.string().optional(),
+  endAt: z.string().optional(),
+  adminNotes: z.string().optional(),
   
   // Tab content fields
   inclusions: z.string().optional(),
@@ -84,8 +87,11 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose, isOpen: externalI
       location: tour?.location || '',
       heroImage: tour?.heroImage || '',
       featured: tour?.featured || false,
-      status: tour?.status || 'pending',
+      status: tour?.status || 'pending_approval',
       meetingPlace: tour?.meetingPlace || '',
+      startAt: tour?.startAt ? tour.startAt.split('T')[0] : '',
+      endAt: tour?.endAt ? tour.endAt.split('T')[0] : '',
+      adminNotes: tour?.adminNotes || '',
       inclusions: tour?.inclusions?.join('\n') || '',
       thingsToBring: tour?.thingsToBring?.join('\n') || '',
       reminders: tour?.reminders?.join('\n') || '',
@@ -128,7 +134,11 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose, isOpen: externalI
       inclusions: data.inclusions ? data.inclusions.split('\n').filter(line => line.trim()) : [],
       thingsToBring: data.thingsToBring ? data.thingsToBring.split('\n').filter(line => line.trim()) : [],
       reminders: data.reminders ? data.reminders.split('\n').filter(line => line.trim()) : [],
-      cancellationPolicy: data.cancellationPolicy || ''
+      cancellationPolicy: data.cancellationPolicy || '',
+      startAt: data.startAt ? new Date(data.startAt).toISOString() : null,
+      endAt: data.endAt ? new Date(data.endAt).toISOString() : null,
+      adminNotes: data.adminNotes || '',
+      lastStatusChange: new Date().toISOString()
     };
     
     createTourMutation.mutate(processedData as any);
@@ -139,9 +149,13 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose, isOpen: externalI
   ];
 
   const statuses = [
+    { value: "pending_approval", label: "Pending Approval", color: "bg-yellow-100 text-yellow-800" },
     { value: "active", label: "Active", color: "bg-green-100 text-green-800" },
-    { value: "inactive", label: "Inactive", color: "bg-red-100 text-red-800" },
-    { value: "pending", label: "Pending", color: "bg-yellow-100 text-yellow-800" }
+    { value: "ongoing", label: "Ongoing", color: "bg-blue-100 text-blue-800" },
+    { value: "completed", label: "Completed", color: "bg-gray-100 text-gray-800" },
+    { value: "declined", label: "Declined", color: "bg-red-100 text-red-800" },
+    { value: "for_revision", label: "For Revision", color: "bg-orange-100 text-orange-800" },
+    { value: "for_reevaluation", label: "For Re-evaluation", color: "bg-purple-100 text-purple-800" }
   ];
 
   return (
@@ -391,6 +405,35 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose, isOpen: externalI
                   />
                   <Label htmlFor="featured">Featured Tour</Label>
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="startAt">Start Date</Label>
+                  <Input
+                    id="startAt"
+                    type="date"
+                    {...form.register('startAt')}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="endAt">End Date</Label>
+                  <Input
+                    id="endAt"
+                    type="date"
+                    {...form.register('endAt')}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="adminNotes">Admin Notes</Label>
+                <Textarea
+                  id="adminNotes"
+                  {...form.register('adminNotes')}
+                  placeholder="Internal notes for admin review, revision feedback, etc."
+                  rows={3}
+                />
               </div>
             </div>
           </Card>
