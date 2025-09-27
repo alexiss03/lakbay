@@ -133,7 +133,97 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
 
   // Comprehensive trip data based on route and category
   const getTripData = () => {
-    // HIKING CATEGORY
+    // EL NIDO ISLAND HOPPING
+    if (location.includes("el-nido-island-hopping")) {
+      return {
+        title: "El Nido Island Hopping Adventure",
+        duration: "4 days",
+        price: "₱12,500",
+        category: "Island Hopping",
+        heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop",
+        host: { 
+          name: "Captain Miguel Santos", 
+          avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+          bio: "Professional boat captain and island hopping guide with 15 years of experience exploring El Nido's pristine lagoons."
+        },
+        itinerary: [
+          {
+            day: 1,
+            title: "Arrival and Lagoon Tour A",
+            description: "Explore the pristine lagoons and hidden beaches of El Nido. Visit Big Lagoon, Small Lagoon, Secret Lagoon, and Shimizu Island.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop"
+          },
+          {
+            day: 2,
+            title: "Island Tour B - Beaches",
+            description: "Visit Snake Island, Entalula Beach, Cathedral Cave, and Cudugnon Cave. Experience crystal clear waters and stunning limestone cliffs.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop"
+          },
+          {
+            day: 3,
+            title: "Island Tour C - Hidden Gems",
+            description: "Discover Helicopter Island, Dilumacad Beach, Tapiutan Beach, and Secret Beach. Perfect for snorkeling and photography.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop"
+          },
+          {
+            day: 4,
+            title: "Island Tour D and Departure",
+            description: "Final island tour to Cadlao Lagoon, Pasandigan Beach, and Nat Nat Beach before departure.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop"
+          }
+        ],
+        accommodation: {
+          name: "El Nido Beach Resort",
+          description: "Comfortable beachfront accommodation with modern amenities and ocean views."
+        },
+        meetingPlace: "El Nido Public Market, El Nido, Palawan",
+        mapCenter: { lat: 11.1949, lng: 119.4013 }
+      };
+    }
+
+    // BOHOL CHOCOLATE HILLS
+    if (location.includes("bohol-chocolate-hills")) {
+      return {
+        title: "Bohol Chocolate Hills Trek",
+        duration: "3 days",
+        price: "₱8,900",
+        category: "Hiking",
+        heroImage: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop",
+        host: { 
+          name: "Elena Rodriguez", 
+          avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b5e5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+          bio: "Local Bohol guide specializing in geological tours and wildlife conservation. Expert on Chocolate Hills formation and Tarsier habitats."
+        },
+        itinerary: [
+          {
+            day: 1,
+            title: "Arrival and Chocolate Hills Viewpoint",
+            description: "Arrive in Carmen and visit the famous Chocolate Hills viewing deck. Learn about the geological formation of these unique limestone hills.",
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop"
+          },
+          {
+            day: 2,
+            title: "Tarsier Sanctuary and River Cruise",
+            description: "Visit the Philippine Tarsier Sanctuary to see the world's smallest primates. Enjoy a peaceful Loboc River cruise with local lunch.",
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop"
+          },
+          {
+            day: 3,
+            title: "Heritage Sites and Departure",
+            description: "Explore Baclayon Church, Blood Compact Monument, and local markets before departure.",
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop"
+          }
+        ],
+        accommodation: {
+          name: "Bohol Beach Club",
+          description: "Comfortable resort accommodation with access to Alona Beach and local amenities."
+        },
+        meetingPlace: "Tagbilaran Airport, Bohol",
+        mapCenter: { lat: 9.8349, lng: 124.1569 }
+      };
+    }
+
+    // HIKING CATEGORY - MOUNT PULAG
     if (location.includes("mount-pulag")) {
       return {
         title: "Mount Pulag Sunrise Trek",
@@ -202,6 +292,222 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
             }
           ]
         }
+      };
+    }
+
+    // SAGADA CAVE EXPLORATION
+    if (location.includes("sagada-caves")) {
+      return {
+        title: "Sagada Cave Exploration",
+        duration: "4 days",
+        price: "₱15,200",
+        category: "Adventure",
+        heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop",
+        host: { 
+          name: "Carlos Banaag", 
+          avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+          bio: "Local Sagada guide specializing in cave exploration and cultural heritage tours. Expert on Igorot traditions and mountain trekking."
+        },
+        itinerary: [
+          {
+            day: 1,
+            title: "Arrival and Sumaguing Cave",
+            description: "Arrive in Sagada and explore the famous Sumaguing Cave with its impressive limestone formations and underground chambers.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop"
+          },
+          {
+            day: 2,
+            title: "Hanging Coffins and Echo Valley",
+            description: "Visit the iconic hanging coffins and learn about ancient burial traditions. Explore Echo Valley and its mystical atmosphere.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop"
+          },
+          {
+            day: 3,
+            title: "Rice Terraces and Local Culture",
+            description: "Trek through ancient rice terraces and visit local Igorot communities. Experience traditional mountain life and customs.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop"
+          },
+          {
+            day: 4,
+            title: "Sunrise at Kiltepan and Departure",
+            description: "Early morning trek to Kiltepan viewpoint for spectacular sunrise views over the Cordillera mountains before departure.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop"
+          }
+        ],
+        accommodation: {
+          name: "Sagada Mountain Lodge",
+          description: "Traditional mountain lodge with cozy accommodations and local hospitality."
+        },
+        meetingPlace: "Sagada Town Center, Mountain Province",
+        mapCenter: { lat: 17.0827, lng: 120.9063 }
+      };
+    }
+
+    // SIARGAO SURF & ISLAND TOUR
+    if (location.includes("siargao-surf")) {
+      return {
+        title: "Siargao Surf & Island Tour",
+        duration: "5 days",
+        price: "₱18,750",
+        category: "Surfing",
+        heroImage: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop",
+        host: { 
+          name: "Jake Mendoza", 
+          avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+          bio: "Professional surf instructor and island guide with 10 years of experience riding the waves of Cloud 9 and exploring Siargao's hidden gems."
+        },
+        itinerary: [
+          {
+            day: 1,
+            title: "Arrival and Surf Lesson at Cloud 9",
+            description: "Welcome to Siargao! Start with surf lessons at the world-famous Cloud 9 break. Perfect waves for beginners and experienced surfers.",
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop"
+          },
+          {
+            day: 2,
+            title: "Island Hopping - Naked and Daku Islands",
+            description: "Explore the pristine islands around Siargao. Visit Naked Island's sandbar and Daku Island's palm-fringed beaches.",
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop"
+          },
+          {
+            day: 3,
+            title: "Sugba Lagoon and Magpupungko Pools",
+            description: "Paddle through the enchanting Sugba Lagoon and relax at the natural Magpupungko rock pools during low tide.",
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop"
+          },
+          {
+            day: 4,
+            title: "Advanced Surf Session and Local Culture",
+            description: "Practice advanced surfing techniques and explore local fishing villages. Experience authentic Siargao hospitality.",
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop"
+          },
+          {
+            day: 5,
+            title: "Final Surf and Departure",
+            description: "Last surf session at Cloud 9 and farewell breakfast before departure.",
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop"
+          }
+        ],
+        accommodation: {
+          name: "Siargao Bleu Resort",
+          description: "Beachfront resort with modern amenities and easy access to Cloud 9 surf break."
+        },
+        meetingPlace: "Sayak Airport, Siargao Island",
+        mapCenter: { lat: 9.8601, lng: 126.0581 }
+      };
+    }
+
+    // SUNSET BEACH TREK
+    if (location.includes("boracay-sunset-trek")) {
+      return {
+        title: "Sunset Beach Trek",
+        duration: "1 day",
+        price: "₱2,500",
+        category: "Beach",
+        heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop",
+        host: { 
+          name: "Anna Reyes", 
+          avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+          bio: "Local Boracay guide specializing in beach photography and sunset tours. Knows all the best hidden spots on the island."
+        },
+        itinerary: [
+          {
+            day: 1,
+            title: "Boracay Beach Trek and Sunset",
+            description: "Trek along Boracay's famous white sand beaches, explore hidden coves, and watch the spectacular sunset from the best viewpoints.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop"
+          }
+        ],
+        accommodation: {
+          name: "Day Tour - No Accommodation",
+          description: "This is a day tour package. Accommodation not included."
+        },
+        meetingPlace: "White Beach Station 1, Boracay",
+        mapCenter: { lat: 11.9674, lng: 121.9270 }
+      };
+    }
+
+    // BATANES CULTURAL HERITAGE TOUR
+    if (location.includes("batanes-heritage")) {
+      return {
+        title: "Batanes Cultural Heritage Tour",
+        duration: "4 days",
+        price: "₱22,400",
+        category: "Cultural",
+        heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop",
+        host: { 
+          name: "Maria Valdez", 
+          avatar: "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+          bio: "Local Ivatan guide born and raised in Batanes. Expert on Ivatan culture, traditional architecture, and the unique heritage of the northernmost province."
+        },
+        itinerary: [
+          {
+            day: 1,
+            title: "Arrival in Basco and North Batan Tour",
+            description: "Arrive in Basco and explore traditional Ivatan stone houses, Vayang Rolling Hills, and the iconic Naidi Lighthouse.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop"
+          },
+          {
+            day: 2,
+            title: "South Batan Cultural Sites",
+            description: "Visit Mahatao Church, traditional villages, and learn about Ivatan craftsmanship including vakul weaving and stone construction.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop"
+          },
+          {
+            day: 3,
+            title: "Sabtang Island Day Trip",
+            description: "Ferry to Sabtang Island to see perfectly preserved traditional villages, stone houses, and experience authentic Ivatan hospitality.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop"
+          },
+          {
+            day: 4,
+            title: "Marlboro Country and Departure",
+            description: "Final morning at the dramatic Marlboro Country hills before departure from Basco Airport.",
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop"
+          }
+        ],
+        accommodation: {
+          name: "Fundacion Pacita Lodge",
+          description: "Boutique lodge with traditional Ivatan architecture and stunning views of the Pacific Ocean."
+        },
+        meetingPlace: "Basco Airport, Batanes",
+        mapCenter: { lat: 20.4488, lng: 121.9678 }
+      };
+    }
+
+    // VIGAN CULTURAL HERITAGE TOUR
+    if (location.includes("vigan-heritage")) {
+      return {
+        title: "Vigan Cultural Heritage Tour",
+        duration: "2 days",
+        price: "₱2,800",
+        category: "Cultural",
+        heroImage: "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=400&h=250&fit=crop",
+        host: { 
+          name: "Luis Crisologo", 
+          avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+          bio: "Local historian and cultural guide specializing in Spanish colonial heritage and Vigan's UNESCO World Heritage significance."
+        },
+        itinerary: [
+          {
+            day: 1,
+            title: "Historic Vigan Walking Tour",
+            description: "Walk through cobblestone streets of Calle Crisologo, visit colonial houses, museums, and traditional pottery workshops.",
+            image: "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=400&h=250&fit=crop"
+          },
+          {
+            day: 2,
+            title: "Cultural Immersion and Local Crafts",
+            description: "Experience traditional Ilocano weaving, cooking classes, and kalesa (horse carriage) tours before departure.",
+            image: "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=400&h=250&fit=crop"
+          }
+        ],
+        accommodation: {
+          name: "Villa Angela Heritage House",
+          description: "Historic colonial mansion converted into a boutique hotel within the heritage district."
+        },
+        meetingPlace: "Vigan City Plaza, Ilocos Sur",
+        mapCenter: { lat: 17.5756, lng: 120.3888 }
       };
     }
 
