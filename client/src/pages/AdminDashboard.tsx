@@ -35,14 +35,12 @@ interface Tour {
   category: string;
   price: string;
   status: 'active' | 'inactive' | 'pending';
-  bookings: number;
-  revenue: number;
-  rating: number;
+  bookingsCount: number;
+  revenue: string;
+  rating: string;
+  hostName: string;
+  hostAvatar: string;
   createdAt: string;
-  host: {
-    name: string;
-    avatar: string;
-  };
 }
 
 interface User {
@@ -296,13 +294,13 @@ const AdminDashboard = () => {
                   {tours.map((tour) => (
                     <div key={tour.id} className="flex items-center space-x-4">
                       <img
-                        src={tour.host.avatar}
-                        alt={tour.host.name}
+                        src={tour.hostAvatar}
+                        alt={tour.hostName}
                         className="w-10 h-10 rounded-full"
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900 truncate">{tour.title}</p>
-                        <p className="text-sm text-gray-500">{tour.category} • {tour.host.name}</p>
+                        <p className="text-sm text-gray-500">{tour.category} • {tour.hostName}</p>
                       </div>
                       <Badge className={getStatusBadge(tour.status, 'tour')}>
                         {tour.status}
@@ -383,13 +381,13 @@ const AdminDashboard = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{tour.category}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            <img className="h-8 w-8 rounded-full mr-3" src={tour.host.avatar} alt={tour.host.name} />
-                            <div className="text-sm text-gray-900">{tour.host.name}</div>
+                            <img className="h-8 w-8 rounded-full mr-3" src={tour.hostAvatar} alt={tour.hostName} />
+                            <div className="text-sm text-gray-900">{tour.hostName}</div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{tour.price}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{tour.bookings}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₱{tour.revenue.toLocaleString()}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₱{tour.price}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{tour.bookingsCount}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₱{parseFloat(tour.revenue).toLocaleString()}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <Badge className={getStatusBadge(tour.status, 'tour')}>
                             {tour.status}
