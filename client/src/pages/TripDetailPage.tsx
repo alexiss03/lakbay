@@ -675,7 +675,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
               })()}
 
               {/* Tab Contents */}
-              <TabsContent value="Event details" className="space-y-6">
+              <TabsContent value="Event details" className="space-y-6 mt-8">
                 {trip.itinerary && trip.itinerary.length > 0 && trip.itinerary.map((day, index) => (
                   <Card key={index} className="p-6">
                     <div className="flex space-x-4">
@@ -699,7 +699,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
               </TabsContent>
 
               {/* Trail Tab - for hiking category */}
-              <TabsContent value="Trail" className="space-y-6">
+              <TabsContent value="Trail" className="space-y-6 mt-8">
                 <Card className="p-6">
                   <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
                     <Mountain className="w-5 h-5 mr-2 text-[#D4AF37]" />
@@ -817,7 +817,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                 </Card>
               </TabsContent>
 
-              <TabsContent value="Inclusions" className="space-y-6">
+              <TabsContent value="Inclusions" className="space-y-6 mt-8">
                 <Card className="p-6">
                   <h3 className="font-semibold text-lg text-gray-900 mb-4">What's Included</h3>
                   <div className="grid md:grid-cols-2 gap-4">
@@ -861,7 +861,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                 </Card>
               </TabsContent>
 
-              <TabsContent value="Reviews" className="space-y-6">
+              <TabsContent value="Reviews" className="space-y-6 mt-8">
                 <Card className="p-6">
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="font-semibold text-lg text-gray-900">Reviews</h3>
@@ -901,7 +901,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                 </Card>
               </TabsContent>
 
-              <TabsContent value="Things to bring" className="space-y-6">
+              <TabsContent value="Things to bring" className="space-y-6 mt-8">
                 <Card className="p-6">
                   <h3 className="font-semibold text-lg text-gray-900 mb-4">Essential Items</h3>
                   <div className="grid md:grid-cols-2 gap-4">
@@ -945,7 +945,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                 </Card>
               </TabsContent>
 
-              <TabsContent value="Reminders" className="space-y-6">
+              <TabsContent value="Reminders" className="space-y-6 mt-8">
                 <Card className="p-6">
                   <h3 className="font-semibold text-lg text-gray-900 mb-4">Important Reminders</h3>
                   <div className="space-y-3">
@@ -969,7 +969,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                 </Card>
               </TabsContent>
 
-              <TabsContent value="Cancellation" className="space-y-6">
+              <TabsContent value="Cancellation" className="space-y-6 mt-8">
                 <Card className="p-6">
                   <h3 className="font-semibold text-lg text-gray-900 mb-4">Cancellation Policy</h3>
                   <div className="space-y-4">
