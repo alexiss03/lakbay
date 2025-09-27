@@ -13,7 +13,15 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // Tour status enum
-export const tourStatusEnum = pgEnum('tour_status', ['active', 'inactive', 'pending']);
+export const tourStatusEnum = pgEnum('tour_status', [
+  'pending_approval',
+  'active', 
+  'ongoing',
+  'completed',
+  'declined',
+  'for_revision',
+  'for_reevaluation'
+]);
 
 // User role enum  
 export const userRoleEnum = pgEnum('user_role', ['user', 'host', 'admin']);
@@ -32,7 +40,7 @@ export const adminTours = pgTable("admin_tours", {
   category: text("category").notNull(), // JSON array as text
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   currency: varchar("currency", { length: 3 }).default("PHP"),
-  status: tourStatusEnum("status").default("pending"),
+  status: tourStatusEnum("status").default("pending_approval"),
   hostId: varchar("host_id").notNull(),
   hostName: varchar("host_name").notNull(),
   hostAvatar: varchar("host_avatar"),
@@ -44,6 +52,10 @@ export const adminTours = pgTable("admin_tours", {
   location: varchar("location"),
   heroImage: varchar("hero_image"),
   featured: boolean("featured").default(false),
+  startAt: timestamp("start_at"),
+  endAt: timestamp("end_at"),
+  adminNotes: text("admin_notes"), // For revision/decline reasons
+  lastStatusChange: timestamp("last_status_change").defaultNow(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
