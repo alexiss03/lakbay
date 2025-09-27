@@ -650,12 +650,12 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                 const tabs = trip.category === 'hiking' ? hikingTabs : defaultTabs;
 
                 return (
-                  <TabsList className="flex items-center justify-center w-full space-x-8 bg-transparent border-none">
+                  <TabsList className="flex items-center justify-center w-full space-x-12 bg-transparent border-none">
                     {tabs.map((tab) => (
                       <TabsTrigger 
                         key={tab} 
                         value={tab}
-                        className="prada-nav transition-colors data-[state=active]:text-black data-[state=active]:hover:text-gray-600 data-[state=inactive]:text-gray-700 data-[state=inactive]:hover:text-black bg-transparent border-none"
+                        className="prada-nav transition-colors data-[state=active]:text-black data-[state=active]:hover:text-gray-600 data-[state=inactive]:text-gray-700 data-[state=inactive]:hover:text-black bg-transparent border-none px-4 py-2"
                       >
                         {tab}
                       </TabsTrigger>
