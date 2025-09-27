@@ -144,7 +144,15 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose, isOpen: externalI
   ];
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (externalIsOpen !== undefined) {
+        // Externally controlled - delegate to onClose when closing
+        if (!open) handleClose();
+      } else {
+        // Internally controlled - sync internal state
+        setInternalIsOpen(open);
+      }
+    }}>
       {/* Only show trigger button when not externally controlled */}
       {externalIsOpen === undefined && (
         <DialogTrigger asChild>
@@ -170,7 +178,7 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose, isOpen: externalI
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setIsOpen(false)}
+              onClick={handleClose}
             >
               <X className="w-4 h-4" />
             </Button>
@@ -409,7 +417,7 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose, isOpen: externalI
             <Button
               type="button"
               variant="outline"
-              onClick={() => setIsOpen(false)}
+              onClick={handleClose}
             >
               Cancel
             </Button>
