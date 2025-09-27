@@ -153,11 +153,13 @@ export const SearchResultsPage = (): JSX.Element => {
         const params = new URLSearchParams(window.location.search);
         const query = params.get('q') || '';
         
+        console.log(`🌐 URL DEBUG: Setting searchQuery to "${query}" and triggering search`);
         setSearchQuery(query);
 
         if (query) {
           performSearch(query);
         } else {
+          console.log(`🌐 URL DEBUG: Empty query - clearing search results`);
           setSearchResults([]);
         }
       }
@@ -183,6 +185,8 @@ export const SearchResultsPage = (): JSX.Element => {
   }, [currentUrl]);
 
   const performSearch = (query: string) => {
+    console.log(`🔍 SEARCH DEBUG: performSearch called with query: "${query}"`);
+    console.log(`📊 Current searchResults state:`, searchResults.length, 'items');
     setIsLoading(true);
     
     // Simulate API call delay
@@ -196,8 +200,15 @@ export const SearchResultsPage = (): JSX.Element => {
         tour.destination.toLowerCase().includes(query.toLowerCase())
       );
       
+      console.log(`🎯 SEARCH DEBUG: Found ${results.length} results for "${query}"`);
+      if (results.length > 0) {
+        console.log(`📋 SEARCH DEBUG: Results:`, results.map(t => `"${t.title}" (${t.location})`));
+      }
+      
       setSearchResults(results);
       setIsLoading(false);
+      
+      console.log(`✅ SEARCH DEBUG: Updated searchResults state to ${results.length} items`);
     }, 500);
   };
 
