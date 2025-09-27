@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db } from "../db";
 import { adminTours, adminUsers, adminArticles, adminBookings, adminHosts, AdminAnalytics } from "@shared/admin-schema";
 import { eq, desc, count, sum, and, gte, lte, like, sql } from "drizzle-orm";
+import { validateStatusTransition, checkAutomaticTransition, type TripStatus, type UserRole } from "@shared/status-transitions";
 
 const router = Router();
 
@@ -174,6 +175,67 @@ router.put("/tours/:id", async (req, res) => {
   } catch (error) {
     console.error("Error updating tour:", error);
     res.status(500).json({ error: "Failed to update tour" });
+  }
+});
+
+// Change tour status with validation
+router.patch("/tours/:id/status", async (req, res) => {
+  try {
+    const { status, adminNotes } = req.body;
+    
+    // Get current tour
+    const [currentTour] = await db
+      .select()
+      .from(adminTours)
+      .where(eq(adminTours.id, req.params.id))
+      .limit(1);
+
+    if (!currentTour) {
+      return res.status(404).json({ error: "Tour not found" });
+    }
+
+    // Validate status transition (assuming admin role for now)
+    const validation = validateStatusTransition(
+      currentTour.status as TripStatus,
+      status as TripStatus,
+      'admin' as UserRole,
+      adminNotes
+    );
+
+    if (!validation.isValid) {
+      return res.status(400).json({ error: validation.error });
+    }
+
+    // Check for automatic transitions based on dates
+    const automaticStatus = checkAutomaticTransition(
+      status as TripStatus,
+      currentTour.startAt,
+      currentTour.endAt
+    );
+
+    // Use automatic status if applicable, otherwise use requested status
+    const finalStatus = automaticStatus || status;
+
+    // Update tour with new status
+    const [updatedTour] = await db
+      .update(adminTours)
+      .set({
+        status: finalStatus,
+        adminNotes: adminNotes || currentTour.adminNotes,
+        lastStatusChange: new Date(),
+        updatedAt: new Date()
+      })
+      .where(eq(adminTours.id, req.params.id))
+      .returning();
+
+    res.json({
+      success: true,
+      tour: updatedTour,
+      automaticTransition: automaticStatus !== null
+    });
+  } catch (error) {
+    console.error("Error changing tour status:", error);
+    res.status(500).json({ error: "Failed to change tour status" });
   }
 });
 

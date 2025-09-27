@@ -15,6 +15,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Edit, X } from 'lucide-react';
+import { statusInfo, getAvailableTransitions, validateStatusTransition, type TripStatus, type UserRole } from '@shared/status-transitions';
 
 // Form validation schema
 const tourFormSchema = z.object({
@@ -148,15 +149,13 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose, isOpen: externalI
     "Private", "Joiner", "Meetups", "Mystery", "Events", "Virtual", "Online Quizzes"
   ];
 
-  const statuses = [
-    { value: "pending_approval", label: "Pending Approval", color: "bg-yellow-100 text-yellow-800" },
-    { value: "active", label: "Active", color: "bg-green-100 text-green-800" },
-    { value: "ongoing", label: "Ongoing", color: "bg-blue-100 text-blue-800" },
-    { value: "completed", label: "Completed", color: "bg-gray-100 text-gray-800" },
-    { value: "declined", label: "Declined", color: "bg-red-100 text-red-800" },
-    { value: "for_revision", label: "For Revision", color: "bg-orange-100 text-orange-800" },
-    { value: "for_reevaluation", label: "For Re-evaluation", color: "bg-purple-100 text-purple-800" }
-  ];
+  // Get all statuses with their UI information
+  const statuses = Object.entries(statusInfo).map(([value, info]) => ({
+    value: value as TripStatus,
+    label: info.label,
+    color: info.color,
+    description: info.description
+  }));
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {
@@ -388,8 +387,11 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose, isOpen: externalI
                     <SelectContent>
                       {statuses.map((status) => (
                         <SelectItem key={status.value} value={status.value}>
-                          <div className="flex items-center">
-                            <Badge className={status.color}>{status.label}</Badge>
+                          <div className="flex flex-col">
+                            <div className="flex items-center">
+                              <Badge className={status.color}>{status.label}</Badge>
+                            </div>
+                            <p className="text-xs text-gray-500 mt-1">{status.description}</p>
                           </div>
                         </SelectItem>
                       ))}
