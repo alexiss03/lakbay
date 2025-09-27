@@ -1,9 +1,11 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
+import { Strategy as LocalStrategy } from 'passport-local';
 import session from 'express-session';
 import { storage } from './storage';
 import type { Express } from 'express';
+import bcrypt from 'bcryptjs';
 
 export function setupAuth(app: Express) {
   // Session middleware - Fixed for Replit environment
@@ -92,7 +94,7 @@ export function setupAuth(app: Express) {
           lastName: profile.name?.familyName || '',
           profileImage: profile.photos?.[0]?.value || '',
           authProvider: 'facebook'
-        });
+        } as any);
 
         return done(null, newUser);
       } catch (error) {
@@ -102,6 +104,38 @@ export function setupAuth(app: Express) {
   } else {
     console.log('⚠️  Facebook OAuth disabled - FACEBOOK_APP_ID and FACEBOOK_APP_SECRET not provided');
   }
+
+  // Local Strategy for username/password authentication
+  passport.use(new LocalStrategy({
+    usernameField: 'username',
+    passwordField: 'password'
+  },
+  async (username, password, done) => {
+    try {
+      // Check if user exists
+      const user = await storage.getUserByUsername(username);
+      
+      if (!user) {
+        return done(null, false, { message: 'Invalid username or password' });
+      }
+
+      // Check if user has a password (might be OAuth-only user)
+      if (!user.password) {
+        return done(null, false, { message: 'Please sign in with your social account' });
+      }
+
+      // Verify password
+      const isValidPassword = await bcrypt.compare(password, user.password);
+      
+      if (!isValidPassword) {
+        return done(null, false, { message: 'Invalid username or password' });
+      }
+
+      return done(null, user);
+    } catch (error) {
+      return done(error);
+    }
+  }));
 
   // Serialize/deserialize user for session
   passport.serializeUser((user: any, done) => {

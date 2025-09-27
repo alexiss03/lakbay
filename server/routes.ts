@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import passport from "passport";
 import { setupAuth, requireAuth, getCurrentUser } from "./auth";
 import adminRoutes from "./routes/admin";
+import bcrypt from 'bcryptjs';
 import hostRoutes from "./routes/host";
 import chatRoutes from "./routes/chat";
 import accommodationRoutes from "./routes/accommodation";
@@ -138,35 +139,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Local authentication (email/password)
-  app.post('/api/auth/login', async (req, res) => {
-    try {
-      const { email, password } = req.body;
+  // Local authentication (username/password)
+  app.post('/api/auth/login', (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
+      if (err) {
+        return next(err);
+      }
       
-      if (!email || !password) {
-        return res.status(400).json({ error: 'Email and password are required' });
+      if (!user) {
+        return res.status(401).json({ 
+          error: info?.message || 'Invalid credentials' 
+        });
       }
 
-      // For demo purposes, this is a simple check
-      // In production, you'd hash and compare passwords
-      const user = await storage.getUserByEmail(email);
-      
-      if (!user || (user.password && user.password !== password)) {
-        return res.status(401).json({ error: 'Invalid credentials' });
-      }
-
-      // Set user in session
       req.login(user, (err) => {
         if (err) {
-          return res.status(500).json({ error: 'Login failed' });
+          return next(err);
         }
-        res.json({ success: true, user });
+        
+        return res.json({ 
+          success: true, 
+          user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role,
+            authProvider: user.authProvider
+          }
+        });
       });
-
-    } catch (error) {
-      console.error('Login error:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    }
+    })(req, res, next);
   });
 
   // Register new user
@@ -189,11 +193,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'Username already taken' });
       }
 
+      // Hash password before storing
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+
       // Create new user
       const newUser = await storage.createUser({
         username,
         email,
-        password, // In production, hash this password
+        password: hashedPassword,
         firstName: firstName || '',
         lastName: lastName || '',
         authProvider: 'local'

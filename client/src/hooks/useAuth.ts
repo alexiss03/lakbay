@@ -7,6 +7,8 @@ export interface User {
   firstName?: string;
   lastName?: string;
   profileImageUrl?: string;
+  role?: 'user' | 'host' | 'admin';
+  authProvider?: string;
 }
 
 export function useAuth() {
@@ -15,9 +17,14 @@ export function useAuth() {
     retry: false,
   });
 
+  const currentUser = user as User | undefined;
+
   return {
-    user: user as User | undefined,
+    user: currentUser,
     isLoading,
-    isAuthenticated: !!user,
+    isAuthenticated: !!currentUser,
+    isAdmin: currentUser?.role === 'admin',
+    isHost: currentUser?.role === 'host' || currentUser?.role === 'admin',
+    hasRole: (role: 'user' | 'host' | 'admin') => currentUser?.role === role,
   };
 }

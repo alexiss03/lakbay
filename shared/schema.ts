@@ -1,7 +1,10 @@
-import { pgTable, text, serial, integer, boolean, decimal, timestamp, varchar, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, decimal, timestamp, varchar, jsonb, pgEnum } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
+
+// User role enum
+export const userRoleEnum = pgEnum('user_role', ['user', 'host', 'admin']);
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -19,6 +22,7 @@ export const users = pgTable("users", {
   facebookId: text("facebook_id").unique(),
   profileImage: text("profile_image"),
   authProvider: text("auth_provider").default("local"), // 'local', 'google', 'facebook'
+  role: userRoleEnum("role").default("user"), // user, host, admin
   createdAt: timestamp("created_at").defaultNow(),
 });
 
