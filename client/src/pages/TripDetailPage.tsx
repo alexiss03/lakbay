@@ -785,13 +785,9 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                         <div key={index} className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${
                             point.type === 'trailhead' ? 'bg-green-500' :
-                            point.type === 'campsite' ? 'bg-orange-500' :
                             point.type === 'summit' ? 'bg-red-500' :
                             'bg-blue-500'
                           }`}>
-                            {point.type === 'campsite' && (
-                              <span className="text-xs">⛺</span>
-                            )}
                             {point.type === 'summit' && (
                               <span className="text-xs">🏔️</span>
                             )}
