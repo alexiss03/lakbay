@@ -1,4 +1,5 @@
 import { pgTable, text, serial, integer, boolean, decimal, timestamp, varchar, jsonb, pgEnum } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
@@ -357,3 +358,102 @@ export type InsertWishlistItem = z.infer<typeof insertWishlistItemSchema>;
 export type WishlistItem = typeof wishlistItems.$inferSelect;
 export type InsertTour = z.infer<typeof insertTourSchema>;
 export type Tour = typeof tours.$inferSelect;
+
+// Tour status enum
+export const tourStatusEnum = pgEnum('tour_status', ['active', 'inactive', 'pending']);
+
+// User status enum
+export const userStatusEnum = pgEnum('user_status', ['active', 'suspended']);
+
+// Tours table for admin management
+export const adminTours = pgTable("admin_tours", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 100 }).notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 3 }).default("PHP"),
+  status: tourStatusEnum("status").default("pending"),
+  hostId: varchar("host_id").notNull(),
+  hostName: varchar("host_name").notNull(),
+  hostAvatar: varchar("host_avatar"),
+  bookingsCount: integer("bookings_count").default(0),
+  revenue: decimal("revenue", { precision: 12, scale: 2 }).default("0"),
+  rating: decimal("rating", { precision: 2, scale: 1 }).default("0"),
+  maxParticipants: integer("max_participants"),
+  duration: varchar("duration"),
+  location: varchar("location"),
+  heroImage: varchar("hero_image"),
+  featured: boolean("featured").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Admin users table
+export const adminUsers = pgTable("admin_users", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).unique().notNull(),
+  avatar: varchar("avatar"),
+  role: userRoleEnum("role").default("user"),
+  status: userStatusEnum("status").default("active"),
+  totalBookings: integer("total_bookings").default(0),
+  totalSpent: decimal("total_spent", { precision: 12, scale: 2 }).default("0"),
+  lastLoginAt: timestamp("last_login_at"),
+  joinedAt: timestamp("joined_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Admin bookings table for tracking
+export const adminBookings = pgTable("admin_bookings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  tourId: varchar("tour_id").notNull(),
+  userId: varchar("user_id").notNull(),
+  userName: varchar("user_name").notNull(),
+  userEmail: varchar("user_email").notNull(),
+  tourTitle: varchar("tour_title").notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 3 }).default("PHP"),
+  status: varchar("status", { length: 50 }).default("pending"),
+  participants: integer("participants").default(1),
+  bookingDate: timestamp("booking_date").notNull(),
+  travelDate: timestamp("travel_date"),
+  notes: text("notes"),
+  paymentStatus: varchar("payment_status", { length: 50 }).default("pending"),
+  paymentId: varchar("payment_id"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Admin hosts table
+export const adminHosts = pgTable("admin_hosts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").unique().notNull(),
+  businessName: varchar("business_name"),
+  description: text("description"),
+  specialties: text("specialties"),
+  experience: varchar("experience"),
+  location: varchar("location"),
+  website: varchar("website"),
+  socialMedia: text("social_media"),
+  verificationStatus: varchar("verification_status").default("pending"),
+  documentsSubmitted: boolean("documents_submitted").default(false),
+  rating: decimal("rating", { precision: 2, scale: 1 }).default("0"),
+  totalTours: integer("total_tours").default(0),
+  totalRevenue: decimal("total_revenue", { precision: 12, scale: 2 }).default("0"),
+  commissionRate: decimal("commission_rate", { precision: 3, scale: 2 }).default("15.00"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Admin schema types
+export type AdminTour = typeof adminTours.$inferSelect;
+export type InsertAdminTour = typeof adminTours.$inferInsert;
+export type AdminUser = typeof adminUsers.$inferSelect;
+export type InsertAdminUser = typeof adminUsers.$inferInsert;
+export type AdminBooking = typeof adminBookings.$inferSelect;
+export type InsertAdminBooking = typeof adminBookings.$inferInsert;
+export type AdminHost = typeof adminHosts.$inferSelect;
+export type InsertAdminHost = typeof adminHosts.$inferInsert;
