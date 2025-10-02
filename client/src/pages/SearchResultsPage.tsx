@@ -27,121 +27,8 @@ export const SearchResultsPage = (): JSX.Element => {
   const [searchResults, setSearchResults] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Sample tour data for search
-  const allTours: Tour[] = [
-    {
-      id: '1',
-      title: 'El Nido Island Hopping Adventure',
-      location: 'Palawan',
-      destination: 'Palawan, Philippines',
-      price: '₱12,500',
-      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop',
-      category: 'Island Hopping',
-      slug: 'el-nido-island-hopping',
-      duration: '4 days',
-      participants: 8,
-      rating: 4.8,
-      description: 'Explore the pristine lagoons and hidden beaches of El Nido with crystal clear waters and stunning limestone cliffs.'
-    },
-    {
-      id: '2',
-      title: 'Bohol Chocolate Hills Trek',
-      location: 'Bohol',
-      destination: 'Bohol, Philippines',
-      price: '₱8,900',
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop',
-      category: 'Hiking',
-      slug: 'bohol-chocolate-hills',
-      duration: '3 days',
-      participants: 12,
-      rating: 4.6,
-      description: 'Experience the iconic Chocolate Hills and visit the adorable Tarsier sanctuary in this unique Bohol adventure.'
-    },
-    {
-      id: '3',
-      title: 'Sagada Cave Exploration',
-      location: 'Mountain Province',
-      destination: 'Mountain Province, Philippines',
-      price: '₱15,200',
-      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop',
-      category: 'Adventure',
-      slug: 'sagada-caves',
-      duration: '4 days',
-      participants: 6,
-      rating: 4.9,
-      description: 'Discover ancient burial caves, stunning rice terraces, and breathtaking mountain views in mystical Sagada.'
-    },
-    {
-      id: '4',
-      title: 'Siargao Surf & Island Tour',
-      location: 'Siargao',
-      destination: 'Siargao, Philippines',
-      price: '₱18,750',
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop',
-      category: 'Surfing',
-      slug: 'siargao-surf',
-      duration: '5 days',
-      participants: 10,
-      rating: 4.9,
-      description: 'Ride the waves at Cloud 9 and explore the magical islands around Siargao in this ultimate surf adventure.'
-    },
-    {
-      id: '5',
-      title: 'Batanes Cultural Heritage Tour',
-      location: 'Batanes',
-      destination: 'Batanes, Philippines',
-      price: '₱22,400',
-      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop',
-      category: 'Cultural',
-      slug: 'batanes-heritage',
-      duration: '4 days',
-      participants: 8,
-      rating: 4.7,
-      description: 'Immerse yourself in Ivatan culture while exploring the dramatic landscapes and traditional stone houses of Batanes.'
-    },
-    {
-      id: '6',
-      title: 'Sunset Beach Trek',
-      location: 'Boracay',
-      destination: 'Boracay, Philippines',
-      price: '₱2,500',
-      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop',
-      category: 'Beach',
-      slug: 'boracay-sunset-trek',
-      duration: '1 day',
-      participants: 15,
-      rating: 4.5,
-      description: 'Watch spectacular sunsets while trekking along Boracay\'s famous white sand beaches and hidden coves.'
-    },
-    {
-      id: '7',
-      title: 'Mountain Sunrise Hike',
-      location: 'Benguet',
-      destination: 'Benguet, Philippines',
-      price: '₱3,800',
-      image: 'https://images.unsplash.com/photo-1464822759844-d150baec0494?w=400&h=250&fit=crop',
-      category: 'Hiking',
-      slug: 'mount-pulag',
-      duration: '2 days',
-      participants: 20,
-      rating: 4.8,
-      description: 'Experience the breathtaking sea of clouds and sunrise views from the Philippines\' second highest peak.'
-    },
-    {
-      id: '8',
-      title: 'Vigan Cultural Heritage Tour',
-      location: 'Vigan',
-      destination: 'Ilocos Sur, Philippines',
-      price: '₱2,800',
-      image: 'https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=400&h=250&fit=crop',
-      category: 'Cultural',
-      slug: 'vigan-heritage',
-      duration: '2 days',
-      participants: 12,
-      rating: 4.4,
-      description: 'Step back in time exploring UNESCO World Heritage cobblestone streets and Spanish colonial architecture.'
-    }
-  ];
+  // Fetch all tours from database for search
+  const [allTours, setAllTours] = useState<Tour[]>([]);
 
   // Effect to handle initial URL and popstate changes
   useEffect(() => {
@@ -184,23 +71,51 @@ export const SearchResultsPage = (): JSX.Element => {
     }
   }, [location]); // Depend on wouter location changes
 
+  // Fetch all tours from the database
+  useEffect(() => {
+    const fetchTours = async () => {
+      try {
+        const response = await fetch('/api/trips?limit=100');
+        if (response.ok) {
+          const tours = await response.json();
+          // Transform database tours to match Tour interface
+          const transformedTours = tours.map((tour: any) => ({
+            id: tour.id,
+            title: tour.title,
+            location: tour.location || 'Philippines',
+            destination: tour.location || 'Philippines',
+            price: `₱${parseFloat(tour.price).toLocaleString()}`,
+            image: tour.heroImage || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop',
+            category: JSON.parse(tour.category || '[]')[0] || 'Adventure',
+            slug: tour.id,
+            duration: tour.duration || 'N/A',
+            participants: tour.maxParticipants || 0,
+            rating: tour.rating ? parseFloat(tour.rating) : undefined,
+            description: tour.description || ''
+          }));
+          setAllTours(transformedTours);
+        }
+      } catch (error) {
+        console.error('Error fetching tours:', error);
+      }
+    };
+    fetchTours();
+  }, []);
+
   const performSearch = (query: string) => {
     setIsLoading(true);
     
-    // Simulate API call delay
-    setTimeout(() => {
-      const results = allTours.filter(tour =>
-        tour.title.toLowerCase().includes(query.toLowerCase()) ||
-        tour.location.toLowerCase().includes(query.toLowerCase()) ||
-        tour.category.toLowerCase().includes(query.toLowerCase()) ||
-        tour.description.toLowerCase().includes(query.toLowerCase()) ||
-        tour.slug.toLowerCase().includes(query.toLowerCase()) ||
-        tour.destination.toLowerCase().includes(query.toLowerCase())
-      );
-      
-      setSearchResults(results);
-      setIsLoading(false);
-    }, 500);
+    // Filter tours based on search query
+    const results = allTours.filter(tour =>
+      tour.title.toLowerCase().includes(query.toLowerCase()) ||
+      tour.location.toLowerCase().includes(query.toLowerCase()) ||
+      tour.category.toLowerCase().includes(query.toLowerCase()) ||
+      tour.description.toLowerCase().includes(query.toLowerCase()) ||
+      tour.destination.toLowerCase().includes(query.toLowerCase())
+    );
+    
+    setSearchResults(results);
+    setIsLoading(false);
   };
 
   const renderStars = (rating: number) => {
