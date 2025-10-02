@@ -146,7 +146,7 @@ export const AdminTourForm = ({ tour, isEdit = false, onClose, isOpen: externalI
   };
 
   const categories = [
-    "Private", "Joiner", "Meetups", "Mystery", "Events", "Virtual", "Online Quizzes"
+    "Private", "Joiner", "Meetups", "Mystery", "Events", "Virtual", "Online Quizzes", "Niche Events"
   ];
 
   // Get all statuses with their UI information

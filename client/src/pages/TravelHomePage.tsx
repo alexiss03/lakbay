@@ -465,7 +465,7 @@ export const TravelHomePage = (): JSX.Element => {
       {/* Event Tabs */}
       <section className="px-8 py-16 bg-white">
         <div className="flex space-x-12 mb-12 border-b border-gray-100">
-          {["Private", "Joiner", "Meetups", "Mystery", "Events", "Virtual", "Wellness", "Online Quizzes"].map((tab) => (
+          {["Private", "Joiner", "Meetups", "Mystery", "Events", "Virtual", "Wellness", "Online Quizzes", "Niche Events"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
