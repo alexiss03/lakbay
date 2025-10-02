@@ -40,20 +40,41 @@ export const SearchResultsPage = (): JSX.Element => {
           const tours = await response.json();
           console.log('Fetched tours:', tours.length);
           // Transform database tours to match Tour interface
-          const transformedTours = tours.map((tour: any) => ({
-            id: tour.id,
-            title: tour.title,
-            location: tour.location || 'Philippines',
-            destination: tour.location || 'Philippines',
-            price: `₱${parseFloat(tour.price).toLocaleString()}`,
-            image: tour.heroImage || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop',
-            category: JSON.parse(tour.category || '[]')[0] || 'Adventure',
-            slug: tour.id,
-            duration: tour.duration || 'N/A',
-            participants: tour.maxParticipants || 0,
-            rating: tour.rating ? parseFloat(tour.rating) : undefined,
-            description: tour.description || ''
-          }));
+          const transformedTours = tours.map((tour: any) => {
+            // Handle category - can be array, JSON string, or plain string
+            let categories: string[] = [];
+            if (Array.isArray(tour.category)) {
+              categories = tour.category;
+            } else if (typeof tour.category === 'string') {
+              if (tour.category.startsWith('[')) {
+                // It's a JSON array string
+                try {
+                  categories = JSON.parse(tour.category);
+                } catch (e) {
+                  categories = [tour.category];
+                }
+              } else {
+                // It's a plain string
+                categories = [tour.category];
+              }
+            }
+            
+            return {
+              id: tour.id,
+              title: tour.title,
+              location: tour.location || 'Philippines',
+              destination: tour.location || 'Philippines',
+              price: `₱${parseFloat(tour.price).toLocaleString()}`,
+              image: tour.heroImage || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop',
+              category: categories[0] || 'Adventure',
+              slug: tour.id,
+              duration: tour.duration || 'N/A',
+              participants: tour.maxParticipants || 0,
+              rating: tour.rating ? parseFloat(tour.rating) : undefined,
+              description: tour.description || ''
+            };
+          });
+          console.log('Transformed tours:', transformedTours.length);
           setAllTours(transformedTours);
           setToursLoaded(true);
         } else {
