@@ -25,59 +25,20 @@ export const SearchResultsPage = (): JSX.Element => {
   const [location, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Tour[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Fetch all tours from database for search
+  const [isLoading, setIsLoading] = useState(true);
   const [allTours, setAllTours] = useState<Tour[]>([]);
+  const [toursLoaded, setToursLoaded] = useState(false);
 
-  // Effect to handle initial URL and popstate changes
-  useEffect(() => {
-    const handleUrlChange = () => {
-      const params = new URLSearchParams(window.location.search);
-      const query = params.get('q') || '';
-      
-      setSearchQuery(query);
-
-      if (query) {
-        performSearch(query);
-      } else {
-        setSearchResults([]);
-      }
-    };
-
-    // Handle initial load
-    handleUrlChange();
-
-    // Listen for browser back/forward
-    window.addEventListener('popstate', handleUrlChange);
-
-    return () => {
-      window.removeEventListener('popstate', handleUrlChange);
-    };
-  }, []); // Empty dependency array - only run on mount
-
-  // Effect to handle wouter location changes  
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const query = params.get('q') || '';
-    
-    if (query !== searchQuery) {
-      setSearchQuery(query);
-      if (query) {
-        performSearch(query);
-      } else {
-        setSearchResults([]);
-      }
-    }
-  }, [location]); // Depend on wouter location changes
-
-  // Fetch all tours from the database
+  // Fetch all tours from the database on mount
   useEffect(() => {
     const fetchTours = async () => {
       try {
+        console.log('Fetching tours from /api/trips...');
         const response = await fetch('/api/trips?limit=100');
+        console.log('Response status:', response.status);
         if (response.ok) {
           const tours = await response.json();
+          console.log('Fetched tours:', tours.length);
           // Transform database tours to match Tour interface
           const transformedTours = tours.map((tour: any) => ({
             id: tour.id,
@@ -94,29 +55,45 @@ export const SearchResultsPage = (): JSX.Element => {
             description: tour.description || ''
           }));
           setAllTours(transformedTours);
+          setToursLoaded(true);
+        } else {
+          console.error('Failed to fetch tours:', response.statusText);
+          setToursLoaded(true);
         }
       } catch (error) {
         console.error('Error fetching tours:', error);
+        setToursLoaded(true);
       }
     };
     fetchTours();
   }, []);
 
-  const performSearch = (query: string) => {
-    setIsLoading(true);
+  // Perform search when tours are loaded and query exists
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const query = params.get('q') || '';
     
-    // Filter tours based on search query
-    const results = allTours.filter(tour =>
-      tour.title.toLowerCase().includes(query.toLowerCase()) ||
-      tour.location.toLowerCase().includes(query.toLowerCase()) ||
-      tour.category.toLowerCase().includes(query.toLowerCase()) ||
-      tour.description.toLowerCase().includes(query.toLowerCase()) ||
-      tour.destination.toLowerCase().includes(query.toLowerCase())
-    );
-    
-    setSearchResults(results);
-    setIsLoading(false);
-  };
+    if (toursLoaded && query) {
+      console.log('Tours loaded, performing search for:', query);
+      setIsLoading(true);
+      
+      const results = allTours.filter(tour =>
+        tour.title.toLowerCase().includes(query.toLowerCase()) ||
+        tour.location.toLowerCase().includes(query.toLowerCase()) ||
+        tour.category.toLowerCase().includes(query.toLowerCase()) ||
+        tour.description.toLowerCase().includes(query.toLowerCase()) ||
+        tour.destination.toLowerCase().includes(query.toLowerCase())
+      );
+      
+      console.log('Search results found:', results.length);
+      setSearchResults(results);
+      setSearchQuery(query);
+      setIsLoading(false);
+    } else if (toursLoaded && !query) {
+      setSearchResults([]);
+      setIsLoading(false);
+    }
+  }, [toursLoaded, allTours, location]);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
