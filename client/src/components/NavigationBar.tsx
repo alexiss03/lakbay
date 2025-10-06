@@ -15,7 +15,9 @@ export const NavigationBar = ({ currentPage }: NavigationBarProps): JSX.Element 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      setLocation(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      const newQuery = searchQuery.trim();
+      setSearchQuery(""); // Clear input after search
+      setLocation(`/search?q=${encodeURIComponent(newQuery)}`);
     }
   };
 

@@ -28,6 +28,7 @@ export const SearchResultsPage = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState(true);
   const [allTours, setAllTours] = useState<Tour[]>([]);
   const [toursLoaded, setToursLoaded] = useState(false);
+  const [urlSearch, setUrlSearch] = useState(window.location.search);
 
   // Fetch all tours from the database on mount
   useEffect(() => {
@@ -89,9 +90,14 @@ export const SearchResultsPage = (): JSX.Element => {
     fetchTours();
   }, []);
 
+  // Track URL search params changes
+  useEffect(() => {
+    setUrlSearch(window.location.search);
+  }, [location]);
+
   // Perform search when tours are loaded and query exists
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(urlSearch);
     const query = params.get('q') || '';
     
     if (toursLoaded && query) {
@@ -114,7 +120,7 @@ export const SearchResultsPage = (): JSX.Element => {
       setSearchResults([]);
       setIsLoading(false);
     }
-  }, [toursLoaded, allTours, location]);
+  }, [toursLoaded, allTours, urlSearch]);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
