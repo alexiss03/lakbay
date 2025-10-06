@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, useSearch } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -23,12 +23,12 @@ interface Tour {
 
 export const SearchResultsPage = (): JSX.Element => {
   const [location, setLocation] = useLocation();
+  const searchParams = useSearch();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [allTours, setAllTours] = useState<Tour[]>([]);
   const [toursLoaded, setToursLoaded] = useState(false);
-  const [urlSearch, setUrlSearch] = useState(window.location.search);
 
   // Fetch all tours from the database on mount
   useEffect(() => {
@@ -90,14 +90,9 @@ export const SearchResultsPage = (): JSX.Element => {
     fetchTours();
   }, []);
 
-  // Track URL search params changes
-  useEffect(() => {
-    setUrlSearch(window.location.search);
-  }, [location]);
-
   // Perform search when tours are loaded and query exists
   useEffect(() => {
-    const params = new URLSearchParams(urlSearch);
+    const params = new URLSearchParams(searchParams);
     const query = params.get('q') || '';
     
     if (toursLoaded && query) {
@@ -120,7 +115,7 @@ export const SearchResultsPage = (): JSX.Element => {
       setSearchResults([]);
       setIsLoading(false);
     }
-  }, [toursLoaded, allTours, urlSearch]);
+  }, [toursLoaded, allTours, searchParams]);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
