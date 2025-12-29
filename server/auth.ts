@@ -25,43 +25,47 @@ export function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // Google OAuth Strategy - Use full URL with proper domain
-  const getCallbackURL = () => {
-    // Use hardcoded Replit domain since REPLIT_DOMAIN env var is not available
-    const domain = 'cf95eddf-2870-43aa-8998-a0b407d82da8-00-a53kb0z62kcn.spock.replit.dev';
-    return `https://${domain}/api/auth/google/callback`;
-  };
+  // Google OAuth Strategy - Only initialize if credentials are available
+  if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+    const getCallbackURL = () => {
+      // Use hardcoded Replit domain since REPLIT_DOMAIN env var is not available
+      const domain = 'cf95eddf-2870-43aa-8998-a0b407d82da8-00-a53kb0z62kcn.spock.replit.dev';
+      return `https://${domain}/api/auth/google/callback`;
+    };
 
-  passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID!,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    callbackURL: getCallbackURL()
-  },
-  async (accessToken, refreshToken, profile, done) => {
-    try {
-      // Check if user already exists
-      let user = await storage.getUserByGoogleId(profile.id);
-      
-      if (user) {
-        return done(null, user);
+    passport.use(new GoogleStrategy({
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: getCallbackURL()
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        // Check if user already exists
+        let user = await storage.getUserByGoogleId(profile.id);
+        
+        if (user) {
+          return done(null, user);
+        }
+
+        // Create new user
+        const newUser = await storage.createUser({
+          googleId: profile.id,
+          email: profile.emails?.[0]?.value || '',
+          username: profile.displayName || profile.emails?.[0]?.value?.split('@')[0] || 'user',
+          firstName: profile.name?.givenName || '',
+          lastName: profile.name?.familyName || '',
+          profileImage: profile.photos?.[0]?.value || '',
+          authProvider: 'google'
+        });
+
+        return done(null, newUser);
+      } catch (error) {
+        return done(error as Error, undefined);
       }
-
-      // Create new user
-      const newUser = await storage.createUser({
-        googleId: profile.id,
-        email: profile.emails?.[0]?.value || '',
-        username: profile.displayName || profile.emails?.[0]?.value?.split('@')[0] || 'user',
-        firstName: profile.name?.givenName || '',
-        lastName: profile.name?.familyName || '',
-        profileImage: profile.photos?.[0]?.value || '',
-        authProvider: 'google'
-      });
-
-      return done(null, newUser);
-    } catch (error) {
-      return done(error as Error, undefined);
-    }
-  }));
+    }));
+  } else {
+    console.log('⚠️  Google OAuth disabled - GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET not provided');
+  }
 
   // Facebook OAuth Strategy - Only initialize if credentials are available
   if (process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET) {
