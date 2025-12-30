@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { FaFacebook, FaGoogle } from "react-icons/fa";
-import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
+import { NavigationBar } from "@/components/NavigationBar";
 
 export const LoginPage = (): JSX.Element => {
   const [, setLocation] = useLocation();
@@ -110,22 +111,33 @@ export const LoginPage = (): JSX.Element => {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafa] flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Back Button */}
-        <div className="mb-8">
-          <Button
-            variant="ghost"
-            onClick={() => setLocation("/")}
-            className="prada-button flex items-center text-gray-600 hover:text-black font-light"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            BACK TO LAKBAY
-          </Button>
+    <div className="min-h-screen bg-white">
+      {/* Header - Aligned with Home Page */}
+      <header className="bg-white px-8 py-6 border-b border-gray-100">
+        <div className="flex items-center justify-between">
+          {/* Left: Logo placeholder */}
+          <div className="w-8 h-8 bg-black" style={{borderRadius: '1px'}}></div>
+          
+          {/* Center: Navigation */}
+          <NavigationBar currentPage="login" />
+          
+          {/* Right: Language and Back Button */}
+          <div className="flex items-center space-x-3">
+            <Link href="/">
+              <Button variant="outline" className="prada-button h-9 px-6 text-xs font-light border-black text-black hover:bg-black hover:text-white">
+                BACK TO HOME
+              </Button>
+            </Link>
+            <span className="text-xs text-gray-500 font-light ml-4">EN</span>
+          </div>
         </div>
+      </header>
 
-        {/* Login Card */}
-        <div className="prada-card p-8">
+      {/* Login Content */}
+      <div className="min-h-[calc(100vh-88px)] bg-[#fafafa] flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          {/* Login Card */}
+          <div className="prada-card p-8">
           <div className="text-center mb-8">
             <h1 className="prada-heading text-3xl text-black mb-3 font-light">WELCOME BACK</h1>
             <p className="text-gray-600 font-light tracking-wide text-sm">Sign in to your Lakbay account</p>
