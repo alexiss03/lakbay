@@ -129,48 +129,6 @@ export const TravelHomePage = (): JSX.Element => {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Recommended Tours */}
-            <div>
-              <h2 className="prada-heading text-2xl text-black mb-6 font-light">Recommended</h2>
-              <div className="space-y-4">
-                <div className="flex items-center text-sm text-gray-600 font-light tracking-wide">
-                  <span className="mr-4">JQ Tours</span>
-                  <div className="bg-[#D4AF37] text-black px-2 py-1 text-xs font-light tracking-wider prada-corner-radius">
-                    POPULAR
-                  </div>
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  {[
-                    { id: 1, title: 'Sunset Beach Trek', location: 'Boracay', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=120&h=80&fit=crop&auto=format', slug: 'boracay-sunset-trek' },
-                    { id: 2, title: 'Mountain Sunrise Hike', location: 'Benguet', image: 'https://images.unsplash.com/photo-1464822759844-d150baec0494?w=120&h=80&fit=crop&auto=format', slug: 'mount-pulag' },
-                    { id: 3, title: 'Island Hopping Adventure', location: 'Palawan', image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=120&h=80&fit=crop&auto=format', slug: 'palawan-island-hopping' },
-                    { id: 4, title: 'Cultural Heritage Tour', location: 'Vigan', image: 'https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=120&h=80&fit=crop&auto=format', slug: 'vigan-heritage' },
-                    { id: 5, title: 'Surfing Experience', location: 'Siargao', image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=120&h=80&fit=crop&auto=format', slug: 'siargao-surfing' },
-                    { id: 6, title: 'Tarsier Sanctuary Visit', location: 'Bohol', image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=120&h=80&fit=crop&auto=format', slug: 'bohol-tarsier' }
-                  ].map((tour) => (
-                    <Link key={tour.id} href={`/trip/${tour.slug}`} className="group cursor-pointer block">
-                      <div className="flex-shrink-0 w-full h-24 prada-corner-radius overflow-hidden mb-2">
-                        <img 
-                          src={tour.image}
-                          alt={tour.title}
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <h4 className="text-xs font-medium text-gray-900 group-hover:text-[#D4AF37] transition-colors line-clamp-1">
-                          {tour.title}
-                        </h4>
-                        <p className="text-xs text-gray-600 flex items-center">
-                          <MapPin className="w-3 h-3 mr-1" />
-                          {tour.location}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-
             {/* Feature Cards */}
             <div className="grid md:grid-cols-3 gap-4">
               <Dialog>
