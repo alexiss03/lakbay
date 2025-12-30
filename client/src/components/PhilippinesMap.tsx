@@ -31,7 +31,7 @@ const provinceCoordinates: Record<string, { lat: number; lng: number }> = {
   'Sorsogon': { lat: 12.9744, lng: 124.0065 }
 };
 
-// Philippines provincial boundaries (simplified polygons for major provinces)
+// Philippines provincial boundaries (simplified polygons)
 const provincePolygons: Record<string, { lat: number; lng: number }[]> = {
   'Bohol': [
     { lat: 9.5000, lng: 123.7000 },
@@ -68,6 +68,234 @@ const provincePolygons: Record<string, { lat: number; lng: number }[]> = {
     { lat: 11.3000, lng: 123.3000 },
     { lat: 11.3000, lng: 124.0000 },
     { lat: 9.8000, lng: 124.0000 }
+  ],
+  'Metro Manila': [
+    { lat: 14.4000, lng: 121.0000 },
+    { lat: 14.8000, lng: 121.0000 },
+    { lat: 14.8000, lng: 121.3000 },
+    { lat: 14.4000, lng: 121.3000 }
+  ],
+  'Laguna': [
+    { lat: 14.0000, lng: 121.2000 },
+    { lat: 14.5000, lng: 121.2000 },
+    { lat: 14.5000, lng: 121.7000 },
+    { lat: 14.0000, lng: 121.7000 }
+  ],
+  'Batangas': [
+    { lat: 13.4000, lng: 121.1000 },
+    { lat: 14.0000, lng: 121.1000 },
+    { lat: 14.0000, lng: 121.7000 },
+    { lat: 13.4000, lng: 121.7000 }
+  ],
+  'Cavite': [
+    { lat: 14.0000, lng: 120.7000 },
+    { lat: 14.4000, lng: 120.7000 },
+    { lat: 14.4000, lng: 121.1000 },
+    { lat: 14.0000, lng: 121.1000 }
+  ],
+  'Bulacan': [
+    { lat: 14.6000, lng: 120.7000 },
+    { lat: 15.1000, lng: 120.7000 },
+    { lat: 15.1000, lng: 121.3000 },
+    { lat: 14.6000, lng: 121.3000 }
+  ],
+  'Nueva Ecija': [
+    { lat: 15.0000, lng: 120.9000 },
+    { lat: 15.6000, lng: 120.9000 },
+    { lat: 15.6000, lng: 121.6000 },
+    { lat: 15.0000, lng: 121.6000 }
+  ],
+  'Bataan': [
+    { lat: 14.6000, lng: 120.3000 },
+    { lat: 14.9000, lng: 120.3000 },
+    { lat: 14.9000, lng: 120.7000 },
+    { lat: 14.6000, lng: 120.7000 }
+  ],
+  'Zambales': [
+    { lat: 15.2000, lng: 120.0000 },
+    { lat: 15.9000, lng: 120.0000 },
+    { lat: 15.9000, lng: 120.4000 },
+    { lat: 15.2000, lng: 120.4000 }
+  ],
+  'Ilocos Norte': [
+    { lat: 17.6000, lng: 120.3000 },
+    { lat: 18.3000, lng: 120.3000 },
+    { lat: 18.3000, lng: 120.7000 },
+    { lat: 17.6000, lng: 120.7000 }
+  ],
+  'La Union': [
+    { lat: 16.8000, lng: 120.3000 },
+    { lat: 17.2000, lng: 120.3000 },
+    { lat: 17.2000, lng: 120.7000 },
+    { lat: 16.8000, lng: 120.7000 }
+  ],
+  'Pangasinan': [
+    { lat: 15.8000, lng: 120.3000 },
+    { lat: 16.6000, lng: 120.3000 },
+    { lat: 16.6000, lng: 120.9000 },
+    { lat: 15.8000, lng: 120.9000 }
+  ],
+  'Tarlac': [
+    { lat: 15.5000, lng: 120.5000 },
+    { lat: 16.2000, lng: 120.5000 },
+    { lat: 16.2000, lng: 121.1000 },
+    { lat: 15.5000, lng: 121.1000 }
+  ],
+  'Pampanga': [
+    { lat: 14.9000, lng: 120.5000 },
+    { lat: 15.4000, lng: 120.5000 },
+    { lat: 15.4000, lng: 121.2000 },
+    { lat: 14.9000, lng: 121.2000 }
+  ],
+  'Albay': [
+    { lat: 13.0000, lng: 123.6000 },
+    { lat: 13.4000, lng: 123.6000 },
+    { lat: 13.4000, lng: 124.1000 },
+    { lat: 13.0000, lng: 124.1000 }
+  ],
+  'Camarines Norte': [
+    { lat: 13.6000, lng: 123.4000 },
+    { lat: 14.1000, lng: 123.4000 },
+    { lat: 14.1000, lng: 123.9000 },
+    { lat: 13.6000, lng: 123.9000 }
+  ],
+  'Camarines Sur': [
+    { lat: 13.2000, lng: 123.9000 },
+    { lat: 13.8000, lng: 123.9000 },
+    { lat: 13.8000, lng: 124.3000 },
+    { lat: 13.2000, lng: 124.3000 }
+  ],
+  'Catanduanes': [
+    { lat: 13.9000, lng: 124.4000 },
+    { lat: 14.3000, lng: 124.4000 },
+    { lat: 14.3000, lng: 124.9000 },
+    { lat: 13.9000, lng: 124.9000 }
+  ],
+  'Sorsogon': [
+    { lat: 12.5000, lng: 124.0000 },
+    { lat: 12.9000, lng: 124.0000 },
+    { lat: 12.9000, lng: 124.4000 },
+    { lat: 12.5000, lng: 124.4000 }
+  ],
+  'Iloilo': [
+    { lat: 10.5000, lng: 122.5000 },
+    { lat: 11.5000, lng: 122.5000 },
+    { lat: 11.5000, lng: 123.2000 },
+    { lat: 10.5000, lng: 123.2000 }
+  ],
+  'Capiz': [
+    { lat: 11.5000, lng: 122.8000 },
+    { lat: 12.0000, lng: 122.8000 },
+    { lat: 12.0000, lng: 123.5000 },
+    { lat: 11.5000, lng: 123.5000 }
+  ],
+  'Aklan': [
+    { lat: 11.8000, lng: 122.0000 },
+    { lat: 12.3000, lng: 122.0000 },
+    { lat: 12.3000, lng: 122.6000 },
+    { lat: 11.8000, lng: 122.6000 }
+  ],
+  'Antique': [
+    { lat: 10.8000, lng: 122.0000 },
+    { lat: 11.5000, lng: 122.0000 },
+    { lat: 11.5000, lng: 122.5000 },
+    { lat: 10.8000, lng: 122.5000 }
+  ],
+  'Guimaras': [
+    { lat: 10.8000, lng: 122.6000 },
+    { lat: 11.0000, lng: 122.6000 },
+    { lat: 11.0000, lng: 122.9000 },
+    { lat: 10.8000, lng: 122.9000 }
+  ],
+  'Negros Occidental': [
+    { lat: 10.4000, lng: 123.2000 },
+    { lat: 11.3000, lng: 123.2000 },
+    { lat: 11.3000, lng: 123.8000 },
+    { lat: 10.4000, lng: 123.8000 }
+  ],
+  'Negros Oriental': [
+    { lat: 10.4000, lng: 123.8000 },
+    { lat: 11.3000, lng: 123.8000 },
+    { lat: 11.3000, lng: 124.4000 },
+    { lat: 10.4000, lng: 124.4000 }
+  ],
+  'Davao': [
+    { lat: 6.8000, lng: 125.3000 },
+    { lat: 7.5000, lng: 125.3000 },
+    { lat: 7.5000, lng: 125.9000 },
+    { lat: 6.8000, lng: 125.9000 }
+  ],
+  'Davao Occidental': [
+    { lat: 7.2000, lng: 124.8000 },
+    { lat: 7.6000, lng: 124.8000 },
+    { lat: 7.6000, lng: 125.2000 },
+    { lat: 7.2000, lng: 125.2000 }
+  ],
+  'Davao Oriental': [
+    { lat: 7.5000, lng: 125.8000 },
+    { lat: 8.2000, lng: 125.8000 },
+    { lat: 8.2000, lng: 126.4000 },
+    { lat: 7.5000, lng: 126.4000 }
+  ],
+  'Bukidnon': [
+    { lat: 7.9000, lng: 124.6000 },
+    { lat: 8.5000, lng: 124.6000 },
+    { lat: 8.5000, lng: 125.3000 },
+    { lat: 7.9000, lng: 125.3000 }
+  ],
+  'Misamis Oriental': [
+    { lat: 8.4000, lng: 124.2000 },
+    { lat: 9.0000, lng: 124.2000 },
+    { lat: 9.0000, lng: 124.8000 },
+    { lat: 8.4000, lng: 124.8000 }
+  ],
+  'Misamis Occidental': [
+    { lat: 8.6000, lng: 123.6000 },
+    { lat: 9.1000, lng: 123.6000 },
+    { lat: 9.1000, lng: 124.2000 },
+    { lat: 8.6000, lng: 124.2000 }
+  ],
+  'Lanao del Norte': [
+    { lat: 8.8000, lng: 123.9000 },
+    { lat: 9.3000, lng: 123.9000 },
+    { lat: 9.3000, lng: 124.5000 },
+    { lat: 8.8000, lng: 124.5000 }
+  ],
+  'Lanao del Sur': [
+    { lat: 8.0000, lng: 123.8000 },
+    { lat: 8.6000, lng: 123.8000 },
+    { lat: 8.6000, lng: 124.4000 },
+    { lat: 8.0000, lng: 124.4000 }
+  ],
+  'Maguindanao': [
+    { lat: 6.9000, lng: 123.9000 },
+    { lat: 7.5000, lng: 123.9000 },
+    { lat: 7.5000, lng: 124.6000 },
+    { lat: 6.9000, lng: 124.6000 }
+  ],
+  'Sultan Kudarat': [
+    { lat: 6.9000, lng: 124.6000 },
+    { lat: 7.5000, lng: 124.6000 },
+    { lat: 7.5000, lng: 125.2000 },
+    { lat: 6.9000, lng: 125.2000 }
+  ],
+  'South Cotabato': [
+    { lat: 6.3000, lng: 124.9000 },
+    { lat: 6.9000, lng: 124.9000 },
+    { lat: 6.9000, lng: 125.5000 },
+    { lat: 6.3000, lng: 125.5000 }
+  ],
+  'Sarangani': [
+    { lat: 5.8000, lng: 125.0000 },
+    { lat: 6.3000, lng: 125.0000 },
+    { lat: 6.3000, lng: 125.6000 },
+    { lat: 5.8000, lng: 125.6000 }
+  ],
+  'General Santos': [
+    { lat: 6.1000, lng: 125.1000 },
+    { lat: 6.4000, lng: 125.1000 },
+    { lat: 6.4000, lng: 125.4000 },
+    { lat: 6.1000, lng: 125.4000 }
   ]
 };
 
@@ -225,6 +453,25 @@ export const PhilippinesMap: React.FC<PhilippinesMapProps> = ({ visitedProvinces
         `;
         
         mapInstance.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
+
+        // Add all province borders (unvisited provinces)
+        Object.keys(provincePolygons).forEach((provinceName) => {
+          // Skip if already visited (will be handled above)
+          if (visitedProvinces.some(p => p.province === provinceName)) {
+            return;
+          }
+          
+          const polygonPaths = provincePolygons[provinceName];
+          new google.maps.Polygon({
+            paths: polygonPaths,
+            strokeColor: '#e0e0e0',
+            strokeOpacity: 0.5,
+            strokeWeight: 1,
+            fillColor: '#f5f5f5',
+            fillOpacity: 0.3,
+            map: mapInstance
+          });
+        });
 
       } catch (err) {
         console.error('Error loading Google Maps:', err);
