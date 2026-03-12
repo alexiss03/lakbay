@@ -123,7 +123,7 @@ export const RecommendedSection = (): JSX.Element => {
                 {recommendedTours.map((tour) => (
                   <Link key={tour.id} href={`/trip/${tour.slug}`} className="group cursor-pointer block">
                     <div className="relative mb-2">
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={tour.image}
                         alt={tour.title}
                         className="w-full h-24 object-cover rounded-lg group-hover:scale-105 transition-transform"
@@ -202,7 +202,7 @@ export const RecommendedSection = (): JSX.Element => {
               <div className="grid md:grid-cols-2 gap-4">
                 {upcomingTrips.map((trip) => (
                   <div key={trip.id} className="flex space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={trip.image}
                       alt={trip.title}
                       className="w-16 h-12 object-cover rounded"

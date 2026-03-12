@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 import { 
   Package, 
   ShoppingCart, 
@@ -146,9 +147,10 @@ const ShopDashboard = () => {
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
-  // Current shop ID - in a real app, this would come from auth context
-  const [currentShopId] = useState("shop_1");
+  // Current shop ID - defaults to demo id when auth context is unavailable
+  const currentShopId = user?.id ? `shop_${user.id}` : "shop_1";
 
   // Fetch shop analytics
   const { data: stats, isLoading: statsLoading } = useQuery<any>({
@@ -457,16 +459,16 @@ const ShopDashboard = () => {
 
   if (statsLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen view-shell flex items-center justify-center">
         <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen view-shell">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="view-header">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">

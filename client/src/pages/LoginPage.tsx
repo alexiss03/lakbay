@@ -106,9 +106,9 @@ export const LoginPage = (): JSX.Element => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen view-shell flex flex-col">
       {/* Header - Aligned with Home Page */}
-      <header className="bg-white px-8 py-6 border-b border-gray-100">
+      <header className="view-header">
         <div className="flex items-center justify-between">
           {/* Left: Logo placeholder */}
           <div className="w-8 h-8 bg-black" style={{borderRadius: '1px'}}></div>

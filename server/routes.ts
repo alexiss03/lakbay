@@ -1,10 +1,13 @@
-import type { Express } from "express";
+import crypto from "crypto";
+import type { Express, Request } from "express";
 import { createServer, type Server } from "http";
 import passport from "passport";
-import { setupAuth, requireAuth, getCurrentUser } from "./auth";
+import { setupAuth, requireAuth, requireRole, getCurrentUser } from "./auth";
 import adminRoutes from "./routes/admin";
 import bcrypt from 'bcryptjs';
 import hostRoutes from "./routes/host";
+import adminLocalRoutes from "./routes/admin-local";
+import hostLocalRoutes from "./routes/host-local";
 import chatRoutes from "./routes/chat";
 import accommodationRoutes from "./routes/accommodation";
 import shopRoutes from "./routes/shop";
@@ -20,8 +23,195 @@ import { isSearchable } from "@shared/status-transitions";
 
 // PayMongo API configuration
 const PAYMONGO_SECRET_KEY = process.env.PAYMONGO_SECRET_KEY;
+const PAYMONGO_WEBHOOK_SECRET = process.env.PAYMONGO_WEBHOOK_SECRET;
 const PAYMONGO_BASE_URL = 'https://api.paymongo.com/v1';
 
+type AuthenticatedRequest = Request & {
+  user?: {
+    id?: string | number;
+    username?: string;
+    email?: string;
+    role?: "user" | "host" | "admin";
+  };
+  rawBody?: Buffer;
+};
+
+type ReservationRecord = {
+  id: string;
+  trip_id: string;
+  trip_title: string;
+  user_id: string;
+  user_name: string;
+  user_email: string;
+  check_in: string;
+  check_out: string;
+  guests: number;
+  amount: number;
+  status: string;
+  payment_status: string;
+  payment_id: string | null;
+  created_at: string;
+  expires_at: string;
+  updated_at: string;
+};
+
+const pendingReservations = new Map<string, ReservationRecord>();
+const passwordResetTokens = new Map<string, { userId: number; expiresAt: number }>();
+
+const DEFAULT_TRAVEL_GOAL_TARGETS = {
+  targetTrips: 6,
+  targetProvinces: 8,
+  targetTravelDays: 20,
+};
+
+const travelGoalUpsertSchema = z.object({
+  year: z.coerce.number().int().min(2000).max(2100),
+  // Legacy field names (kept for backward compatibility)
+  targetTrips: z.coerce.number().int().min(1).max(120).optional(),
+  targetProvinces: z.coerce.number().int().min(1).max(120).optional(),
+  targetTravelDays: z.coerce.number().int().min(1).max(365).optional(),
+  // Preferred semantic goal names
+  targetAdventure: z.coerce.number().int().min(1).max(120).optional(),
+  targetWellness: z.coerce.number().int().min(1).max(120).optional(),
+  targetExplorationDays: z.coerce.number().int().min(1).max(365).optional(),
+  targetPoints: z.coerce.number().int().min(100).max(100000).optional(),
+  notes: z.string().max(500).optional().nullable(),
+});
+
+const travelGoalProgressSchema = z.object({
+  year: z.coerce.number().int().min(2000).max(2100),
+  action: z.enum([
+    "trip_completed",
+    "province_visited",
+    "travel_day",
+    "bonus_points",
+    "adventure_activity",
+    "wellness_activity",
+    "exploration_day",
+  ]),
+  amount: z.coerce.number().int().min(1).max(100).default(1),
+});
+
+const getTargetPointsFromGoals = (targetTrips: number, targetProvinces: number, targetTravelDays: number) => {
+  return targetTrips * 120 + targetProvinces * 80 + targetTravelDays * 20;
+};
+
+const clampPercent = (current: number, target: number) => {
+  if (target <= 0) return 0;
+  return Math.min(100, Math.round((current / target) * 100));
+};
+
+const buildTravelGoalResponse = (goal: any) => {
+  const tripsPercent = clampPercent(goal.currentTrips, goal.targetTrips);
+  const provincesPercent = clampPercent(goal.currentProvinces, goal.targetProvinces);
+  const travelDaysPercent = clampPercent(goal.currentTravelDays, goal.targetTravelDays);
+  const pointsPercent = clampPercent(goal.currentPoints, goal.targetPoints);
+  const overallCompletion = Math.round(
+    (tripsPercent + provincesPercent + travelDaysPercent + pointsPercent) / 4,
+  );
+
+  const level = Math.max(1, Math.floor(goal.currentPoints / 300) + 1);
+  const nextLevelPoints = level * 300;
+  const xpToNextLevel = Math.max(0, nextLevelPoints - goal.currentPoints);
+
+  const badges: string[] = [];
+  if (goal.currentTrips >= 1) badges.push("First Adventure");
+  if (goal.currentProvinces >= 5) badges.push("Wellness Keeper");
+  if (goal.currentTravelDays >= 10) badges.push("Explorer Rhythm");
+  if (goal.currentPoints >= 1000) badges.push("Momentum Master");
+  if (overallCompletion >= 100) badges.push("Goal Champion");
+
+  return {
+    goal: {
+      ...goal,
+      targetAdventure: goal.targetTrips,
+      targetWellness: goal.targetProvinces,
+      targetExplorationDays: goal.targetTravelDays,
+      currentAdventure: goal.currentTrips,
+      currentWellness: goal.currentProvinces,
+      currentExplorationDays: goal.currentTravelDays,
+    },
+    progress: {
+      trips: { current: goal.currentTrips, target: goal.targetTrips, percent: tripsPercent },
+      provinces: { current: goal.currentProvinces, target: goal.targetProvinces, percent: provincesPercent },
+      travelDays: { current: goal.currentTravelDays, target: goal.targetTravelDays, percent: travelDaysPercent },
+      points: { current: goal.currentPoints, target: goal.targetPoints, percent: pointsPercent },
+      adventure: { current: goal.currentTrips, target: goal.targetTrips, percent: tripsPercent },
+      wellness: { current: goal.currentProvinces, target: goal.targetProvinces, percent: provincesPercent },
+      explorationDays: { current: goal.currentTravelDays, target: goal.targetTravelDays, percent: travelDaysPercent },
+      overallCompletion,
+    },
+    gamification: {
+      level,
+      nextLevelPoints,
+      xpToNextLevel,
+      badges,
+      rank: overallCompletion >= 100 ? "Travel Legend" : level >= 5 ? "Trail Mentor" : "Explorer in Progress",
+    },
+  };
+};
+
+const parsePaymongoSignatureHeader = (headerValue: string | undefined): { timestamp: string; signature: string } | null => {
+  if (!headerValue) {
+    return null;
+  }
+
+  const parts = headerValue.split(",").reduce<Record<string, string>>((acc, entry) => {
+    const [key, value] = entry.split("=").map((part) => part?.trim());
+    if (key && value) {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});
+
+  const timestamp = parts.t;
+  const signature = parts.li || parts.te || parts.v1;
+  if (!timestamp || !signature) {
+    return null;
+  }
+
+  return { timestamp, signature };
+};
+
+const timingSafeHexCompare = (left: string, right: string): boolean => {
+  const leftBuffer = Buffer.from(left, "hex");
+  const rightBuffer = Buffer.from(right, "hex");
+
+  if (leftBuffer.length === 0 || rightBuffer.length === 0 || leftBuffer.length !== rightBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(leftBuffer, rightBuffer);
+};
+
+const verifyPaymongoWebhookSignature = (req: AuthenticatedRequest): boolean => {
+  if (!PAYMONGO_WEBHOOK_SECRET) {
+    return true;
+  }
+
+  const rawBody = req.rawBody;
+  if (!rawBody) {
+    return false;
+  }
+
+  const signatureHeader =
+    req.header("paymongo-signature") ||
+    req.header("Paymongo-Signature") ||
+    req.header("x-paymongo-signature");
+
+  const parsedSignature = parsePaymongoSignatureHeader(signatureHeader);
+  if (!parsedSignature) {
+    return false;
+  }
+
+  const signedPayload = `${parsedSignature.timestamp}.${rawBody.toString("utf8")}`;
+  const expectedSignature = crypto
+    .createHmac("sha256", PAYMONGO_WEBHOOK_SECRET)
+    .update(signedPayload)
+    .digest("hex");
+
+  return timingSafeHexCompare(expectedSignature, parsedSignature.signature);
+};
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication
@@ -123,6 +313,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(401).json({ error: 'Not authenticated' });
     }
     res.json(user);
+  });
+
+  app.post('/api/auth/forgot-password', async (req, res) => {
+    try {
+      const email = String(req.body?.email || "").trim().toLowerCase();
+      if (!email) {
+        return res.status(400).json({ error: "Email is required" });
+      }
+
+      const user = await storage.getUserByEmail(email);
+      if (user) {
+        const token = crypto.randomBytes(24).toString("hex");
+        const expiresAt = Date.now() + 60 * 60 * 1000;
+        passwordResetTokens.set(token, { userId: user.id, expiresAt });
+        console.log(`Password reset token generated for user ${user.id}: ${token}`);
+      }
+
+      res.json({
+        success: true,
+        message: "If the account exists, a reset link has been generated.",
+      });
+    } catch (error) {
+      console.error("Forgot password error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post('/api/auth/reset-password', async (req, res) => {
+    try {
+      const token = String(req.body?.token || "");
+      const password = String(req.body?.password || "");
+      if (!token || !password) {
+        return res.status(400).json({ error: "Token and password are required" });
+      }
+
+      const tokenRecord = passwordResetTokens.get(token);
+      if (!tokenRecord || tokenRecord.expiresAt < Date.now()) {
+        passwordResetTokens.delete(token);
+        return res.status(400).json({ error: "Invalid or expired reset token" });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await storage.updateUser(tokenRecord.userId, { password: hashedPassword });
+      passwordResetTokens.delete(token);
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Reset password error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
   });
 
   // Logout
@@ -507,9 +747,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // ============ EXISTING TRAVEL BOOKING ROUTES ============
   // PayMongo Payment Routes
-  app.post('/api/create-payment', async (req, res) => {
+  app.post('/api/create-payment', requireAuth, async (req, res) => {
     try {
       const { amount, currency, description, statement_descriptor, metadata } = req.body;
+      const safeMetadata =
+        metadata && typeof metadata === "object" ? (metadata as Record<string, unknown>) : {};
+      const tripId = String(safeMetadata.trip_id || "booking");
 
       if (!PAYMONGO_SECRET_KEY) {
         return res.status(500).json({ 
@@ -528,7 +771,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         body: JSON.stringify({
           data: {
             attributes: {
-              cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:5000'}/trip/${metadata.trip_id}?payment=cancelled`,
+              cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:5000'}/trip/${tripId}?payment=cancelled`,
               billing: {
                 name: 'Customer',
                 email: 'customer@lakbay.com',
@@ -550,9 +793,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 'paymaya',
                 'grab_pay'
               ],
-              success_url: `${process.env.FRONTEND_URL || 'http://localhost:5000'}/trip/${metadata.trip_id}?payment=success`,
+              success_url: `${process.env.FRONTEND_URL || 'http://localhost:5000'}/trip/${tripId}?payment=success`,
               statement_descriptor,
-              metadata
+              metadata: safeMetadata
             }
           }
         }),
@@ -566,6 +809,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           success: false, 
           error: checkoutData.errors?.[0]?.detail || 'Checkout creation failed' 
         });
+      }
+
+      const reservationId = safeMetadata.reservation_id as string | undefined;
+      if (reservationId && pendingReservations.has(reservationId)) {
+        const reservation = pendingReservations.get(reservationId)!;
+        reservation.payment_id = checkoutData.data.id;
+        reservation.updated_at = new Date().toISOString();
+        pendingReservations.set(reservation.id, reservation);
       }
 
       res.json({
@@ -584,24 +835,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Create Reservation (without payment)
-  app.post('/api/create-reservation', async (req, res) => {
+  app.post('/api/create-reservation', requireAuth, async (req, res) => {
     try {
-      const { trip_id, check_in, check_out, guests, status } = req.body;
+      const requestUser = getCurrentUser(req as AuthenticatedRequest);
+      const { trip_id, trip_title, check_in, check_out, guests, status = "pending_payment", amount } = req.body;
 
-      // Create reservation object
-      const reservation = {
-        id: `res_${Date.now()}`,
-        trip_id,
-        check_in,
-        check_out,
-        guests,
-        status,
-        created_at: new Date().toISOString(),
-        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
+      if (!trip_id || !check_in || !check_out) {
+        return res.status(400).json({
+          success: false,
+          error: "trip_id, check_in, and check_out are required",
+        });
+      }
+
+      const checkInDate = new Date(check_in);
+      const checkOutDate = new Date(check_out);
+      if (Number.isNaN(checkInDate.getTime()) || Number.isNaN(checkOutDate.getTime())) {
+        return res.status(400).json({ success: false, error: "Invalid date format" });
+      }
+
+      if (checkOutDate <= checkInDate) {
+        return res.status(400).json({ success: false, error: "check_out must be after check_in" });
+      }
+
+      const parsedGuests = Math.max(1, Number.parseInt(String(guests), 10) || 1);
+      const parsedAmount = Number.isFinite(Number(amount)) ? Number(amount) / 100 : 0;
+      const nowIso = new Date().toISOString();
+      const reservationId = `res_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+
+      const reservation: ReservationRecord = {
+        id: reservationId,
+        trip_id: String(trip_id),
+        trip_title: String(trip_title || `Trip ${trip_id}`),
+        user_id: String(requestUser?.id ?? ""),
+        user_name: requestUser?.username || "Guest User",
+        user_email: requestUser?.email || "unknown@lakbay.local",
+        check_in: checkInDate.toISOString(),
+        check_out: checkOutDate.toISOString(),
+        guests: parsedGuests,
+        amount: Number.isNaN(parsedAmount) ? 0 : parsedAmount,
+        status: String(status),
+        payment_status: "pending",
+        payment_id: null,
+        created_at: nowIso,
+        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        updated_at: nowIso,
       };
 
-      // In production, save to database
-      console.log('Created reservation:', reservation);
+      pendingReservations.set(reservation.id, reservation);
+
+      try {
+        const { adminBookings } = await import("@shared/admin-schema");
+        const { db } = await import("./db");
+        await db.insert(adminBookings).values({
+          id: reservation.id,
+          tourId: reservation.trip_id,
+          userId: reservation.user_id,
+          userName: reservation.user_name,
+          userEmail: reservation.user_email,
+          tourTitle: reservation.trip_title,
+          amount: reservation.amount.toFixed(2),
+          status: reservation.status,
+          participants: reservation.guests,
+          bookingDate: new Date(reservation.created_at),
+          travelDate: new Date(reservation.check_in),
+          notes: `check_out=${reservation.check_out}`,
+          paymentStatus: reservation.payment_status,
+          paymentId: reservation.payment_id,
+          updatedAt: new Date(),
+        });
+      } catch (dbError) {
+        console.warn("Reservation DB persistence unavailable, using in-memory fallback:", dbError);
+      }
 
       res.json({
         success: true,
@@ -635,19 +939,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // PayMongo Webhook handler
   app.post('/api/paymongo-webhook', async (req, res) => {
     try {
-      const event = req.body;
+      const typedReq = req as AuthenticatedRequest;
+      const signatureValid = verifyPaymongoWebhookSignature(typedReq);
+      if (!signatureValid) {
+        return res.status(400).json({ error: "Invalid webhook signature" });
+      }
+
+      const event = req.body as any;
+      const eventType = event?.data?.attributes?.type as string | undefined;
+      const eventData = event?.data?.attributes?.data;
+      const eventAttributes = eventData?.attributes ?? {};
+      const metadata = eventAttributes.metadata ?? {};
+      const paymentId = eventData?.id ? String(eventData.id) : null;
+      const reservationId = metadata.reservation_id ? String(metadata.reservation_id) : null;
       
-      switch (event.data.attributes.type) {
+      switch (eventType) {
         case 'payment_intent.payment_failed':
-          console.log('Payment failed:', event.data.attributes.data.id);
+          console.log('Payment failed:', paymentId);
           break;
           
         case 'payment_intent.succeeded':
-          console.log('Payment succeeded:', event.data.attributes.data.id);
+          console.log('Payment succeeded:', paymentId);
           break;
           
         case 'checkout_session.payment_paid':
-          console.log('Checkout payment paid:', event.data.attributes.data.id);
+          console.log('Checkout payment paid:', paymentId);
+          if (reservationId && pendingReservations.has(reservationId)) {
+            const reservation = pendingReservations.get(reservationId)!;
+            reservation.payment_status = "paid";
+            reservation.status = "confirmed";
+            reservation.payment_id = paymentId;
+            reservation.updated_at = new Date().toISOString();
+            pendingReservations.set(reservation.id, reservation);
+
+            try {
+              const [{ adminBookings }, { eq }, { db }] = await Promise.all([
+                import("@shared/admin-schema"),
+                import("drizzle-orm"),
+                import("./db"),
+              ]);
+              await db
+                .update(adminBookings)
+                .set({
+                  status: "confirmed",
+                  paymentStatus: "paid",
+                  paymentId,
+                  updatedAt: new Date(),
+                })
+                .where(eq(adminBookings.id, reservation.id));
+            } catch (dbError) {
+              console.warn("Failed to update booking status in DB after webhook:", dbError);
+            }
+          }
           break;
       }
 
@@ -715,11 +1058,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ error: 'Admin access required' });
       }
 
-      // For this demo, let's return the in-memory users if using MemoryStorage
-      // In a real database setup, you'd query all users
+      const users = await storage.getUsers();
+
       res.json({ 
         success: true, 
-        users: [] // This would be populated with actual user data
+        users: users.map((user) => ({
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          authProvider: user.authProvider,
+          createdAt: user.createdAt,
+        }))
       });
 
     } catch (error) {
@@ -728,17 +1080,158 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Yearly travel goals with gamified progress
+  app.get('/api/travel-goals', requireAuth, async (req, res) => {
+    try {
+      const parsedYear = Number(req.query.year ?? new Date().getFullYear());
+      if (!Number.isInteger(parsedYear) || parsedYear < 2000 || parsedYear > 2100) {
+        return res.status(400).json({ error: "Invalid year" });
+      }
+
+      const userId = Number((req.user as any)?.id);
+      if (!Number.isInteger(userId)) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+
+      let goal = await storage.getTravelGoal(userId, parsedYear);
+      if (!goal) {
+        goal = await storage.upsertTravelGoal(userId, {
+          year: parsedYear,
+          ...DEFAULT_TRAVEL_GOAL_TARGETS,
+          targetPoints: getTargetPointsFromGoals(
+            DEFAULT_TRAVEL_GOAL_TARGETS.targetTrips,
+            DEFAULT_TRAVEL_GOAL_TARGETS.targetProvinces,
+            DEFAULT_TRAVEL_GOAL_TARGETS.targetTravelDays,
+          ),
+        });
+      }
+
+      res.json(buildTravelGoalResponse(goal));
+    } catch (error) {
+      console.error("Get travel goals error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.put('/api/travel-goals', requireAuth, async (req, res) => {
+    try {
+      const parsed = travelGoalUpsertSchema.parse(req.body || {});
+      const userId = Number((req.user as any)?.id);
+      if (!Number.isInteger(userId)) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+
+      const targetTrips = parsed.targetAdventure ?? parsed.targetTrips;
+      const targetProvinces = parsed.targetWellness ?? parsed.targetProvinces;
+      const targetTravelDays = parsed.targetExplorationDays ?? parsed.targetTravelDays;
+      if (!targetTrips || !targetProvinces || !targetTravelDays) {
+        return res.status(400).json({
+          error:
+            "Provide targetAdventure/targetWellness/targetExplorationDays (or legacy targetTrips/targetProvinces/targetTravelDays).",
+        });
+      }
+
+      const goal = await storage.upsertTravelGoal(userId, {
+        year: parsed.year,
+        targetTrips,
+        targetProvinces,
+        targetTravelDays,
+        targetPoints:
+          parsed.targetPoints ??
+          getTargetPointsFromGoals(targetTrips, targetProvinces, targetTravelDays),
+        notes: parsed.notes,
+      });
+
+      res.json(buildTravelGoalResponse(goal));
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid goal payload", details: error.errors });
+      }
+      console.error("Update travel goals error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post('/api/travel-goals/progress', requireAuth, async (req, res) => {
+    try {
+      const parsed = travelGoalProgressSchema.parse(req.body || {});
+      const userId = Number((req.user as any)?.id);
+      if (!Number.isInteger(userId)) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+
+      let goal = await storage.getTravelGoal(userId, parsed.year);
+      if (!goal) {
+        goal = await storage.upsertTravelGoal(userId, {
+          year: parsed.year,
+          ...DEFAULT_TRAVEL_GOAL_TARGETS,
+          targetPoints: getTargetPointsFromGoals(
+            DEFAULT_TRAVEL_GOAL_TARGETS.targetTrips,
+            DEFAULT_TRAVEL_GOAL_TARGETS.targetProvinces,
+            DEFAULT_TRAVEL_GOAL_TARGETS.targetTravelDays,
+          ),
+        });
+      }
+
+      let currentTrips = goal.currentTrips;
+      let currentProvinces = goal.currentProvinces;
+      let currentTravelDays = goal.currentTravelDays;
+      let currentPoints = goal.currentPoints;
+
+      switch (parsed.action) {
+        case "trip_completed":
+        case "adventure_activity":
+          currentTrips += parsed.amount;
+          currentPoints += parsed.amount * 120;
+          break;
+        case "province_visited":
+        case "wellness_activity":
+          currentProvinces += parsed.amount;
+          currentPoints += parsed.amount * 80;
+          break;
+        case "travel_day":
+        case "exploration_day":
+          currentTravelDays += parsed.amount;
+          currentPoints += parsed.amount * 20;
+          break;
+        case "bonus_points":
+          currentPoints += parsed.amount;
+          break;
+      }
+
+      const updatedGoal = await storage.upsertTravelGoal(userId, {
+        year: parsed.year,
+        currentTrips,
+        currentProvinces,
+        currentTravelDays,
+        currentPoints,
+        lastActivityAt: new Date(),
+      });
+
+      res.json(buildTravelGoalResponse(updatedGoal));
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid progress payload", details: error.errors });
+      }
+      console.error("Update travel goal progress error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  const adminRouter = process.env.DATABASE_URL ? adminRoutes : adminLocalRoutes;
+  const hostRouter = process.env.DATABASE_URL ? hostRoutes : hostLocalRoutes;
+
   // Register admin routes
-  app.use('/api/admin', adminRoutes);
+  app.use('/api/admin', requireAuth, requireRole('admin'), adminRouter);
   
   // Register host routes
-  app.use('/api/host', hostRoutes);
+  app.use('/api/host', requireAuth, requireRole('host', 'admin'), hostRouter);
   
   // Register chat routes
-  app.use('/api/chat', chatRoutes);
+  app.use('/api/chat', requireAuth, chatRoutes);
   
   // Register accommodation routes
-  app.use('/api/accommodation', accommodationRoutes);
+  app.use('/api/accommodation', requireAuth, requireRole('host', 'admin'), accommodationRoutes);
 
   // Register shop routes
   app.use('/api/shop', shopRoutes);
@@ -749,12 +1242,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Public trips endpoint with status visibility filtering
   app.get('/api/trips', async (req, res) => {
     try {
-      const { category, limit = "20", offset = "0", featured } = req.query;
+      if (!process.env.DATABASE_URL) {
+        return res.json([]);
+      }
+
+      const { category, search, limit = "20", offset = "0", featured } = req.query;
       
       // Import admin tours schema for public display
       const { adminTours } = await import('@shared/admin-schema');
       const { db } = await import('./db');
-      const { eq, desc, and, inArray } = await import('drizzle-orm');
+      const { eq, desc, and, inArray, sql } = await import('drizzle-orm');
       
       const conditions = [];
       
@@ -763,12 +1260,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       conditions.push(inArray(adminTours.status, searchableStatuses));
       
       if (category && category !== "all") {
-        // Since category is stored as JSON array, use like query
-        conditions.push(eq(adminTours.category, category as string));
+        // Category can be stored as a JSON array string; use text match for compatibility
+        conditions.push(sql`${adminTours.category}::text ILIKE ${`%${String(category)}%`}`);
       }
       
       if (featured === 'true') {
         conditions.push(eq(adminTours.featured, true));
+      }
+
+      if (search) {
+        const term = `%${String(search).trim()}%`;
+        conditions.push(
+          sql`(
+            ${adminTours.title} ILIKE ${term}
+            OR ${adminTours.location} ILIKE ${term}
+            OR COALESCE(${adminTours.description}, '') ILIKE ${term}
+          )`
+        );
       }
 
       let query = db.select().from(adminTours);

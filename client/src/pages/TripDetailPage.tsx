@@ -46,10 +46,10 @@ interface QuizTrip {
 }
 
 export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const [guests, setGuests] = useState("1 guest");
-  const [checkIn, setCheckIn] = useState("09/14/2025");
-  const [checkOut, setCheckOut] = useState("09/16/2025");
+  const [checkIn, setCheckIn] = useState("2025-09-14");
+  const [checkOut, setCheckOut] = useState("2025-09-16");
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeTab, setActiveTab] = useState("Event details");
   const [isBooked, setIsBooked] = useState(false); // Trip booking status
@@ -57,7 +57,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
   const [currentAudioTrack, setCurrentAudioTrack] = useState<number | null>(null);
   const [showAudioModal, setShowAudioModal] = useState(false);
   
-  const { isAdmin } = useAuth();
+  const { isAdmin, isAuthenticated } = useAuth();
   const [activeNavTab, setActiveNavTab] = useState("Home");
   
   // Quiz state
@@ -143,7 +143,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
         heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop",
         host: { 
           name: "Captain Miguel Santos", 
-          avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+          avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=75",
           bio: "Professional boat captain and island hopping guide with 15 years of experience exploring El Nido's pristine lagoons."
         },
         itinerary: [
@@ -191,7 +191,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
         heroImage: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop",
         host: { 
           name: "Elena Rodriguez", 
-          avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b5e5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+          avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b5e5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=75",
           bio: "Local Bohol guide specializing in geological tours and wildlife conservation. Expert on Chocolate Hills formation and Tarsier habitats."
         },
         itinerary: [
@@ -230,10 +230,10 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
         duration: "3 Days 2 Nights",
         price: "PHP 15,500",
         category: "hiking",
-        heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80",
+        heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=960&q=75",
         host: { 
           name: "Maria Santos", 
-          avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+          avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=75",
           bio: "Certified mountain guide with 8 years experience leading Pulag treks. Expert in high-altitude climbing and wilderness survival."
         },
         itinerary: [
@@ -241,19 +241,19 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
             day: 1,
             title: "Arrival and Base Camp Setup",
             description: "Meet at Babadak Ranger Station, complete registration, and set up base camp. Evening briefing on trail safety and weather conditions.",
-            image: "https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
+            image: "https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=960&q=75"
           },
           {
             day: 2,
             title: "Summit Push and Sunrise",
             description: "Early morning 3AM start for summit push. Watch the spectacular sunrise from the Philippines' second highest peak at 2,926 meters above sea level.",
-            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
+            image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=960&q=75"
           },
           {
             day: 3,
             title: "Descent and Departure",
             description: "Leisurely descent back to base camp, pack up, and departure. Stop at local hot springs for relaxation.",
-            image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
+            image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=960&q=75"
           }
         ],
         accommodation: {
@@ -305,7 +305,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
         heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop",
         host: { 
           name: "Carlos Banaag", 
-          avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+          avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=75",
           bio: "Local Sagada guide specializing in cave exploration and cultural heritage tours. Expert on Igorot traditions and mountain trekking."
         },
         itinerary: [
@@ -353,7 +353,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
         heroImage: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop",
         host: { 
           name: "Jake Mendoza", 
-          avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+          avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=75",
           bio: "Professional surf instructor and island guide with 10 years of experience riding the waves of Cloud 9 and exploring Siargao's hidden gems."
         },
         itinerary: [
@@ -407,7 +407,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
         heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop",
         host: { 
           name: "Anna Reyes", 
-          avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+          avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=75",
           bio: "Local Boracay guide specializing in beach photography and sunset tours. Knows all the best hidden spots on the island."
         },
         itinerary: [
@@ -437,7 +437,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
         heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop",
         host: { 
           name: "Maria Valdez", 
-          avatar: "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+          avatar: "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=75",
           bio: "Local Ivatan guide born and raised in Batanes. Expert on Ivatan culture, traditional architecture, and the unique heritage of the northernmost province."
         },
         itinerary: [
@@ -485,7 +485,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
         heroImage: "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=400&h=250&fit=crop",
         host: { 
           name: "Luis Crisologo", 
-          avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+          avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=75",
           bio: "Local historian and cultural guide specializing in Spanish colonial heritage and Vigan's UNESCO World Heritage significance."
         },
         itinerary: [
@@ -517,10 +517,10 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
       duration: "3 Days 2 Nights",
       price: "PHP 12,500",
       category: "beach",
-      heroImage: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80",
+      heroImage: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=960&q=75",
       host: { 
         name: "Juan Dela Cruz", 
-        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=75",
         bio: "Local guide specializing in island hopping and beach adventures with 12 years of experience in Palawan tourism."
       },
       itinerary: [
@@ -528,19 +528,19 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
           day: 1,
           title: "Island Hopping Adventure",
           description: "Visit pristine beaches and hidden lagoons around El Nido. Experience crystal clear waters and dramatic limestone cliffs.",
-          image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
+          image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=960&q=75"
         },
         {
           day: 2,
           title: "Underground River Tour", 
           description: "Explore the world-famous Puerto Princesa Underground River, a UNESCO World Heritage Site.",
-          image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
+          image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=960&q=75"
         },
         {
           day: 3,
           title: "Beach Relaxation",
           description: "Free day to relax on white sand beaches, snorkeling, or spa treatments at the resort.",
-          image: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80"
+          image: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=960&q=75"
         }
       ],
       accommodation: {
@@ -554,10 +554,111 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
 
   const trip = getTripData();
 
+  const parsePriceToCentavos = (price: string): number => {
+    const numeric = Number(price.replace(/[^0-9.]/g, "")) || 0;
+    return Math.round(numeric * 100);
+  };
+
+  const parseGuestCount = (value: string): number => {
+    const parsed = Number.parseInt(value, 10);
+    return Number.isNaN(parsed) ? 1 : parsed;
+  };
+
+  const handleBookNow = async () => {
+    if (!isAuthenticated) {
+      setLocation(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+      return;
+    }
+
+    if (!checkIn || !checkOut) {
+      toast({
+        title: "Missing dates",
+        description: "Please choose your check-in and check-out dates.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (new Date(checkOut) <= new Date(checkIn)) {
+      toast({
+        title: "Invalid dates",
+        description: "Check-out must be after check-in.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const reservationResponse = await fetch("/api/create-reservation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          trip_id: params?.id || trip.title.toLowerCase().replace(/\s+/g, "-"),
+          trip_title: trip.title,
+          check_in: checkIn,
+          check_out: checkOut,
+          guests: parseGuestCount(guests),
+          status: "pending_payment",
+          amount: parsePriceToCentavos(trip.price),
+        }),
+      });
+
+      const reservationPayload = await reservationResponse.json();
+
+      if (!reservationResponse.ok || !reservationPayload.success) {
+        throw new Error(reservationPayload.error || "Failed to create reservation");
+      }
+
+      const paymentResponse = await fetch("/api/create-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          amount: parsePriceToCentavos(trip.price),
+          currency: "PHP",
+          description: `${trip.title} booking`,
+          statement_descriptor: "LAKBAY",
+          metadata: {
+            trip_id: params?.id || trip.title.toLowerCase().replace(/\s+/g, "-"),
+            trip_title: trip.title,
+            reservation_id: reservationPayload?.reservation?.id,
+            guests: String(parseGuestCount(guests)),
+            check_in: checkIn,
+            check_out: checkOut,
+          },
+        }),
+      });
+
+      const paymentPayload = await paymentResponse.json();
+
+      if (paymentResponse.ok && paymentPayload.success && paymentPayload.checkout_url) {
+        window.location.href = paymentPayload.checkout_url;
+        return;
+      }
+
+      setIsBooked(true);
+      toast({
+        title: "Reservation created",
+        description: "Payment checkout is unavailable right now. Your reservation is saved as pending.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Booking failed",
+        description: error.message || "Unable to complete booking right now.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen view-shell">
       {/* Header */}
-      <header className="bg-white px-8 py-6 border-b border-gray-100">
+      <header className="view-header">
         <div className="flex items-center justify-between">
           {/* Left: Logo placeholder */}
           <div className="w-8 h-8 bg-black" style={{borderRadius: '1px'}}></div>
@@ -568,9 +669,9 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
             <Link href="/trips" className="prada-nav text-black hover:text-gray-600 transition-colors">Trips</Link>
             <Link href="/chats" className="prada-nav text-gray-700 hover:text-black transition-colors">Chats</Link>
             <Link href="/trails" className="prada-nav text-gray-700 hover:text-black transition-colors">Trails</Link>
-            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</a>
+            <Link href="/story" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</Link>
             <Link href="/shop" className="prada-nav text-gray-700 hover:text-black transition-colors">Shop</Link>
-            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</a>
+            <Link href="/corporate" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</Link>
           </nav>
           
           {/* Right: Buttons and Language */}
@@ -592,7 +693,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
 
       {/* Hero Section */}
       <div className="relative h-72">
-        <img 
+        <img loading="lazy" decoding="async" 
           src={trip.heroImage}
           alt={trip.title}
           className="w-full h-full object-cover"
@@ -677,10 +778,10 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                       <div className="flex-1">
                         <h3 className="font-semibold text-lg text-gray-900 mb-2">{day.title}</h3>
                         <p className="text-gray-700 mb-4">{day.description}</p>
-                        <img 
+                        <img loading="lazy" decoding="async" 
                           src={day.image}
                           alt={day.title}
-                          className="w-full h-48 object-cover rounded-lg"
+                          className="w-full h-40 object-cover rounded-lg"
                         />
                       </div>
                     </div>
@@ -868,8 +969,8 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                   <div className="space-y-4">
                     <div className="border-b border-gray-200 pb-4">
                       <div className="flex items-center space-x-3 mb-2">
-                        <img 
-                          src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        <img loading="lazy" decoding="async" 
+                          src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=75"
                           alt="Reviewer"
                           className="w-8 h-8 rounded-full"
                         />
@@ -1032,8 +1133,9 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
                 <Button 
                   className="w-full bg-[#D4AF37] hover:bg-[#B8941F] text-black"
                   disabled={isProcessing}
+                  onClick={handleBookNow}
                 >
-                  {isProcessing ? "Processing..." : "Book Now"}
+                  {isProcessing ? "Processing..." : isBooked ? "Reserved" : "Book Now"}
                 </Button>
               </div>
             </Card>
@@ -1042,7 +1144,7 @@ export const TripDetailPage = ({ params }: TripDetailPageProps): JSX.Element => 
             <Card className="p-6">
               <h3 className="font-semibold text-lg text-gray-900 mb-4">About the host</h3>
               <div className="flex items-center space-x-3 mb-3">
-                <img 
+                <img loading="lazy" decoding="async" 
                   src={trip.host.avatar}
                   alt={trip.host.name}
                   className="w-12 h-12 rounded-full object-cover"

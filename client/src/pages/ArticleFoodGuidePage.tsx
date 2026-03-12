@@ -53,9 +53,9 @@ export const ArticleFoodGuidePage = (): JSX.Element => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen view-shell">
       {/* Header */}
-      <header className="bg-white px-8 py-6 border-b border-gray-100">
+      <header className="view-header">
         <div className="flex items-center justify-between">
           {/* Left: Logo placeholder */}
           <div className="w-8 h-8 bg-black" style={{borderRadius: '1px'}}></div>
@@ -66,9 +66,9 @@ export const ArticleFoodGuidePage = (): JSX.Element => {
             <Link href="/trips" className="prada-nav text-gray-700 hover:text-black transition-colors">Trips</Link>
             <Link href="/chats" className="prada-nav text-gray-700 hover:text-black transition-colors">Chats</Link>
             <Link href="/trails" className="prada-nav text-gray-700 hover:text-black transition-colors">Trails</Link>
-            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</a>
+            <Link href="/story" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</Link>
             <Link href="/shop" className="prada-nav text-gray-700 hover:text-black transition-colors">Shop</Link>
-            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</a>
+            <Link href="/corporate" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</Link>
           </nav>
           
           {/* Right: Buttons and Language */}
@@ -126,7 +126,7 @@ export const ArticleFoodGuidePage = (): JSX.Element => {
           <img 
             src={article.heroImage}
             alt="Filipino Food Guide"
-            className="w-full h-96 object-cover rounded-lg"
+            className="w-full h-72 md:h-80 object-cover rounded-lg"
           />
         </div>
 
@@ -152,7 +152,7 @@ export const ArticleFoodGuidePage = (): JSX.Element => {
                     <img 
                       src={item.src} 
                       alt={item.caption}
-                      className="w-full h-64 object-cover rounded-lg"
+                      className="w-full h-52 object-cover rounded-lg"
                     />
                     {item.caption && (
                       <figcaption className="text-center text-gray-600 text-sm mt-2">

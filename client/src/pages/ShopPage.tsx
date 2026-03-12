@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/hooks/useAuth";
 import { Link } from "wouter";
 import { Search, ShoppingCart, Star, Filter, Grid, List, Menu, X } from "lucide-react";
 
@@ -27,9 +28,11 @@ export default function ShopPage() {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user } = useAuth();
+  const shopId = user?.id ? `shop_${user.id}` : "shop_1";
 
   const { data: products = [], isLoading } = useQuery<Product[]>({
-    queryKey: ['/api/shop/products/shop_1'],
+    queryKey: [`/api/shop/products/${shopId}`],
   });
 
   const filteredProducts = (products as Product[]).filter((product: Product) => {
@@ -44,14 +47,14 @@ export default function ShopPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen view-shell p-6">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-300 rounded w-64 mb-6"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {[...Array(8)].map((_, i) => (
                 <div key={i} className="bg-white rounded-lg p-4">
-                  <div className="h-48 bg-gray-300 rounded mb-4"></div>
+                  <div className="h-40 bg-gray-300 rounded mb-4"></div>
                   <div className="h-4 bg-gray-300 rounded mb-2"></div>
                   <div className="h-6 bg-gray-300 rounded"></div>
                 </div>
@@ -64,9 +67,9 @@ export default function ShopPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen view-shell">
       {/* Header */}
-      <header className="bg-white px-8 py-6 border-b border-gray-100">
+      <header className="view-header">
         <div className="flex items-center justify-between">
           {/* Left: Logo placeholder */}
           <div className="w-8 h-8 bg-black" style={{borderRadius: '1px'}}></div>
@@ -77,9 +80,9 @@ export default function ShopPage() {
             <Link href="/trips" className="prada-nav text-gray-700 hover:text-black transition-colors">Trips</Link>
             <Link href="/chats" className="prada-nav text-gray-700 hover:text-black transition-colors">Chats</Link>
             <Link href="/trails" className="prada-nav text-gray-700 hover:text-black transition-colors">Trails</Link>
-            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</a>
+            <Link href="/story" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</Link>
             <Link href="/shop" className="prada-nav text-black hover:text-gray-600 transition-colors">Shop</Link>
-            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</a>
+            <Link href="/corporate" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</Link>
           </nav>
           
           {/* Right: Buttons and Language */}
@@ -203,7 +206,7 @@ function ProductCard({ product, viewMode }: ProductCardProps) {
     return (
       <Card className="p-4 hover:shadow-md transition-shadow">
         <div className="flex gap-4">
-          <img
+          <img loading="lazy" decoding="async"
             src={mainImage}
             alt={product.name}
             className="w-24 h-24 object-cover rounded-lg flex-shrink-0"
@@ -244,10 +247,10 @@ function ProductCard({ product, viewMode }: ProductCardProps) {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow group">
       <div className="relative">
-        <img
+        <img loading="lazy" decoding="async"
           src={mainImage}
           alt={product.name}
-          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
           onError={(e) => {
             (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&h=400&fit=crop';
           }}

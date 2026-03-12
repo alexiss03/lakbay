@@ -27,8 +27,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
+import { apiJsonRequest, apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -106,20 +107,25 @@ const AccommodationDashboard = () => {
   });
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
-  // Current host ID - in a real app, this would come from auth context
-  const [currentHostId] = useState("host_1");
+  // Current host ID - defaults to demo id when auth context is unavailable
+  const currentHostId = user?.id ? String(user.id) : "host_1";
 
   // Fetch accommodation analytics
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['/api/accommodation/analytics', currentHostId],
-    queryFn: () => apiRequest('GET', `/api/accommodation/analytics/${currentHostId}`),
+    queryFn: () => apiJsonRequest<AccommodationStats>('GET', `/api/accommodation/analytics/${currentHostId}`),
   });
 
   // Fetch properties
   const { data: properties = [], isLoading: propertiesLoading } = useQuery<Property[]>({
     queryKey: ['/api/accommodation/properties', currentHostId, selectedFilter],
-    queryFn: () => apiRequest('GET', `/api/accommodation/properties/${currentHostId}?type=${selectedFilter === 'all' ? 'all' : selectedFilter}&limit=50`),
+    queryFn: () =>
+      apiJsonRequest<Property[]>(
+        'GET',
+        `/api/accommodation/properties/${currentHostId}?type=${selectedFilter === 'all' ? 'all' : selectedFilter}&limit=50`,
+      ),
   });
 
   // Fetch bookings for active properties
@@ -130,7 +136,8 @@ const AccommodationDashboard = () => {
       const allBookings = [];
       for (const property of properties) {
         const propertyBookings = await apiRequest('GET', `/api/accommodation/bookings/${property.id}?limit=20`);
-        allBookings.push(...propertyBookings);
+        const propertyBookingsJson = await propertyBookings.json();
+        allBookings.push(...propertyBookingsJson);
       }
       return allBookings;
     },
@@ -145,7 +152,8 @@ const AccommodationDashboard = () => {
       const allRoomTypes = [];
       for (const property of properties) {
         const propertyRoomTypes = await apiRequest('GET', `/api/accommodation/properties/${property.id}/room-types`);
-        allRoomTypes.push(...propertyRoomTypes.map((rt: any) => ({ ...rt, propertyName: property.name })));
+        const propertyRoomTypesJson = await propertyRoomTypes.json();
+        allRoomTypes.push(...propertyRoomTypesJson.map((rt: any) => ({ ...rt, propertyName: property.name })));
       }
       return allRoomTypes;
     },
@@ -298,7 +306,7 @@ const AccommodationDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen view-shell">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -321,7 +329,10 @@ const AccommodationDashboard = () => {
                 Guest Messages
                 <Badge className="ml-2 bg-red-100 text-red-800">5</Badge>
               </Button>
-              <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black">
+              <Button
+                className="bg-[#D4AF37] hover:bg-[#B8941F] text-black"
+                onClick={() => setShowAddPropertyModal(true)}
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Property
               </Button>
@@ -690,7 +701,7 @@ const AccommodationDashboard = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[...Array(3)].map((_, i) => (
                   <Card key={i} className="prada-card overflow-hidden">
-                    <div className="h-48 bg-gray-200 animate-pulse"></div>
+                    <div className="h-40 bg-gray-200 animate-pulse"></div>
                     <div className="p-6">
                       <div className="h-6 bg-gray-200 rounded animate-pulse mb-2"></div>
                       <div className="h-4 bg-gray-200 rounded animate-pulse w-2/3 mb-4"></div>
@@ -713,7 +724,7 @@ const AccommodationDashboard = () => {
                         <img 
                           src={property.heroImage} 
                           alt={property.name}
-                          className="w-full h-48 object-cover"
+                          className="w-full h-40 object-cover"
                         />
                       )}
                       <div className="p-6">
@@ -763,10 +774,10 @@ const AccommodationDashboard = () => {
                                 size="sm" 
                                 variant="outline"
                                 onClick={() => {
-                                  // Navigate to property detail view
+                                  setActiveTab('bookings');
                                   toast({
                                     title: "View Property",
-                                    description: `Opening ${property.name} details...`,
+                                    description: `Switched to bookings for ${property.name}.`,
                                   });
                                 }}
                               >
@@ -776,10 +787,11 @@ const AccommodationDashboard = () => {
                                 size="sm" 
                                 variant="outline"
                                 onClick={() => {
-                                  // Open edit property modal
-                                  toast({
-                                    title: "Edit Property",
-                                    description: `Opening ${property.name} for editing...`,
+                                  updatePropertyMutation.mutate({
+                                    id: property.id,
+                                    data: {
+                                      status: property.status === 'active' ? 'inactive' : 'active',
+                                    },
                                   });
                                 }}
                               >
@@ -797,7 +809,10 @@ const AccommodationDashboard = () => {
                     <Building className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">No properties yet</h3>
                     <p className="text-gray-500 mb-6">Get started by adding your first property</p>
-                    <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black">
+                    <Button
+                      className="bg-[#D4AF37] hover:bg-[#B8941F] text-black"
+                      onClick={() => setShowAddPropertyModal(true)}
+                    >
                       <Plus className="w-4 h-4 mr-2" />
                       Add Property
                     </Button>

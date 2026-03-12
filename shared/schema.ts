@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, decimal, timestamp, varchar, jsonb, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, decimal, timestamp, varchar, jsonb, pgEnum, uniqueIndex } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -337,6 +337,39 @@ export const insertTourSchema = createInsertSchema(tours).omit({
   updatedAt: true,
 });
 
+// User yearly travel goals with gamified progress tracking
+export const travelGoals = pgTable(
+  "travel_goals",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id),
+    year: integer("year").notNull(),
+    targetTrips: integer("target_trips").notNull().default(6),
+    targetProvinces: integer("target_provinces").notNull().default(8),
+    targetTravelDays: integer("target_travel_days").notNull().default(20),
+    targetPoints: integer("target_points").notNull().default(1200),
+    currentTrips: integer("current_trips").notNull().default(0),
+    currentProvinces: integer("current_provinces").notNull().default(0),
+    currentTravelDays: integer("current_travel_days").notNull().default(0),
+    currentPoints: integer("current_points").notNull().default(0),
+    notes: text("notes"),
+    lastActivityAt: timestamp("last_activity_at"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    userYearUnique: uniqueIndex("travel_goals_user_year_unique").on(table.userId, table.year),
+  }),
+);
+
+export const insertTravelGoalSchema = createInsertSchema(travelGoals).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -358,6 +391,8 @@ export type InsertWishlistItem = z.infer<typeof insertWishlistItemSchema>;
 export type WishlistItem = typeof wishlistItems.$inferSelect;
 export type InsertTour = z.infer<typeof insertTourSchema>;
 export type Tour = typeof tours.$inferSelect;
+export type InsertTravelGoal = z.infer<typeof insertTravelGoalSchema>;
+export type TravelGoal = typeof travelGoals.$inferSelect;
 
 // Tour status enum
 export const tourStatusEnum = pgEnum('tour_status', ['active', 'inactive', 'pending']);

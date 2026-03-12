@@ -290,6 +290,52 @@ router.get("/users", async (req, res) => {
   }
 });
 
+router.get("/users/:id", async (req, res) => {
+  try {
+    const [user] = await db
+      .select()
+      .from(adminUsers)
+      .where(eq(adminUsers.id, req.params.id))
+      .limit(1);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ error: "Failed to fetch user" });
+  }
+});
+
+router.post("/users", async (req, res) => {
+  try {
+    const { name, email, role = "user", status = "active", avatar } = req.body;
+    if (!name || !email) {
+      return res.status(400).json({ error: "name and email are required" });
+    }
+
+    const [user] = await db
+      .insert(adminUsers)
+      .values({
+        name,
+        email,
+        role,
+        status,
+        avatar: avatar || null,
+        joinedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+
+    res.status(201).json(user);
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.status(500).json({ error: "Failed to create user" });
+  }
+});
+
 router.put("/users/:id", async (req, res) => {
   try {
     const [updatedUser] = await db
@@ -306,6 +352,24 @@ router.put("/users/:id", async (req, res) => {
   } catch (error) {
     console.error("Error updating user:", error);
     res.status(500).json({ error: "Failed to update user" });
+  }
+});
+
+router.delete("/users/:id", async (req, res) => {
+  try {
+    const [deletedUser] = await db
+      .delete(adminUsers)
+      .where(eq(adminUsers.id, req.params.id))
+      .returning();
+
+    if (!deletedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ error: "Failed to delete user" });
   }
 });
 
@@ -343,6 +407,25 @@ router.get("/articles", async (req, res) => {
   } catch (error) {
     console.error("Error fetching articles:", error);
     res.status(500).json({ error: "Failed to fetch articles" });
+  }
+});
+
+router.get("/articles/:id", async (req, res) => {
+  try {
+    const [article] = await db
+      .select()
+      .from(adminArticles)
+      .where(eq(adminArticles.id, req.params.id))
+      .limit(1);
+
+    if (!article) {
+      return res.status(404).json({ error: "Article not found" });
+    }
+
+    res.json(article);
+  } catch (error) {
+    console.error("Error fetching article:", error);
+    res.status(500).json({ error: "Failed to fetch article" });
   }
 });
 
@@ -430,6 +513,91 @@ router.get("/hosts", async (req, res) => {
   }
 });
 
+router.get("/hosts/:id", async (req, res) => {
+  try {
+    const [host] = await db
+      .select()
+      .from(adminHosts)
+      .where(eq(adminHosts.id, req.params.id))
+      .limit(1);
+
+    if (!host) {
+      return res.status(404).json({ error: "Host not found" });
+    }
+
+    res.json(host);
+  } catch (error) {
+    console.error("Error fetching host:", error);
+    res.status(500).json({ error: "Failed to fetch host" });
+  }
+});
+
+router.post("/hosts", async (req, res) => {
+  try {
+    const { userId, businessName, location, verificationStatus = "pending", isActive = true } = req.body;
+    if (!userId) {
+      return res.status(400).json({ error: "userId is required" });
+    }
+
+    const [host] = await db
+      .insert(adminHosts)
+      .values({
+        userId,
+        businessName: businessName || null,
+        location: location || null,
+        verificationStatus,
+        isActive,
+        updatedAt: new Date(),
+      })
+      .returning();
+
+    res.status(201).json(host);
+  } catch (error) {
+    console.error("Error creating host:", error);
+    res.status(500).json({ error: "Failed to create host" });
+  }
+});
+
+router.put("/hosts/:id", async (req, res) => {
+  try {
+    const [updatedHost] = await db
+      .update(adminHosts)
+      .set({
+        ...req.body,
+        updatedAt: new Date(),
+      })
+      .where(eq(adminHosts.id, req.params.id))
+      .returning();
+
+    if (!updatedHost) {
+      return res.status(404).json({ error: "Host not found" });
+    }
+
+    res.json(updatedHost);
+  } catch (error) {
+    console.error("Error updating host:", error);
+    res.status(500).json({ error: "Failed to update host" });
+  }
+});
+
+router.delete("/hosts/:id", async (req, res) => {
+  try {
+    const [deletedHost] = await db
+      .delete(adminHosts)
+      .where(eq(adminHosts.id, req.params.id))
+      .returning();
+
+    if (!deletedHost) {
+      return res.status(404).json({ error: "Host not found" });
+    }
+
+    res.json({ message: "Host deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting host:", error);
+    res.status(500).json({ error: "Failed to delete host" });
+  }
+});
+
 router.put("/hosts/:id/verify", async (req, res) => {
   try {
     const { status } = req.body; // 'verified', 'rejected', 'pending'
@@ -454,7 +622,7 @@ router.put("/hosts/:id/verify", async (req, res) => {
   }
 });
 
-// Bookings
+// Bookings CRUD
 router.get("/bookings", async (req, res) => {
   try {
     const { status, dateFrom, dateTo, limit = "50", offset = "0" } = req.query;
@@ -488,6 +656,103 @@ router.get("/bookings", async (req, res) => {
   } catch (error) {
     console.error("Error fetching bookings:", error);
     res.status(500).json({ error: "Failed to fetch bookings" });
+  }
+});
+
+router.get("/bookings/:id", async (req, res) => {
+  try {
+    const [booking] = await db
+      .select()
+      .from(adminBookings)
+      .where(eq(adminBookings.id, req.params.id))
+      .limit(1);
+
+    if (!booking) {
+      return res.status(404).json({ error: "Booking not found" });
+    }
+
+    res.json(booking);
+  } catch (error) {
+    console.error("Error fetching booking:", error);
+    res.status(500).json({ error: "Failed to fetch booking" });
+  }
+});
+
+router.post("/bookings", async (req, res) => {
+  try {
+    const { tourId, userId, userName, userEmail, tourTitle, amount, participants = 1, status = "pending", paymentStatus = "pending", bookingDate, travelDate, notes } = req.body;
+
+    if (!tourId || !userId || !userName || !userEmail || !tourTitle || amount == null) {
+      return res.status(400).json({ error: "tourId, userId, userName, userEmail, tourTitle, and amount are required" });
+    }
+
+    const [booking] = await db
+      .insert(adminBookings)
+      .values({
+        tourId,
+        userId,
+        userName,
+        userEmail,
+        tourTitle,
+        amount: String(amount),
+        participants,
+        status,
+        paymentStatus,
+        bookingDate: bookingDate ? new Date(bookingDate) : new Date(),
+        travelDate: travelDate ? new Date(travelDate) : null,
+        notes: notes || null,
+        updatedAt: new Date(),
+      })
+      .returning();
+
+    res.status(201).json(booking);
+  } catch (error) {
+    console.error("Error creating booking:", error);
+    res.status(500).json({ error: "Failed to create booking" });
+  }
+});
+
+router.put("/bookings/:id", async (req, res) => {
+  try {
+    const payload = { ...req.body } as Record<string, any>;
+    if (payload.bookingDate) payload.bookingDate = new Date(payload.bookingDate);
+    if (payload.travelDate) payload.travelDate = new Date(payload.travelDate);
+
+    const [updatedBooking] = await db
+      .update(adminBookings)
+      .set({
+        ...payload,
+        updatedAt: new Date(),
+      })
+      .where(eq(adminBookings.id, req.params.id))
+      .returning();
+
+    if (!updatedBooking) {
+      return res.status(404).json({ error: "Booking not found" });
+    }
+
+    res.json(updatedBooking);
+  } catch (error) {
+    console.error("Error updating booking:", error);
+    res.status(500).json({ error: "Failed to update booking" });
+  }
+});
+
+router.delete("/bookings/:id", async (req, res) => {
+  try {
+    const [deletedBooking] = await db
+      .delete(adminBookings)
+      .where(eq(adminBookings.id, req.params.id))
+      .returning();
+
+    if (!deletedBooking) {
+      return res.status(404).json({ error: "Booking not found" });
+    }
+
+    res.json({ message: "Booking deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting booking:", error);
+    res.status(500).json({ error: "Failed to delete booking" });
   }
 });
 

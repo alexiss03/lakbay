@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button';
 
 export const TrailsPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen view-shell">
       {/* Header */}
-      <header className="bg-white px-8 py-6 border-b border-gray-100">
+      <header className="view-header">
         <div className="flex items-center justify-between">
           {/* Left: Logo placeholder */}
           <Link href="/">
@@ -20,16 +20,18 @@ export const TrailsPage: React.FC = () => {
             <Link href="/trips" className="prada-nav text-gray-700 hover:text-black transition-colors">Trips</Link>
             <Link href="/chats" className="prada-nav text-gray-700 hover:text-black transition-colors">Chats</Link>
             <span className="prada-nav text-black font-medium">Trails</span>
-            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</a>
+            <Link href="/story" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</Link>
             <Link href="/shop" className="prada-nav text-gray-700 hover:text-black transition-colors">Shop</Link>
-            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</a>
+            <Link href="/corporate" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</Link>
           </nav>
           
           {/* Right: Buttons */}
           <div className="flex items-center space-x-3">
-            <Button variant="outline" className="prada-button h-9 px-6 text-xs font-light border-black text-black hover:bg-black hover:text-white">
-              LOG IN
-            </Button>
+            <Link href="/login">
+              <Button variant="outline" className="prada-button h-9 px-6 text-xs font-light border-black text-black hover:bg-black hover:text-white">
+                LOG IN
+              </Button>
+            </Link>
             <select className="h-9 px-3 text-xs border-none bg-transparent font-light">
               <option>EN</option>
             </select>

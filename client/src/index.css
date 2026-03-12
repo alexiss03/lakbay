@@ -1,3 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
+
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -7,160 +10,472 @@
   }
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 47.4% 11.2%;
+    --background: 44 28% 96%;
+    --foreground: 35 24% 9%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 44 20% 91%;
+    --muted-foreground: 35 10% 26%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 47.4% 11.2%;
+    --popover-foreground: 35 24% 9%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --border: 44 22% 83%;
+    --input: 44 22% 83%;
 
-    --card: transparent;
-    --card-foreground: 222.2 47.4% 11.2%;
+    --card: 0 0% 100%;
+    --card-foreground: 35 24% 9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 43 63% 52%;
+    --primary-foreground: 35 24% 9%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 44 24% 89%;
+    --secondary-foreground: 35 24% 12%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 44 35% 87%;
+    --accent-foreground: 35 24% 12%;
 
-    --destructive: 0 100% 50%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 6 72% 45%;
+    --destructive-foreground: 0 0% 100%;
 
-    --ring: 215 20.2% 65.1%;
-
-    --radius: 0.125rem;
+    --ring: 43 63% 52%;
+    --radius: 1rem;
   }
 
-  .dark {
-    --background: 224 71% 4%;
-    --foreground: 213 31% 91%;
-
-    --muted: 223 47% 11%;
-    --muted-foreground: 215.4 16.3% 56.9%;
-
-    --accent: 216 34% 17%;
-    --accent-foreground: 210 40% 98%;
-
-    --popover: 224 71% 4%;
-    --popover-foreground: 215 20.2% 65.1%;
-
-    --border: 216 34% 17%;
-    --input: 216 34% 17%;
-
-    --card: transparent;
-    --card-foreground: 213 31% 91%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 1.2%;
-
-    --secondary: 222.2 47.4% 11.2%;
-    --secondary-foreground: 210 40% 98%;
-
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-
-    --ring: 216 34% 17%;
-
-    --radius: 0.125rem;
-  }
-}
-
-@layer base {
   * {
     @apply border-border;
   }
 
+  html,
+  body,
+  #root {
+    min-height: 100vh;
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-family: "Plus Jakarta Sans", "Helvetica Neue", Arial, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
-    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Arial", sans-serif;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.012em;
+    background:
+      radial-gradient(34rem 34rem at -8% -8%, rgba(212, 175, 55, 0.12), transparent 64%),
+      radial-gradient(30rem 30rem at 105% -5%, rgba(212, 175, 55, 0.08), transparent 70%),
+      linear-gradient(180deg, #f8f6f0 0%, #f4f1e8 100%);
   }
 }
 
 @layer components {
-  /* Prada-style design system */
+  .app-shell {
+    min-height: 100vh;
+  }
+
+  .view-shell {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #f8f6f0 0%, #f4f1e8 100%);
+  }
+
+  .view-header {
+    @apply sticky top-0 z-40 border-b border-white/70 px-8 py-5 backdrop-blur;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.94) 0%,
+      rgba(255, 255, 255, 0.88) 100%
+    );
+    border-color: rgba(209, 185, 129, 0.35);
+  }
+
+  .page-reveal {
+    animation: page-reveal 420ms ease-out both;
+  }
+
+  @keyframes page-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .prada-corner-radius {
+    border-radius: 18px;
+  }
+
   .prada-button {
     @apply transition-all duration-200 ease-out;
-    border-radius: 2px;
-    letter-spacing: 0.5px;
-    font-weight: 400;
+    border-radius: 9999px;
+    font-weight: 600;
     border: 1px solid transparent;
+    letter-spacing: -0.01em;
   }
-  
+
   .prada-button:hover {
-    @apply transform translate-y-[-1px];
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    @apply translate-y-[-1px];
+    box-shadow: 0 12px 20px rgba(212, 175, 55, 0.22);
   }
-  
+
   .prada-card {
-    border-radius: 2px;
-    border: 1px solid #e5e5e5;
+    border-radius: 30px;
+    border: 1px solid #e7ddca;
     background: #ffffff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow:
+      0 14px 28px rgba(22, 16, 31, 0.06),
+      0 3px 8px rgba(22, 16, 31, 0.03);
     transition: all 0.2s ease-out;
   }
-  
+
   .prada-card:hover {
-    border-color: #d0d0d0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-color: #d4af37;
+    box-shadow:
+      0 16px 30px rgba(212, 175, 55, 0.16),
+      0 4px 10px rgba(22, 16, 31, 0.05);
   }
-  
+
   .prada-input {
-    border-radius: 2px;
-    border: 1px solid #d0d0d0;
+    border-radius: 14px;
+    border: 1px solid #e1d8c2;
     background: #ffffff;
+    font-weight: 500;
     transition: all 0.15s ease-out;
-    font-weight: 300;
-    letter-spacing: 0.25px;
+    letter-spacing: 0;
   }
-  
+
   .prada-input:focus {
-    border-color: #000000;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+    border-color: #d4af37;
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.18);
   }
-  
+
   .prada-nav {
-    letter-spacing: 0.5px;
-    font-weight: 300;
-    text-transform: uppercase;
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
   }
-  
+
   .prada-heading {
-    letter-spacing: -0.02em;
-    font-weight: 300;
+    letter-spacing: -0.035em;
+    font-weight: 700;
   }
-  
+
   .prada-select {
-    border-radius: 2px;
-    border: 1px solid #d0d0d0;
+    border-radius: 14px;
+    border: 1px solid #e1d8c2;
     background: #ffffff;
-    letter-spacing: 0.25px;
+    letter-spacing: 0;
   }
-  
+
   .prada-gold-accent {
-    background: #D4AF37;
-    color: #000000;
-    border: 1px solid #D4AF37;
+    background: #d4af37;
+    color: #17130d;
+    border: 1px solid #bf9b2f;
   }
-  
+
   .prada-gold-accent:hover {
-    background: #B8941F;
-    border-color: #B8941F;
+    background: #c8a333;
+    border-color: #b28f2b;
+  }
+
+  .fit-screen {
+    background: linear-gradient(180deg, #f8f6f0 0%, #f4f1e8 100%);
+  }
+
+  .fit-panel {
+    border-radius: 34px;
+    border: 1px solid #e7ddca;
+    background: #ffffff;
+    box-shadow:
+      0 16px 28px rgba(26, 18, 29, 0.08),
+      0 3px 8px rgba(26, 18, 29, 0.04);
+  }
+
+  .fit-orange {
+    background: linear-gradient(160deg, #e3c766 0%, #d4af37 60%, #bc9829 100%);
+    color: #17130d;
+  }
+
+  .fit-soft {
+    background: linear-gradient(160deg, #fbf8ef 0%, #ffffff 100%);
+  }
+
+  .fit-pill {
+    border-radius: 9999px;
+    background: #d4af37;
+    color: #17130d;
+    font-weight: 700;
+    box-shadow: 0 8px 16px rgba(212, 175, 55, 0.25);
+  }
+
+  .fit-mobile-card {
+    border-radius: 42px;
+    overflow: hidden;
+    min-height: 520px;
+  }
+
+  .fit-grid-dots {
+    background-image:
+      radial-gradient(circle at 0.5px 0.5px, rgba(212, 175, 55, 0.22) 0.5px, transparent 0);
+    background-size: 16px 16px;
+  }
+}
+
+@layer base {
+  .app-shell {
+    color: #17130d;
+  }
+
+  .app-shell [class*="text-[#"],
+  .app-shell [class*="text-blue-"],
+  .app-shell [class*="text-green-"],
+  .app-shell [class*="text-purple-"],
+  .app-shell [class*="text-red-"],
+  .app-shell [class*="text-orange-"],
+  .app-shell [class*="text-emerald-"],
+  .app-shell [class*="text-indigo-"],
+  .app-shell [class*="text-teal-"],
+  .app-shell [class*="text-yellow-"],
+  .app-shell [class*="text-amber-"],
+  .app-shell [class*="text-pink-"],
+  .app-shell [class*="text-sky-"],
+  .app-shell [class*="text-cyan-"],
+  .app-shell [class*="text-lime-"],
+  .app-shell [class*="text-violet-"],
+  .app-shell [class*="text-fuchsia-"],
+  .app-shell [class*="text-rose-"],
+  .app-shell [class*="text-gray-"],
+  .app-shell [class*="text-slate-"],
+  .app-shell [class*="text-zinc-"],
+  .app-shell [class*="text-neutral-"],
+  .app-shell [class*="text-stone-"] {
+    color: #17130d !important;
+  }
+
+  .app-shell [class*="bg-[#ff"],
+  .app-shell [class*="bg-[#f"],
+  .app-shell [class*="bg-[#F"],
+  .app-shell [class*="bg-[#e"],
+  .app-shell [class*="bg-[#E"],
+  .app-shell [class*="bg-blue-"],
+  .app-shell [class*="bg-green-"],
+  .app-shell [class*="bg-purple-"],
+  .app-shell [class*="bg-red-"],
+  .app-shell [class*="bg-orange-"],
+  .app-shell [class*="bg-emerald-"],
+  .app-shell [class*="bg-indigo-"],
+  .app-shell [class*="bg-teal-"],
+  .app-shell [class*="bg-yellow-"],
+  .app-shell [class*="bg-amber-"],
+  .app-shell [class*="bg-pink-"],
+  .app-shell [class*="bg-sky-"],
+  .app-shell [class*="bg-cyan-"],
+  .app-shell [class*="bg-lime-"],
+  .app-shell [class*="bg-violet-"],
+  .app-shell [class*="bg-fuchsia-"],
+  .app-shell [class*="bg-rose-"],
+  .app-shell [class*="bg-gray-"],
+  .app-shell [class*="bg-slate-"],
+  .app-shell [class*="bg-zinc-"],
+  .app-shell [class*="bg-neutral-"],
+  .app-shell [class*="bg-stone-"] {
+    background-color: rgba(212, 175, 55, 0.18) !important;
+    color: #17130d !important;
+    border-color: rgba(212, 175, 55, 0.45) !important;
+  }
+
+  .app-shell [class*="bg-[#D4AF37"],
+  .app-shell [class*="bg-[#d4af37"],
+  .app-shell [class*="bg-[#B8941F"],
+  .app-shell [class*="bg-[#b8941f"] {
+    background-color: #d4af37 !important;
+    color: #17130d !important;
+    border-color: #b8941f !important;
+  }
+
+  .app-shell [class*="bg-"] [class*="text-white"] {
+    color: #17130d !important;
+  }
+
+  .app-shell [class*="border-[#"],
+  .app-shell [class*="border-blue-"],
+  .app-shell [class*="border-green-"],
+  .app-shell [class*="border-purple-"],
+  .app-shell [class*="border-red-"],
+  .app-shell [class*="border-orange-"],
+  .app-shell [class*="border-emerald-"],
+  .app-shell [class*="border-indigo-"],
+  .app-shell [class*="border-teal-"],
+  .app-shell [class*="border-yellow-"],
+  .app-shell [class*="border-amber-"],
+  .app-shell [class*="border-pink-"],
+  .app-shell [class*="border-sky-"],
+  .app-shell [class*="border-cyan-"],
+  .app-shell [class*="border-lime-"],
+  .app-shell [class*="border-violet-"],
+  .app-shell [class*="border-fuchsia-"],
+  .app-shell [class*="border-rose-"],
+  .app-shell [class*="border-gray-"],
+  .app-shell [class*="border-slate-"],
+  .app-shell [class*="border-zinc-"],
+  .app-shell [class*="border-neutral-"],
+  .app-shell [class*="border-stone-"] {
+    border-color: rgba(212, 175, 55, 0.45) !important;
+  }
+
+  .app-shell [class*="decoration-[#"],
+  .app-shell [class*="decoration-blue-"],
+  .app-shell [class*="decoration-green-"],
+  .app-shell [class*="decoration-purple-"],
+  .app-shell [class*="decoration-red-"],
+  .app-shell [class*="decoration-orange-"],
+  .app-shell [class*="decoration-emerald-"],
+  .app-shell [class*="decoration-indigo-"],
+  .app-shell [class*="decoration-teal-"],
+  .app-shell [class*="decoration-yellow-"],
+  .app-shell [class*="decoration-amber-"],
+  .app-shell [class*="decoration-pink-"],
+  .app-shell [class*="decoration-sky-"],
+  .app-shell [class*="decoration-cyan-"],
+  .app-shell [class*="decoration-lime-"],
+  .app-shell [class*="decoration-violet-"],
+  .app-shell [class*="decoration-fuchsia-"],
+  .app-shell [class*="decoration-rose-"] {
+    text-decoration-color: #d4af37 !important;
+  }
+
+  .app-shell [class*="fill-blue-"],
+  .app-shell [class*="fill-green-"],
+  .app-shell [class*="fill-purple-"],
+  .app-shell [class*="fill-red-"],
+  .app-shell [class*="fill-orange-"],
+  .app-shell [class*="fill-emerald-"],
+  .app-shell [class*="fill-indigo-"],
+  .app-shell [class*="fill-teal-"],
+  .app-shell [class*="fill-yellow-"],
+  .app-shell [class*="fill-amber-"],
+  .app-shell [class*="fill-pink-"],
+  .app-shell [class*="fill-sky-"],
+  .app-shell [class*="fill-cyan-"],
+  .app-shell [class*="fill-lime-"],
+  .app-shell [class*="fill-violet-"],
+  .app-shell [class*="fill-fuchsia-"],
+  .app-shell [class*="fill-rose-"] {
+    fill: #b8941f !important;
+  }
+
+  .app-shell [class*="stroke-blue-"],
+  .app-shell [class*="stroke-green-"],
+  .app-shell [class*="stroke-purple-"],
+  .app-shell [class*="stroke-red-"],
+  .app-shell [class*="stroke-orange-"],
+  .app-shell [class*="stroke-emerald-"],
+  .app-shell [class*="stroke-indigo-"],
+  .app-shell [class*="stroke-teal-"],
+  .app-shell [class*="stroke-yellow-"],
+  .app-shell [class*="stroke-amber-"],
+  .app-shell [class*="stroke-pink-"],
+  .app-shell [class*="stroke-sky-"],
+  .app-shell [class*="stroke-cyan-"],
+  .app-shell [class*="stroke-lime-"],
+  .app-shell [class*="stroke-violet-"],
+  .app-shell [class*="stroke-fuchsia-"],
+  .app-shell [class*="stroke-rose-"] {
+    stroke: #b8941f !important;
+  }
+
+  .app-shell [class*="ring-blue-"],
+  .app-shell [class*="ring-green-"],
+  .app-shell [class*="ring-purple-"],
+  .app-shell [class*="ring-red-"],
+  .app-shell [class*="ring-orange-"],
+  .app-shell [class*="ring-emerald-"],
+  .app-shell [class*="ring-indigo-"],
+  .app-shell [class*="ring-teal-"],
+  .app-shell [class*="ring-yellow-"],
+  .app-shell [class*="ring-amber-"],
+  .app-shell [class*="ring-pink-"],
+  .app-shell [class*="ring-sky-"],
+  .app-shell [class*="ring-cyan-"],
+  .app-shell [class*="ring-lime-"],
+  .app-shell [class*="ring-violet-"],
+  .app-shell [class*="ring-fuchsia-"],
+  .app-shell [class*="ring-rose-"] {
+    --tw-ring-color: rgba(212, 175, 55, 0.5) !important;
+  }
+
+  .app-shell [class*="from-[#ff"],
+  .app-shell [class*="from-[#f"],
+  .app-shell [class*="from-[#F"],
+  .app-shell [class*="from-[#e"],
+  .app-shell [class*="from-[#E"],
+  .app-shell [class*="from-blue-"],
+  .app-shell [class*="from-green-"],
+  .app-shell [class*="from-purple-"],
+  .app-shell [class*="from-red-"],
+  .app-shell [class*="from-orange-"],
+  .app-shell [class*="from-emerald-"],
+  .app-shell [class*="from-indigo-"],
+  .app-shell [class*="from-teal-"],
+  .app-shell [class*="from-yellow-"],
+  .app-shell [class*="from-amber-"],
+  .app-shell [class*="from-pink-"],
+  .app-shell [class*="from-sky-"],
+  .app-shell [class*="from-cyan-"],
+  .app-shell [class*="from-lime-"],
+  .app-shell [class*="from-violet-"],
+  .app-shell [class*="from-fuchsia-"],
+  .app-shell [class*="from-rose-"] {
+    --tw-gradient-from: rgba(212, 175, 55, 0.26) var(--tw-gradient-from-position) !important;
+    --tw-gradient-to: rgba(212, 175, 55, 0.03) var(--tw-gradient-to-position) !important;
+  }
+
+  .app-shell [class*="via-[#ff"],
+  .app-shell [class*="via-[#f"],
+  .app-shell [class*="via-[#F"],
+  .app-shell [class*="via-[#e"],
+  .app-shell [class*="via-[#E"],
+  .app-shell [class*="via-blue-"],
+  .app-shell [class*="via-green-"],
+  .app-shell [class*="via-purple-"],
+  .app-shell [class*="via-red-"],
+  .app-shell [class*="via-orange-"],
+  .app-shell [class*="via-emerald-"],
+  .app-shell [class*="via-indigo-"],
+  .app-shell [class*="via-teal-"],
+  .app-shell [class*="via-yellow-"],
+  .app-shell [class*="via-amber-"],
+  .app-shell [class*="via-pink-"],
+  .app-shell [class*="via-sky-"],
+  .app-shell [class*="via-cyan-"],
+  .app-shell [class*="via-lime-"],
+  .app-shell [class*="via-violet-"],
+  .app-shell [class*="via-fuchsia-"],
+  .app-shell [class*="via-rose-"] {
+    --tw-gradient-via: rgba(212, 175, 55, 0.18) var(--tw-gradient-via-position) !important;
+  }
+
+  .app-shell [class*="to-[#ff"],
+  .app-shell [class*="to-[#f"],
+  .app-shell [class*="to-[#F"],
+  .app-shell [class*="to-[#e"],
+  .app-shell [class*="to-[#E"],
+  .app-shell [class*="to-blue-"],
+  .app-shell [class*="to-green-"],
+  .app-shell [class*="to-purple-"],
+  .app-shell [class*="to-red-"],
+  .app-shell [class*="to-orange-"],
+  .app-shell [class*="to-emerald-"],
+  .app-shell [class*="to-indigo-"],
+  .app-shell [class*="to-teal-"],
+  .app-shell [class*="to-yellow-"],
+  .app-shell [class*="to-amber-"],
+  .app-shell [class*="to-pink-"],
+  .app-shell [class*="to-sky-"],
+  .app-shell [class*="to-cyan-"],
+  .app-shell [class*="to-lime-"],
+  .app-shell [class*="to-violet-"],
+  .app-shell [class*="to-fuchsia-"],
+  .app-shell [class*="to-rose-"] {
+    --tw-gradient-to: rgba(212, 175, 55, 0.05) var(--tw-gradient-to-position) !important;
   }
 }

@@ -2,15 +2,17 @@ import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { NavigationBar } from "@/components/NavigationBar";
 import { Calendar, MapPin, Users, Clock, Star, Bookmark, Menu, X } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export const TripsPage = (): JSX.Element => {
   const [activeTab, setActiveTab] = useState<"upcoming" | "past" | "bookmarked">("upcoming");
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
 
-  const upcomingTrips = [
+  const [upcomingTrips, setUpcomingTrips] = useState([
     {
       id: 1,
       title: "El Nido Island Hopping Adventure",
@@ -35,9 +37,9 @@ export const TripsPage = (): JSX.Element => {
       price: "₱8,900",
       dateAdded: "January 5, 2025"
     }
-  ];
+  ]);
 
-  const pastTrips = [
+  const [pastTrips] = useState([
     {
       id: 3,
       title: "Sagada Cave Exploration",
@@ -77,9 +79,9 @@ export const TripsPage = (): JSX.Element => {
       price: "₱22,400",
       dateAdded: "October 25, 2023"
     }
-  ];
+  ]);
 
-  const bookmarkedTrips = [
+  const [bookmarkedTrips, setBookmarkedTrips] = useState([
     {
       id: 6,
       title: "Donsol Whale Shark Swimming",
@@ -116,7 +118,7 @@ export const TripsPage = (): JSX.Element => {
       price: "₱14,500",
       dateAdded: "December 22, 2024"
     }
-  ];
+  ]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -133,10 +135,86 @@ export const TripsPage = (): JSX.Element => {
     }
   };
 
+  const parsePriceToCentavos = (price: string): number => {
+    const numeric = Number(price.replace(/[^0-9.]/g, "")) || 0;
+    return Math.round(numeric * 100);
+  };
+
+  const handleCompletePayment = async (trip: (typeof upcomingTrips)[number]) => {
+    try {
+      const response = await fetch("/api/create-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          amount: parsePriceToCentavos(trip.price),
+          currency: "PHP",
+          description: `${trip.title} booking`,
+          statement_descriptor: "LAKBAY",
+          metadata: {
+            trip_id: String(trip.id),
+            trip_title: trip.title,
+            source: "trips_page_pending_payment",
+          },
+        }),
+      });
+
+      const payload = await response.json();
+
+      if (response.ok && payload.success && payload.checkout_url) {
+        window.location.href = payload.checkout_url;
+        return;
+      }
+
+      setLocation(`/trip/${trip.id}`);
+      toast({
+        title: "Continue booking in trip page",
+        description: "Payment checkout is unavailable here. We redirected you to trip details.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Payment failed",
+        description: error.message || "Unable to start payment right now.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleRemoveBookmark = (tripId: number) => {
+    setBookmarkedTrips((prev) => prev.filter((trip) => trip.id !== tripId));
+    toast({
+      title: "Bookmark removed",
+      description: "Trip removed from your bookmarked list.",
+    });
+  };
+
+  const handleBookAgain = (trip: (typeof pastTrips)[number]) => {
+    const clonedTrip = {
+      ...trip,
+      id: Date.now(),
+      status: "Pending Payment",
+      dateAdded: new Date().toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }),
+    };
+    setUpcomingTrips((prev) => [clonedTrip, ...prev]);
+    setActiveTab("upcoming");
+    toast({
+      title: "Trip added to upcoming",
+      description: `${trip.title} was added for rebooking.`,
+    });
+  };
+
+  const handleWriteReview = (tripId: number) => {
+    setLocation(`/trip/${tripId}#reviews`);
+  };
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen view-shell fit-screen">
       {/* Header */}
-      <header className="bg-white px-8 py-6 border-b border-gray-100">
+      <header className="view-header">
         <div className="flex items-center justify-between">
           {/* Left: Logo placeholder */}
           <div className="w-8 h-8 bg-black" style={{borderRadius: '1px'}}></div>
@@ -162,42 +240,42 @@ export const TripsPage = (): JSX.Element => {
       </header>
 
       {/* Header */}
-      <div className="bg-white border-b border-gray-100">
+      <div className="bg-transparent border-b border-white/80">
         <div className="max-w-7xl mx-auto px-8 py-8">
-          <h1 className="prada-heading text-4xl text-black font-light mb-2">Your Lakbays</h1>
-          <p className="text-gray-600 font-light">Manage your upcoming and past travel experiences</p>
+          <h1 className="prada-heading text-5xl text-[#1f2435] mb-2">Your Lakbays</h1>
+          <p className="text-[#646b7c] font-medium">Manage your upcoming and past travel experiences</p>
         </div>
       </div>
 
       {/* Navigation Tabs */}
       <div className="max-w-7xl mx-auto px-8 py-6">
-        <div className="flex space-x-8">
+        <div className="flex flex-wrap gap-3">
           <button
             onClick={() => setActiveTab("upcoming")}
-            className={`text-sm font-light tracking-wider transition-all ${
+            className={`text-sm px-5 py-2.5 rounded-full font-semibold transition-all ${
               activeTab === "upcoming"
-                ? "text-black font-medium"
-                : "text-gray-500 hover:text-black"
+                ? "fit-orange shadow-lg shadow-orange-200"
+                : "bg-white text-gray-500 hover:text-black"
             }`}
           >
             UPCOMING TRIPS ({upcomingTrips.length})
           </button>
           <button
             onClick={() => setActiveTab("past")}
-            className={`text-sm font-light tracking-wider transition-all ${
+            className={`text-sm px-5 py-2.5 rounded-full font-semibold transition-all ${
               activeTab === "past"
-                ? "text-black font-medium"
-                : "text-gray-500 hover:text-black"
+                ? "fit-orange shadow-lg shadow-orange-200"
+                : "bg-white text-gray-500 hover:text-black"
             }`}
           >
             PAST TRIPS ({pastTrips.length})
           </button>
           <button
             onClick={() => setActiveTab("bookmarked")}
-            className={`text-sm font-light tracking-wider transition-all ${
+            className={`text-sm px-5 py-2.5 rounded-full font-semibold transition-all ${
               activeTab === "bookmarked"
-                ? "text-black font-medium"
-                : "text-gray-500 hover:text-black"
+                ? "fit-orange shadow-lg shadow-orange-200"
+                : "bg-white text-gray-500 hover:text-black"
             }`}
           >
             BOOKMARKED ({bookmarkedTrips.length})
@@ -235,10 +313,10 @@ export const TripsPage = (): JSX.Element => {
                     </div>
                     
                     {/* Trip Card */}
-                    <Card className="flex-1 prada-card p-6 hover:shadow-lg transition-shadow">
+                    <Card className="flex-1 prada-card fit-panel p-6 hover:shadow-lg transition-shadow">
                       <div className="grid md:grid-cols-4 gap-6">
                         <div className="md:col-span-1">
-                          <img
+                          <img loading="lazy" decoding="async"
                             src={trip.image}
                             alt={trip.title}
                             className="w-full h-32 object-cover prada-corner-radius"
@@ -286,7 +364,10 @@ export const TripsPage = (): JSX.Element => {
                               </Button>
                             </Link>
                             {trip.status === "Pending Payment" && (
-                              <Button className="w-full bg-[#D4AF37] hover:bg-[#B8941F] text-black font-light tracking-wider">
+                              <Button
+                                className="w-full bg-[#D4AF37] hover:bg-[#B8941F] text-black font-light tracking-wider"
+                                onClick={() => handleCompletePayment(trip)}
+                              >
                                 COMPLETE PAYMENT
                               </Button>
                             )}
@@ -332,10 +413,10 @@ export const TripsPage = (): JSX.Element => {
                     </div>
                     
                     {/* Trip Card */}
-                    <Card className="flex-1 prada-card p-6 hover:shadow-lg transition-shadow">
+                    <Card className="flex-1 prada-card fit-panel p-6 hover:shadow-lg transition-shadow">
                       <div className="grid md:grid-cols-4 gap-6">
                         <div className="md:col-span-1">
-                          <img
+                          <img loading="lazy" decoding="async"
                             src={trip.image}
                             alt={trip.title}
                             className="w-full h-32 object-cover prada-corner-radius"
@@ -383,10 +464,17 @@ export const TripsPage = (): JSX.Element => {
                                 VIEW DETAILS
                               </Button>
                             </Link>
-                            <Button className="w-full bg-green-600 hover:bg-green-700 text-white font-light tracking-wider">
+                            <Button
+                              className="w-full bg-green-600 hover:bg-green-700 text-white font-light tracking-wider"
+                              onClick={() => setLocation(`/trip/${trip.id}`)}
+                            >
                               BOOK NOW
                             </Button>
-                            <Button variant="outline" className="w-full font-light tracking-wider border-red-300 text-red-600 hover:bg-red-50">
+                            <Button
+                              variant="outline"
+                              className="w-full font-light tracking-wider border-red-300 text-red-600 hover:bg-red-50"
+                              onClick={() => handleRemoveBookmark(trip.id)}
+                            >
                               REMOVE BOOKMARK
                             </Button>
                           </div>
@@ -425,10 +513,10 @@ export const TripsPage = (): JSX.Element => {
                     </div>
                     
                     {/* Trip Card */}
-                    <Card className="flex-1 prada-card p-6 hover:shadow-lg transition-shadow">
+                    <Card className="flex-1 prada-card fit-panel p-6 hover:shadow-lg transition-shadow">
                       <div className="grid md:grid-cols-4 gap-6">
                         <div className="md:col-span-1">
-                          <img
+                          <img loading="lazy" decoding="async"
                             src={trip.image}
                             alt={trip.title}
                             className="w-full h-32 object-cover prada-corner-radius"
@@ -481,10 +569,18 @@ export const TripsPage = (): JSX.Element => {
                                 VIEW DETAILS
                               </Button>
                             </Link>
-                            <Button variant="outline" className="w-full font-light tracking-wider">
+                            <Button
+                              variant="outline"
+                              className="w-full font-light tracking-wider"
+                              onClick={() => handleWriteReview(trip.id)}
+                            >
                               WRITE REVIEW
                             </Button>
-                            <Button variant="outline" className="w-full font-light tracking-wider">
+                            <Button
+                              variant="outline"
+                              className="w-full font-light tracking-wider"
+                              onClick={() => handleBookAgain(trip)}
+                            >
                               BOOK AGAIN
                             </Button>
                           </div>

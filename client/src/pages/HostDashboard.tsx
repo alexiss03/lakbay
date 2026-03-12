@@ -25,9 +25,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
+import { apiJsonRequest, apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 import { AdminTourForm } from '@/components/AdminTourForm';
+import { Link } from 'wouter';
 
 interface HostTrip {
   id: string;
@@ -79,11 +81,12 @@ const HostDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const { user } = useAuth();
+  const currentHostId = user?.id ? String(user.id) : 'host_1';
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Mock data for demonstration - replace with actual API calls
-  const [hostStats] = useState({
+  const defaultHostStats = {
     totalTrips: 12,
     activeTrips: 8,
     totalBookings: 156,
@@ -92,9 +95,9 @@ const HostDashboard = () => {
     totalEarnings: 2340000,
     pendingPayouts: 125000,
     activeChats: 5
-  });
+  };
 
-  const [trips] = useState<HostTrip[]>([
+  const defaultTrips: HostTrip[] = [
     {
       id: '1',
       title: 'Palawan Island Hopping Adventure',
@@ -121,9 +124,9 @@ const HostDashboard = () => {
       maxParticipants: 15,
       createdAt: '2024-02-10'
     }
-  ]);
+  ];
 
-  const [bookings] = useState<Booking[]>([
+  const defaultBookings: Booking[] = [
     {
       id: '1',
       userName: 'Juan Dela Cruz',
@@ -146,7 +149,7 @@ const HostDashboard = () => {
       travelDate: '2024-08-20',
       participants: 1
     }
-  ]);
+  ];
 
   const [payouts] = useState<Payout[]>([
     {
@@ -198,6 +201,81 @@ const HostDashboard = () => {
     }
   ]);
 
+  const { data: analyticsData } = useQuery<any>({
+    queryKey: ['/api/host/analytics', currentHostId],
+    queryFn: () => apiJsonRequest('GET', `/api/host/analytics/${currentHostId}`),
+  });
+
+  const { data: tripsData = [] } = useQuery<HostTrip[]>({
+    queryKey: ['/api/host/trips', currentHostId, selectedFilter],
+    queryFn: () => apiJsonRequest('GET', `/api/host/trips/${currentHostId}?status=${selectedFilter}&limit=50`),
+  });
+
+  const { data: bookingsData = [] } = useQuery<Booking[]>({
+    queryKey: ['/api/host/bookings', currentHostId, selectedFilter],
+    queryFn: () => apiJsonRequest('GET', `/api/host/bookings/${currentHostId}?status=${selectedFilter}&limit=50`),
+  });
+
+  const hostStats = analyticsData
+    ? {
+        totalTrips: analyticsData.totalTrips || 0,
+        activeTrips: analyticsData.activeTrips || 0,
+        totalBookings: analyticsData.totalBookings || 0,
+        monthlyRevenue: analyticsData.monthlyRevenue || 0,
+        averageRating: analyticsData.averageRating || 0,
+        totalEarnings: analyticsData.totalRevenue || 0,
+        pendingPayouts: analyticsData.pendingPayouts || 0,
+        activeChats: 5,
+      }
+    : defaultHostStats;
+
+  const trips = Array.isArray(tripsData) && tripsData.length > 0 ? tripsData : defaultTrips;
+  const bookings = Array.isArray(bookingsData) && bookingsData.length > 0 ? bookingsData : defaultBookings;
+
+  const requestPayoutMutation = useMutation({
+    mutationFn: async () => {
+      return apiJsonRequest('POST', '/api/host/payouts/request', {
+        hostId: currentHostId,
+        amount: hostStats.pendingPayouts || 0,
+        period: new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' }),
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Payout requested',
+        description: 'Your payout request has been submitted.',
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/host/analytics', currentHostId] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Payout request failed',
+        description: error.message || 'Unable to request payout right now.',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const updateBookingStatusMutation = useMutation({
+    mutationFn: async ({ bookingId, status }: { bookingId: string; status: Booking['status'] }) => {
+      return apiJsonRequest('PUT', `/api/host/bookings/${bookingId}/status`, { status });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/host/bookings', currentHostId] });
+      toast({
+        title: 'Booking updated',
+        description: 'Booking status changed successfully.',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Update failed',
+        description: error.message || 'Failed to update booking status.',
+        variant: 'destructive',
+      });
+    },
+  });
+
   const getStatusBadge = (status: string, type: 'trip' | 'booking' | 'payout') => {
     const statusConfig = {
       trip: {
@@ -223,7 +301,7 @@ const HostDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen view-shell">
       {/* Host Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -503,7 +581,22 @@ const HostDashboard = () => {
                           </Badge>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                          <Button size="sm" variant="outline">
+                          <Link href="/chats">
+                            <Button size="sm" variant="outline">
+                              <MessageCircle className="w-4 h-4" />
+                            </Button>
+                          </Link>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() =>
+                              updateBookingStatusMutation.mutate({
+                                bookingId: booking.id,
+                                status: booking.status === 'pending' ? 'confirmed' : booking.status,
+                              })
+                            }
+                            disabled={updateBookingStatusMutation.isPending || booking.status !== 'pending'}
+                          >
                             <MessageCircle className="w-4 h-4" />
                           </Button>
                           <Button size="sm" variant="outline">
@@ -523,8 +616,12 @@ const HostDashboard = () => {
             <div className="mb-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-light text-gray-900">Payouts</h2>
-                <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black">
-                  Request Payout
+                <Button
+                  className="bg-[#D4AF37] hover:bg-[#B8941F] text-black"
+                  onClick={() => requestPayoutMutation.mutate()}
+                  disabled={requestPayoutMutation.isPending}
+                >
+                  {requestPayoutMutation.isPending ? "Requesting..." : "Request Payout"}
                 </Button>
               </div>
             </div>

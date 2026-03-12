@@ -113,9 +113,9 @@ export const ArticlePage = ({ params }: ArticlePageProps): JSX.Element => {
   const article = getArticleData();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen view-shell">
       {/* Header */}
-      <header className="bg-white px-8 py-4 border-b border-gray-100">
+      <header className="view-header">
         <div className="flex items-center justify-between">
           <Link href="/">
             <div className="w-8 h-8 bg-gray-300 rounded cursor-pointer"></div>
@@ -126,14 +126,18 @@ export const ArticlePage = ({ params }: ArticlePageProps): JSX.Element => {
             <Link href="/trips" className="text-gray-700 hover:text-gray-900">Trips</Link>
             <Link href="/chats" className="text-gray-700 hover:text-gray-900">Chats</Link>
             <Link href="/trails" className="text-gray-700 hover:text-gray-900">Trails</Link>
-            <a href="#" className="text-gray-700 hover:text-gray-900">Story</a>
+            <Link href="/story" className="text-gray-700 hover:text-gray-900">Story</Link>
             <Link href="/shop" className="text-gray-700 hover:text-gray-900">Shop</Link>
-            <a href="#" className="text-gray-700 hover:text-gray-900">Corporate</a>
+            <Link href="/corporate" className="text-gray-700 hover:text-gray-900">Corporate</Link>
           </nav>
           
           <div className="flex items-center space-x-4">
-            <Button variant="outline" className="text-sm">Log in</Button>
-            <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black text-sm">Register</Button>
+            <Link href="/login">
+              <Button variant="outline" className="text-sm">Log in</Button>
+            </Link>
+            <Link href="/signup">
+              <Button className="bg-[#D4AF37] hover:bg-[#B8941F] text-black text-sm">Register</Button>
+            </Link>
             <span className="text-sm text-gray-700">EN</span>
           </div>
         </div>
@@ -177,7 +181,7 @@ export const ArticlePage = ({ params }: ArticlePageProps): JSX.Element => {
           <img 
             src={article.heroImage}
             alt={article.title}
-            className="w-full h-96 object-cover rounded-lg"
+            className="w-full h-72 md:h-80 object-cover rounded-lg"
           />
         </div>
 
@@ -203,7 +207,7 @@ export const ArticlePage = ({ params }: ArticlePageProps): JSX.Element => {
                     <img 
                       src={block.src}
                       alt={block.caption}
-                      className="w-full h-64 object-cover rounded-lg"
+                      className="w-full h-52 object-cover rounded-lg"
                     />
                     <figcaption className="text-center text-gray-500 text-sm mt-2 italic">
                       {block.caption}

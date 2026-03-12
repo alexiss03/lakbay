@@ -103,7 +103,7 @@ export const TrendingArticlesSection = (): JSX.Element => {
                     <img
                       src={article.image}
                       alt={article.title}
-                      className="w-full h-48 object-cover"
+                      className="w-full h-40 object-cover"
                     />
                     <div className="absolute top-3 left-3 flex space-x-2">
                       <Badge variant="outline" className="bg-white/90 text-xs">

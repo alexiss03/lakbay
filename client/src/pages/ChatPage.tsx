@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,6 +8,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Send, Search, MoreVertical, Phone, Video, Users, MapPin } from "lucide-react";
 import { Link } from "wouter";
+import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 interface ChatMessage {
   id: string;
@@ -36,9 +40,13 @@ export const ChatPage = (): JSX.Element => {
   const [messageInput, setMessageInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const currentUserId = user?.id || 'guest_user';
+  const currentUserName = user?.firstName || user?.username || 'You';
 
-  // Mock data for chats
-  const [chats] = useState<Chat[]>([
+  const mockChats: Chat[] = [
     {
       id: '1',
       name: 'Sarah Chen - Host',
@@ -87,10 +95,9 @@ export const ChatPage = (): JSX.Element => {
       location: 'Siargao, Philippines',
       participants: 12
     }
-  ]);
+  ];
 
-  // Mock messages for selected chat
-  const [messages, setMessages] = useState<ChatMessage[]>([
+  const mockMessages: ChatMessage[] = [
     {
       id: '1',
       text: 'Hi everyone! Welcome to our Palawan adventure group. I\'m Sarah, your host for this amazing island hopping experience!',
@@ -119,7 +126,90 @@ export const ChatPage = (): JSX.Element => {
       senderName: 'Sarah Chen',
       timestamp: new Date(Date.now() - 300000)
     }
-  ]);
+  ];
+
+  const [localMessages, setLocalMessages] = useState<ChatMessage[]>(mockMessages);
+
+  const { data: chatRooms = [] } = useQuery<any[]>({
+    queryKey: ['/api/chat/rooms', currentUserId],
+    queryFn: async () => {
+      const response = await apiRequest('GET', `/api/chat/rooms/${currentUserId}`);
+      return response.json();
+    },
+  });
+
+  const backendChats: Chat[] = chatRooms.map((room: any) => ({
+    id: room.id,
+    name: room.name || 'Chat',
+    lastMessage: room.lastMessageContent || 'No messages yet',
+    lastMessageTime: room.lastMessageAt ? new Date(room.lastMessageAt) : new Date(),
+    unreadCount: Number(room.unreadCount || 0),
+    avatar: room.avatar || undefined,
+    isOnline: true,
+    type: room.type === 'direct' ? 'host' : 'group',
+    tripTitle: room.name,
+    participants: Number(room.participantCount || 0),
+  }));
+
+  const chats = backendChats.length > 0 ? backendChats : mockChats;
+
+  useEffect(() => {
+    if (chats.length === 0) return;
+    if (!selectedChat || !chats.some((chat) => chat.id === selectedChat)) {
+      setSelectedChat(chats[0].id);
+    }
+  }, [selectedChat, chats]);
+
+  const isBackendChat = !!selectedChat && backendChats.some((chat) => chat.id === selectedChat);
+
+  const { data: backendMessages = [] } = useQuery<any[]>({
+    queryKey: ['/api/chat/rooms/messages', selectedChat, currentUserId],
+    queryFn: async () => {
+      const response = await apiRequest(
+        'GET',
+        `/api/chat/rooms/${selectedChat}/messages?userId=${encodeURIComponent(currentUserId)}`,
+      );
+      return response.json();
+    },
+    enabled: Boolean(selectedChat && isBackendChat),
+  });
+
+  const normalizedBackendMessages: ChatMessage[] = [...backendMessages]
+    .reverse()
+    .map((message: any) => ({
+      id: message.id,
+      text: message.content,
+      sender: message.senderId === currentUserId ? 'user' : 'host',
+      senderName: message.senderName || 'Host',
+      timestamp: message.createdAt ? new Date(message.createdAt) : new Date(),
+      avatar: message.senderAvatar || undefined,
+    }));
+
+  const messages = isBackendChat ? normalizedBackendMessages : localMessages;
+
+  const sendMessageMutation = useMutation({
+    mutationFn: async (content: string) => {
+      if (!selectedChat) return null;
+      const response = await apiRequest('POST', `/api/chat/rooms/${selectedChat}/messages`, {
+        senderId: currentUserId,
+        senderName: currentUserName,
+        content,
+        type: 'text',
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/chat/rooms/messages', selectedChat, currentUserId] });
+      queryClient.invalidateQueries({ queryKey: ['/api/chat/rooms', currentUserId] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Message failed',
+        description: error.message || 'Unable to send message.',
+        variant: 'destructive',
+      });
+    },
+  });
 
   const filteredChats = chats.filter(chat =>
     chat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -130,18 +220,25 @@ export const ChatPage = (): JSX.Element => {
   const groupChats = filteredChats.filter(chat => chat.type === 'group');
 
   const sendMessage = () => {
-    if (!messageInput.trim() || !selectedChat) return;
+    const content = messageInput.trim();
+    if (!content || !selectedChat) return;
+
+    setMessageInput('');
+
+    if (isBackendChat) {
+      sendMessageMutation.mutate(content);
+      return;
+    }
 
     const newMessage: ChatMessage = {
       id: Date.now().toString(),
-      text: messageInput,
+      text: content,
       sender: 'user',
-      senderName: 'You',
+      senderName: currentUserName,
       timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, newMessage]);
-    setMessageInput('');
+    setLocalMessages((prev) => [...prev, newMessage]);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -176,9 +273,9 @@ export const ChatPage = (): JSX.Element => {
   const selectedChatData = chats.find(chat => chat.id === selectedChat);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen view-shell fit-screen">
       {/* Header */}
-      <header className="bg-white px-8 py-6 border-b border-gray-100">
+      <header className="view-header">
         <div className="flex items-center justify-between">
           {/* Left: Logo placeholder */}
           <div className="w-8 h-8 bg-black" style={{borderRadius: '1px'}}></div>
@@ -189,9 +286,9 @@ export const ChatPage = (): JSX.Element => {
             <Link href="/trips" className="prada-nav text-gray-700 hover:text-black transition-colors">Trips</Link>
             <Link href="/chats" className="prada-nav text-black hover:text-gray-600 transition-colors">Chats</Link>
             <Link href="/trails" className="prada-nav text-gray-700 hover:text-black transition-colors">Trails</Link>
-            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</a>
+            <Link href="/story" className="prada-nav text-gray-700 hover:text-black transition-colors">Story</Link>
             <Link href="/shop" className="prada-nav text-gray-700 hover:text-black transition-colors">Shop</Link>
-            <a href="#" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</a>
+            <Link href="/corporate" className="prada-nav text-gray-700 hover:text-black transition-colors">Corporate</Link>
           </nav>
           
           {/* Right: Buttons and Language */}
@@ -212,9 +309,9 @@ export const ChatPage = (): JSX.Element => {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex h-[calc(100vh-200px)] bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="flex h-[calc(100vh-200px)] fit-panel rounded-[34px] overflow-hidden">
           {/* Chat List Sidebar */}
-          <div className="w-1/3 border-r flex flex-col">
+          <div className="w-1/3 border-r border-[#f1efef] flex flex-col bg-white/80">
             {/* Search */}
             <div className="p-4 border-b">
               <div className="relative">
@@ -230,7 +327,7 @@ export const ChatPage = (): JSX.Element => {
 
             {/* Chat Tabs */}
             <Tabs defaultValue="all" className="flex-1 flex flex-col">
-              <TabsList className="grid w-full grid-cols-3 mx-4 mt-4">
+              <TabsList className="grid w-full grid-cols-3 mx-4 mt-4 bg-[#fff2eb] rounded-full p-1">
                 <TabsTrigger value="all">All</TabsTrigger>
                 <TabsTrigger value="hosts">Hosts</TabsTrigger>
                 <TabsTrigger value="groups">Groups</TabsTrigger>
@@ -243,7 +340,7 @@ export const ChatPage = (): JSX.Element => {
                       key={chat.id}
                       onClick={() => setSelectedChat(chat.id)}
                       className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                        selectedChat === chat.id ? 'bg-[#D4AF37]/10 border-l-4 border-[#D4AF37]' : 'hover:bg-gray-50'
+                        selectedChat === chat.id ? 'bg-[#fff1ea] border-l-4 border-[#ff6c2f]' : 'hover:bg-gray-50'
                       }`}
                     >
                       <div className="flex items-start space-x-3">
@@ -262,7 +359,7 @@ export const ChatPage = (): JSX.Element => {
                             <div className="flex items-center space-x-2">
                               <span className="text-xs text-gray-500">{formatTime(chat.lastMessageTime)}</span>
                               {chat.unreadCount > 0 && (
-                                <Badge className="bg-[#D4AF37] text-black text-xs px-2 py-0">
+                                <Badge className="bg-[#ff6c2f] text-white text-xs px-2 py-0">
                                   {chat.unreadCount}
                                 </Badge>
                               )}
@@ -289,7 +386,7 @@ export const ChatPage = (): JSX.Element => {
                       key={chat.id}
                       onClick={() => setSelectedChat(chat.id)}
                       className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                        selectedChat === chat.id ? 'bg-[#D4AF37]/10 border-l-4 border-[#D4AF37]' : 'hover:bg-gray-50'
+                        selectedChat === chat.id ? 'bg-[#fff1ea] border-l-4 border-[#ff6c2f]' : 'hover:bg-gray-50'
                       }`}
                     >
                       <div className="flex items-start space-x-3">
@@ -326,12 +423,12 @@ export const ChatPage = (): JSX.Element => {
                       key={chat.id}
                       onClick={() => setSelectedChat(chat.id)}
                       className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                        selectedChat === chat.id ? 'bg-[#D4AF37]/10 border-l-4 border-[#D4AF37]' : 'hover:bg-gray-50'
+                        selectedChat === chat.id ? 'bg-[#fff1ea] border-l-4 border-[#ff6c2f]' : 'hover:bg-gray-50'
                       }`}
                     >
                       <div className="flex items-start space-x-3">
                         <div className="relative">
-                          <div className="w-10 h-10 bg-[#D4AF37] rounded-full flex items-center justify-center">
+                          <div className="w-10 h-10 fit-orange rounded-full flex items-center justify-center">
                             <Users className="w-5 h-5 text-black" />
                           </div>
                           {chat.isOnline && (
@@ -367,7 +464,7 @@ export const ChatPage = (): JSX.Element => {
             {selectedChat ? (
               <>
                 {/* Chat Header */}
-                <div className="p-4 border-b bg-white flex items-center justify-between">
+                <div className="p-4 border-b border-[#f1efef] bg-white flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <Avatar className="w-10 h-10">
                       <AvatarImage src={selectedChatData?.avatar} />
@@ -400,7 +497,7 @@ export const ChatPage = (): JSX.Element => {
                 </div>
 
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#f8f7f7]">
                   {messages.map((message) => (
                     <div
                       key={message.id}
@@ -420,7 +517,7 @@ export const ChatPage = (): JSX.Element => {
                           <div
                             className={`px-4 py-2 rounded-lg ${
                               message.sender === 'user'
-                                ? 'bg-[#D4AF37] text-black'
+                                ? 'fit-orange text-white'
                                 : 'bg-white text-gray-900 border'
                             }`}
                           >
@@ -448,8 +545,8 @@ export const ChatPage = (): JSX.Element => {
                     />
                     <Button
                       onClick={sendMessage}
-                      disabled={!messageInput.trim()}
-                      className="bg-[#D4AF37] hover:bg-[#B8941F] text-black"
+                      disabled={!messageInput.trim() || sendMessageMutation.isPending}
+                      className="prada-button prada-gold-accent"
                     >
                       <Send className="w-4 h-4" />
                     </Button>

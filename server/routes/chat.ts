@@ -88,6 +88,13 @@ router.post("/rooms/:roomId/messages", async (req, res) => {
     const { roomId } = req.params;
     const { senderId, senderName, senderAvatar, content, type = "text", attachments } = req.body;
 
+    const [currentStats] = await db
+      .select({ messageCount: chatRoomStats.messageCount })
+      .from(chatRoomStats)
+      .where(eq(chatRoomStats.chatRoomId, roomId))
+      .limit(1);
+    const nextMessageCount = (Number(currentStats?.messageCount || 0) + 1).toString();
+
     const [newMessage] = await db
       .insert(chatMessages)
       .values({
@@ -109,7 +116,7 @@ router.post("/rooms/:roomId/messages", async (req, res) => {
         lastMessageAt: new Date(),
         lastMessageContent: content.substring(0, 100), // Preview
         lastMessageSender: senderName,
-        messageCount: "1", // This would be incremented in real implementation
+        messageCount: nextMessageCount,
       })
       .onConflictDoUpdate({
         target: chatRoomStats.chatRoomId,
@@ -117,6 +124,7 @@ router.post("/rooms/:roomId/messages", async (req, res) => {
           lastMessageAt: new Date(),
           lastMessageContent: content.substring(0, 100),
           lastMessageSender: senderName,
+          messageCount: nextMessageCount,
           updatedAt: new Date(),
         }
       });

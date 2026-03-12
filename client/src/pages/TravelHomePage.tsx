@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Calendar, Users, Star, Clock, Brain, Sparkles, LogOut } from "lucide-react";
+import { MapPin, Calendar, Users, Star, Clock, Brain, Sparkles, LogOut, Trophy, Target, Zap } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { ChatWidget } from "@/components/ChatWidget";
 import { RecommendedSection } from "@/components/RecommendedSection";
@@ -13,6 +14,54 @@ import { PhilippinesMap } from "@/components/PhilippinesMap";
 import { NavigationBar } from "@/components/NavigationBar";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { apiJsonRequest } from "@/lib/queryClient";
+
+type TravelGoalAction =
+  | "trip_completed"
+  | "province_visited"
+  | "travel_day"
+  | "exploration_day"
+  | "bonus_points"
+  | "adventure_activity"
+  | "wellness_activity";
+
+interface TravelGoalSummary {
+  goal: {
+    year: number;
+    targetTrips: number;
+    targetProvinces: number;
+    targetTravelDays: number;
+    targetAdventure?: number;
+    targetWellness?: number;
+    targetExplorationDays?: number;
+    targetPoints: number;
+    currentTrips: number;
+    currentProvinces: number;
+    currentTravelDays: number;
+    currentAdventure?: number;
+    currentWellness?: number;
+    currentExplorationDays?: number;
+    currentPoints: number;
+    notes?: string | null;
+  };
+  progress: {
+    trips: { current: number; target: number; percent: number };
+    provinces: { current: number; target: number; percent: number };
+    travelDays: { current: number; target: number; percent: number };
+    adventure?: { current: number; target: number; percent: number };
+    wellness?: { current: number; target: number; percent: number };
+    explorationDays?: { current: number; target: number; percent: number };
+    points: { current: number; target: number; percent: number };
+    overallCompletion: number;
+  };
+  gamification: {
+    level: number;
+    nextLevelPoints: number;
+    xpToNextLevel: number;
+    badges: string[];
+    rank: string;
+  };
+}
 
 export const TravelHomePage = (): JSX.Element => {
   const [activeTab, setActiveTab] = useState("Private");
@@ -20,6 +69,101 @@ export const TravelHomePage = (): JSX.Element => {
   const [location, setLocation] = useLocation();
   const { user, isAuthenticated, isLoading } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const currentYear = new Date().getFullYear();
+  const [goalForm, setGoalForm] = useState({
+    targetTrips: "6",
+    targetProvinces: "8",
+    targetTravelDays: "20",
+  });
+
+  const travelGoalQueryKey = ["/api/travel-goals", currentYear] as const;
+  const { data: travelGoalData, isLoading: isTravelGoalLoading } = useQuery<TravelGoalSummary>({
+    queryKey: travelGoalQueryKey,
+    queryFn: () => apiJsonRequest("GET", `/api/travel-goals?year=${currentYear}`),
+    enabled: isAuthenticated,
+  });
+
+  const saveGoalMutation = useMutation({
+    mutationFn: (payload: {
+      year: number;
+      targetAdventure: number;
+      targetWellness: number;
+      targetExplorationDays: number;
+      targetPoints: number;
+    }) => apiJsonRequest("PUT", "/api/travel-goals", payload),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: travelGoalQueryKey });
+      toast({
+        title: "Goals Updated",
+        description: `Your ${currentYear} travel goals are saved.`,
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Update Failed",
+        description: "Unable to save travel goals. Try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const progressMutation = useMutation({
+    mutationFn: (payload: { year: number; action: TravelGoalAction; amount: number }) =>
+      apiJsonRequest("POST", "/api/travel-goals/progress", payload),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: travelGoalQueryKey });
+    },
+    onError: () => {
+      toast({
+        title: "Progress Update Failed",
+        description: "Unable to update travel progress right now.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  useEffect(() => {
+    if (!travelGoalData) return;
+    setGoalForm({
+      targetTrips: String(travelGoalData.goal.targetAdventure ?? travelGoalData.goal.targetTrips),
+      targetProvinces: String(travelGoalData.goal.targetWellness ?? travelGoalData.goal.targetProvinces),
+      targetTravelDays: String(
+        travelGoalData.goal.targetExplorationDays ?? travelGoalData.goal.targetTravelDays,
+      ),
+    });
+  }, [travelGoalData]);
+
+  const computedTargetPoints =
+    Math.max(1, Number(goalForm.targetTrips || 0)) * 120 +
+    Math.max(1, Number(goalForm.targetProvinces || 0)) * 80 +
+    Math.max(1, Number(goalForm.targetTravelDays || 0)) * 20;
+
+  const handleSaveGoals = () => {
+    const targetTrips = Math.max(1, Number(goalForm.targetTrips || 0));
+    const targetProvinces = Math.max(1, Number(goalForm.targetProvinces || 0));
+    const targetTravelDays = Math.max(1, Number(goalForm.targetTravelDays || 0));
+    const targetPoints = targetTrips * 120 + targetProvinces * 80 + targetTravelDays * 20;
+
+    saveGoalMutation.mutate({
+      year: currentYear,
+      targetAdventure: targetTrips,
+      targetWellness: targetProvinces,
+      targetExplorationDays: targetTravelDays,
+      targetPoints,
+    });
+  };
+
+  const logProgress = (action: TravelGoalAction) => {
+    if (!isAuthenticated) {
+      toast({
+        title: "Login Required",
+        description: "Sign in to track travel goal progress.",
+      });
+      return;
+    }
+    progressMutation.mutate({ year: currentYear, action, amount: 1 });
+  };
   
   // Sample travel history data for the interactive map
   const travelHistory = [
@@ -68,9 +212,9 @@ export const TravelHomePage = (): JSX.Element => {
     }
   };
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen view-shell fit-screen">
       {/* Header */}
-      <header className="bg-white px-8 py-6 border-b border-gray-100">
+      <header className="view-header">
         <div className="flex items-center justify-between">
           {/* Left: Logo placeholder */}
           <div className="w-8 h-8 bg-black" style={{borderRadius: '1px'}}></div>
@@ -112,21 +256,222 @@ export const TravelHomePage = (): JSX.Element => {
       </header>
 
       {/* Hero Section */}
-      <section className="px-8 py-20 bg-[#fafafa]">
-        <div className="max-w-4xl">
-          <h1 className="prada-heading text-6xl text-black mb-6 leading-tight">
-            Become a premium adventurer
-          </h1>
-          <p className="text-xl text-gray-600 leading-relaxed font-light tracking-wide">
-            Rediscover the world through Lakbay, with our nature and cultural trips.<br />
-            Don't just travel, Lakbay!
-          </p>
+      <section className="px-8 py-14">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
+          <div>
+            <p className="text-sm font-semibold tracking-[0.2em] text-[#ff6a2c] mb-3">ACTIVITY-STYLE EXPERIENCE</p>
+            <h1 className="prada-heading text-6xl text-[#1e2434] mb-6 leading-[1.04]">
+              Track your travel goals like a pro
+            </h1>
+            <p className="text-lg text-[#5d6476] leading-relaxed font-medium max-w-xl mb-8">
+              Clean mobile-card layouts, bold orange highlights, and quick actions across your Lakbay journeys.
+            </p>
+            <div className="flex items-center gap-3">
+              <Link href="/trips">
+                <Button className="prada-button prada-gold-accent px-7 py-6 text-sm">Start Exploring</Button>
+              </Link>
+              <Link href="/shop">
+                <Button variant="outline" className="prada-button px-7 py-6 text-sm border-[#ff6c2f] text-[#ff6c2f]">
+                  Open Shop
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <Card className="fit-panel fit-mobile-card fit-orange p-6 flex flex-col justify-between">
+              <div>
+                <p className="text-xs tracking-[0.2em] opacity-80">WELLNESS + ADVENTURE</p>
+                <h3 className="text-3xl font-bold mt-2">5 Activities</h3>
+                <p className="text-sm opacity-85 mt-2">Your weekly mindful and adventurous streak</p>
+              </div>
+              <div className="mt-10 fit-grid-dots rounded-2xl p-4 bg-white/10">
+                <div className="flex items-end gap-2 h-16">
+                  {[30, 40, 35, 52, 58, 45, 60].map((v, i) => (
+                    <div key={i} className="flex-1 rounded-md bg-white/80" style={{ height: `${v}%` }}></div>
+                  ))}
+                </div>
+              </div>
+            </Card>
+
+            <Card className="fit-panel fit-mobile-card p-6 flex flex-col justify-between">
+              <div>
+                <p className="text-xs tracking-[0.2em] text-[#D4AF37] font-semibold">YEARLY TRAVEL GOAL</p>
+                <h3 className="text-3xl font-bold mt-2">
+                  {isAuthenticated ? `${travelGoalData?.progress.overallCompletion ?? 0}%` : "Login"}
+                </h3>
+                <p className="text-sm mt-2">
+                  {isAuthenticated
+                    ? `Level ${travelGoalData?.gamification.level ?? 1} • ${travelGoalData?.goal.currentPoints ?? 0} XP`
+                    : "Sign in to set and track your yearly goals"}
+                </p>
+              </div>
+
+              <div className="rounded-3xl p-5 fit-soft border border-[#ffe1d3] space-y-4">
+                {!isAuthenticated ? (
+                  <div className="space-y-3">
+                    <p className="text-sm">Build your travel streak, unlock badges, and track annual milestones.</p>
+                    <Link href="/login">
+                      <Button className="w-full prada-button prada-gold-accent">Log In to Start</Button>
+                    </Link>
+                  </div>
+                ) : isTravelGoalLoading || !travelGoalData ? (
+                  <p className="text-sm">Loading your goal progress...</p>
+                ) : (
+                  <>
+                    <div className="space-y-2">
+                      {[
+                        {
+                          key: "trips",
+                          label: "Adventure Quests",
+                          data: travelGoalData.progress.adventure ?? travelGoalData.progress.trips,
+                          icon: <Target className="w-3 h-3" />,
+                        },
+                        {
+                          key: "provinces",
+                          label: "Wellness Sessions",
+                          data: travelGoalData.progress.wellness ?? travelGoalData.progress.provinces,
+                          icon: <MapPin className="w-3 h-3" />,
+                        },
+                        {
+                          key: "days",
+                          label: "Exploration Days",
+                          data: travelGoalData.progress.explorationDays ?? travelGoalData.progress.travelDays,
+                          icon: <Calendar className="w-3 h-3" />,
+                        },
+                        {
+                          key: "xp",
+                          label: "XP",
+                          data: travelGoalData.progress.points,
+                          icon: <Zap className="w-3 h-3" />,
+                        },
+                      ].map((item) => (
+                        <div key={item.key}>
+                          <div className="flex items-center justify-between text-xs mb-1">
+                            <span className="flex items-center gap-1">
+                              {item.icon}
+                              {item.label}
+                            </span>
+                            <span>
+                              {item.data.current}/{item.data.target}
+                            </span>
+                          </div>
+                          <div className="w-full h-1.5 rounded-full bg-black/10 overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-[#D4AF37]"
+                              style={{ width: `${item.data.percent}%` }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      {(travelGoalData.gamification.badges.length ? travelGoalData.gamification.badges : ["No badge yet"])
+                        .slice(0, 3)
+                        .map((badge) => (
+                          <Badge key={badge} className="text-[10px] px-2 py-0.5 bg-[#D4AF37]/20 text-black border border-[#D4AF37]/40">
+                            <Trophy className="w-2.5 h-2.5 mr-1" />
+                            {badge}
+                          </Badge>
+                        ))}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" className="prada-button text-xs">
+                            Set Goals
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-md">
+                          <DialogHeader>
+                            <DialogTitle className="prada-heading text-xl">Set {currentYear} Goals</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-4 mt-4">
+                            <div className="space-y-2">
+                              <label className="text-xs uppercase tracking-wide">Adventure target</label>
+                              <Input
+                                type="number"
+                                min={1}
+                                value={goalForm.targetTrips}
+                                onChange={(e) => setGoalForm((prev) => ({ ...prev, targetTrips: e.target.value }))}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-xs uppercase tracking-wide">Wellness target</label>
+                              <Input
+                                type="number"
+                                min={1}
+                                value={goalForm.targetProvinces}
+                                onChange={(e) =>
+                                  setGoalForm((prev) => ({ ...prev, targetProvinces: e.target.value }))
+                                }
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-xs uppercase tracking-wide">Exploration days target</label>
+                              <Input
+                                type="number"
+                                min={1}
+                                value={goalForm.targetTravelDays}
+                                onChange={(e) =>
+                                  setGoalForm((prev) => ({ ...prev, targetTravelDays: e.target.value }))
+                                }
+                              />
+                            </div>
+                            <div className="flex items-center justify-between text-xs">
+                              <span>Computed XP target</span>
+                              <span className="font-semibold">{computedTargetPoints.toLocaleString()} XP</span>
+                            </div>
+                            <Button
+                              className="w-full prada-button prada-gold-accent"
+                              onClick={handleSaveGoals}
+                              disabled={saveGoalMutation.isPending}
+                            >
+                              {saveGoalMutation.isPending ? "Saving..." : "Save Goal"}
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                      <Button
+                        className="prada-button prada-gold-accent text-xs"
+                        onClick={() => logProgress("adventure_activity")}
+                        disabled={progressMutation.isPending}
+                      >
+                        +1 Adventure
+                      </Button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        variant="outline"
+                        className="prada-button text-xs"
+                        onClick={() => logProgress("wellness_activity")}
+                        disabled={progressMutation.isPending}
+                      >
+                        +1 Wellness
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="prada-button text-xs"
+                        onClick={() => logProgress("exploration_day")}
+                        disabled={progressMutation.isPending}
+                      >
+                        +1 Exploration Day
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </Card>
+          </div>
         </div>
       </section>
 
       {/* Recommended Section */}
       <section className="px-8 py-16 bg-gray-50">
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-8">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Feature Cards */}
@@ -136,7 +481,7 @@ export const TravelHomePage = (): JSX.Element => {
                   <div className="prada-card p-6 cursor-pointer hover:shadow-lg transition-shadow">
                     <h3 className="prada-heading text-lg mb-3 font-light flex items-center">
                       <Brain className="w-5 h-5 mr-2 text-[#D4AF37]" />
-                      Personalized Travel Tips for you
+                      Personalized Travel Tips for You
                     </h3>
                     <p className="text-sm text-gray-600 font-light leading-relaxed">
                       Powered by AI
@@ -217,7 +562,7 @@ export const TravelHomePage = (): JSX.Element => {
                         <Card key={trip.id} className="prada-card p-6 hover:shadow-lg transition-shadow">
                           <div className="space-y-4">
                             <div className="relative">
-                              <img
+                              <img loading="lazy" decoding="async"
                                 src={trip.image}
                                 alt={trip.title}
                                 className="w-full h-40 object-cover prada-corner-radius"
@@ -306,14 +651,14 @@ export const TravelHomePage = (): JSX.Element => {
               <div className="prada-card p-6">
                 <h3 className="prada-heading text-lg mb-3 font-light">Join Tala</h3>
                 <p className="text-sm text-gray-600 font-light leading-relaxed">
-                  Connect with other tourist enthusiast
+                  Connect with fellow travel enthusiasts.
                 </p>
               </div>
               
               <div className="prada-card p-6">
                 <h3 className="prada-heading text-lg mb-3 font-light">Lakbay Tales</h3>
                 <p className="text-sm text-gray-600 font-light leading-relaxed">
-                  Share your island stories. Read your travel memories
+                  Share your island stories. Keep your travel memories.
                 </p>
               </div>
             </div>
@@ -329,7 +674,7 @@ export const TravelHomePage = (): JSX.Element => {
               </div>
               <div className="aspect-square relative">
                 {/* Interactive Philippines Map */}
-                <PhilippinesMap visitedProvinces={travelHistory} />
+                <PhilippinesMap visitedProvinces={travelHistory} className="h-full" />
               </div>
             </div>
           </div>
@@ -338,7 +683,7 @@ export const TravelHomePage = (): JSX.Element => {
 
       {/* Event Tabs */}
       <section className="px-8 py-16 bg-white">
-        <div className="flex space-x-12 mb-12 border-b border-gray-100">
+        <div className="mx-auto flex max-w-7xl space-x-8 overflow-x-auto mb-12 border-b border-gray-100">
           {["Private", "Joiner", "Meetups", "Mystery", "Events", "Virtual", "Wellness", "Online Quizzes", "Niche Events"].map((tab) => (
             <button
               key={tab}
@@ -355,7 +700,7 @@ export const TravelHomePage = (): JSX.Element => {
         </div>
 
         {/* Tab Content */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
           {activeTab === "Private" && [
             { title: "Exclusive Mount Pulag VIP Trek", location: "Benguet", price: "₱25,000", image: "1464822759844-d150baec0494", link: "/trip/mount-pulag-private", category: "private" },
             { title: "Private Bohol Island Tour", location: "Bohol", price: "₱18,000", image: "1506905925346-21bda4d32df4", link: "/trip/bohol-private", category: "private" },
@@ -363,8 +708,8 @@ export const TravelHomePage = (): JSX.Element => {
           ].map((trip, i) => (
             <Link key={i} href={trip.link}>
               <div className="prada-card overflow-hidden group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
+                <div className="relative h-36 sm:h-40">
+                  <img loading="lazy" decoding="async" 
                     src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={trip.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
@@ -390,8 +735,8 @@ export const TravelHomePage = (): JSX.Element => {
           ].map((trip, i) => (
             <Link key={i} href={trip.link}>
               <div className="prada-card overflow-hidden group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
+                <div className="relative h-36 sm:h-40">
+                  <img loading="lazy" decoding="async" 
                     src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={trip.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
@@ -417,8 +762,8 @@ export const TravelHomePage = (): JSX.Element => {
           ].map((trip, i) => (
             <Link key={i} href={trip.link}>
               <Card className="overflow-hidden rounded-lg group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
+                <div className="relative h-36 sm:h-40">
+                  <img loading="lazy" decoding="async" 
                     src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={trip.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -444,8 +789,8 @@ export const TravelHomePage = (): JSX.Element => {
           ].map((trip, i) => (
             <Link key={i} href={trip.link}>
               <Card className="overflow-hidden rounded-lg group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
+                <div className="relative h-36 sm:h-40">
+                  <img loading="lazy" decoding="async" 
                     src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={trip.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -471,8 +816,8 @@ export const TravelHomePage = (): JSX.Element => {
           ].map((trip, i) => (
             <Link key={i} href={trip.link}>
               <Card className="overflow-hidden rounded-lg group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
+                <div className="relative h-36 sm:h-40">
+                  <img loading="lazy" decoding="async" 
                     src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={trip.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -498,8 +843,8 @@ export const TravelHomePage = (): JSX.Element => {
           ].map((trip, i) => (
             <Link key={i} href={trip.link}>
               <Card className="overflow-hidden rounded-lg group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
+                <div className="relative h-36 sm:h-40">
+                  <img loading="lazy" decoding="async" 
                     src={`https://images.unsplash.com/photo-${trip.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={trip.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -525,8 +870,8 @@ export const TravelHomePage = (): JSX.Element => {
           ].map((retreat, i) => (
             <Link key={i} href={retreat.link}>
               <div className="prada-card overflow-hidden group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
+                <div className="relative h-36 sm:h-40">
+                  <img loading="lazy" decoding="async" 
                     src={`https://images.unsplash.com/photo-${retreat.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={retreat.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
@@ -552,8 +897,8 @@ export const TravelHomePage = (): JSX.Element => {
           ].map((quiz, i) => (
             <Link key={i} href={quiz.link}>
               <div className="prada-card overflow-hidden group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
+                <div className="relative h-36 sm:h-40">
+                  <img loading="lazy" decoding="async" 
                     src={`https://images.unsplash.com/photo-${quiz.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={quiz.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
@@ -588,11 +933,11 @@ export const TravelHomePage = (): JSX.Element => {
 
       {/* Discover Niche Events Section */}
       <section className="px-8 py-16 bg-gray-50">
-        <h2 className="prada-heading text-3xl text-black mb-6 font-light">DISCOVER NICHE EVENTS</h2>
-        <p className="text-gray-600 mb-12 font-light tracking-wide">Experience unique, specialized adventures tailored for passionate enthusiasts and curious explorers</p>
+        <h2 className="mx-auto max-w-7xl prada-heading text-3xl text-black mb-6 font-light">DISCOVER NICHE EVENTS</h2>
+        <p className="mx-auto max-w-7xl text-gray-600 mb-12 font-light tracking-wide">Experience unique, specialized adventures tailored for passionate enthusiasts and curious explorers</p>
         
         {/* Niche Categories Navigation */}
-        <div className="flex space-x-8 mb-12 border-b border-gray-100 overflow-x-auto">
+        <div className="mx-auto flex max-w-7xl space-x-8 mb-12 border-b border-gray-100 overflow-x-auto">
           {[
             { name: "Astronomy", label: "Astronomical Tours", icon: "🌟" },
             { name: "Foraging", label: "Foraging Expeditions", icon: "🍄" },
@@ -619,7 +964,7 @@ export const TravelHomePage = (): JSX.Element => {
         </div>
 
         {/* Niche Events Content */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
           {nicheActiveTab === "Astronomy" && [
             { title: "Perseid Meteor Shower Observatory", location: "Benguet Observatory", price: "₱4,500", image: "1464822759844-d150baec0494", link: "/trip/meteor-shower", category: "astronomy" },
             { title: "Solar Eclipse Viewing Expedition", location: "Batanes", price: "₱8,000", image: "1506905925346-21bda4d32df4", link: "/trip/solar-eclipse", category: "astronomy" },
@@ -627,8 +972,8 @@ export const TravelHomePage = (): JSX.Element => {
           ].map((event, i) => (
             <Link key={i} href={event.link}>
               <div className="prada-card overflow-hidden group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
+                <div className="relative h-36 sm:h-40">
+                  <img loading="lazy" decoding="async" 
                     src={`https://images.unsplash.com/photo-${event.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={event.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
@@ -654,8 +999,8 @@ export const TravelHomePage = (): JSX.Element => {
           ].map((event, i) => (
             <Link key={i} href={event.link}>
               <div className="prada-card overflow-hidden group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
+                <div className="relative h-36 sm:h-40">
+                  <img loading="lazy" decoding="async" 
                     src={`https://images.unsplash.com/photo-${event.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={event.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
@@ -681,8 +1026,8 @@ export const TravelHomePage = (): JSX.Element => {
           ].map((event, i) => (
             <Link key={i} href={event.link}>
               <div className="prada-card overflow-hidden group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
+                <div className="relative h-36 sm:h-40">
+                  <img loading="lazy" decoding="async" 
                     src={`https://images.unsplash.com/photo-${event.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={event.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
@@ -708,8 +1053,8 @@ export const TravelHomePage = (): JSX.Element => {
           ].map((event, i) => (
             <Link key={i} href={event.link}>
               <div className="prada-card overflow-hidden group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
+                <div className="relative h-36 sm:h-40">
+                  <img loading="lazy" decoding="async" 
                     src={`https://images.unsplash.com/photo-${event.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={event.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
@@ -735,8 +1080,8 @@ export const TravelHomePage = (): JSX.Element => {
           ].map((event, i) => (
             <Link key={i} href={event.link}>
               <div className="prada-card overflow-hidden group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
+                <div className="relative h-36 sm:h-40">
+                  <img loading="lazy" decoding="async" 
                     src={`https://images.unsplash.com/photo-${event.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={event.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
@@ -762,8 +1107,8 @@ export const TravelHomePage = (): JSX.Element => {
           ].map((event, i) => (
             <Link key={i} href={event.link}>
               <div className="prada-card overflow-hidden group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
+                <div className="relative h-36 sm:h-40">
+                  <img loading="lazy" decoding="async" 
                     src={`https://images.unsplash.com/photo-${event.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={event.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
@@ -789,8 +1134,8 @@ export const TravelHomePage = (): JSX.Element => {
           ].map((event, i) => (
             <Link key={i} href={event.link}>
               <div className="prada-card overflow-hidden group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
+                <div className="relative h-36 sm:h-40">
+                  <img loading="lazy" decoding="async" 
                     src={`https://images.unsplash.com/photo-${event.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={event.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
@@ -816,8 +1161,8 @@ export const TravelHomePage = (): JSX.Element => {
           ].map((event, i) => (
             <Link key={i} href={event.link}>
               <div className="prada-card overflow-hidden group cursor-pointer">
-                <div className="relative aspect-[4/3]">
-                  <img 
+                <div className="relative h-36 sm:h-40">
+                  <img loading="lazy" decoding="async" 
                     src={`https://images.unsplash.com/photo-${event.image}?w=400&h=300&fit=crop&auto=format`}
                     alt={event.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"

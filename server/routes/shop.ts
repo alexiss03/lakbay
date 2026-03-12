@@ -1,19 +1,11 @@
 import { Router } from 'express';
-import { eq, desc, and, gte, sql } from 'drizzle-orm';
-import { db } from '../db';
 import {
-  products,
-  stockMovements,
-  shopOrders,
-  shopStats,
   type Product,
   type StockMovement,
   type ShopOrder,
-  type ShopStats,
   insertProductSchema,
-  insertStockMovementSchema,
-  insertShopOrderSchema,
 } from '../../shared/shop-schema';
+import { requireAuth, requireRole } from '../auth';
 
 const router = Router();
 
@@ -21,6 +13,21 @@ const router = Router();
 const createdProducts = new Map<string, Product>();
 const createdOrders = new Map<string, ShopOrder>();
 const createdStockMovements = new Map<string, StockMovement>();
+type ShopCartItem = {
+  id: string;
+  userId: string;
+  shopId: string;
+  productId: string;
+  productName: string;
+  sku: string;
+  price: string;
+  quantity: number;
+  total: string;
+  image: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+const createdCartItems = new Map<string, ShopCartItem>();
 
 // Generate mock data
 function generateMockProductData(shopId: string): Product[] {
@@ -230,20 +237,53 @@ function generateMockOrders(shopId: string): ShopOrder[] {
   ];
 }
 
+function getProductsForShop(shopId: string): Product[] {
+  const baseProducts = generateMockProductData(shopId);
+  const createdProductsArray = Array.from(createdProducts.values()).filter(
+    (product) => product.shopId === shopId,
+  );
+  const createdProductIds = new Set(createdProductsArray.map((product) => product.id));
+
+  return [
+    ...baseProducts.filter((product) => !createdProductIds.has(product.id)),
+    ...createdProductsArray,
+  ];
+}
+
+function getOrdersForShop(shopId: string): ShopOrder[] {
+  const baseOrders = generateMockOrders(shopId);
+  const createdOrdersArray = Array.from(createdOrders.values()).filter(
+    (order) => order.shopId === shopId,
+  );
+  const createdOrderIds = new Set(createdOrdersArray.map((order) => order.id));
+
+  return [...baseOrders.filter((order) => !createdOrderIds.has(order.id)), ...createdOrdersArray];
+}
+
+function getOrTrackProduct(shopId: string, productId: string): Product | undefined {
+  const tracked = createdProducts.get(productId);
+  if (tracked) {
+    return tracked;
+  }
+
+  const baseProduct = generateMockProductData(shopId).find((product) => product.id === productId);
+  if (!baseProduct) {
+    return undefined;
+  }
+
+  const copied = { ...baseProduct, updatedAt: new Date() };
+  createdProducts.set(productId, copied);
+  return copied;
+}
+
 // Shop Analytics
-router.get('/analytics/:shopId', async (req, res) => {
+router.get('/analytics/:shopId', requireAuth, requireRole('host', 'admin'), async (req, res) => {
   try {
     const { shopId } = req.params;
     
-    // Get base products and created products
-    const baseProducts = generateMockProductData(shopId);
-    const createdProductsArray = Array.from(createdProducts.values()).filter(p => p.shopId === shopId);
-    const allProducts = [...baseProducts, ...createdProductsArray];
-    
-    // Get orders
-    const baseOrders = generateMockOrders(shopId);
-    const createdOrdersArray = Array.from(createdOrders.values()).filter(o => o.shopId === shopId);
-    const allOrders = [...baseOrders, ...createdOrdersArray];
+    // Get products and orders
+    const allProducts = getProductsForShop(shopId);
+    const allOrders = getOrdersForShop(shopId);
     
     // Calculate analytics
     const totalProducts = allProducts.length;
@@ -299,10 +339,7 @@ router.get('/products/:shopId', async (req, res) => {
     const { shopId } = req.params;
     const { category, status, search, limit = '50' } = req.query;
     
-    // Get base products and created products
-    const baseProducts = generateMockProductData(shopId);
-    const createdProductsArray = Array.from(createdProducts.values()).filter(p => p.shopId === shopId);
-    const allProducts = [...baseProducts, ...createdProductsArray];
+    const allProducts = getProductsForShop(shopId);
     
     // Apply filters
     let filteredProducts = allProducts;
@@ -340,8 +377,313 @@ router.get('/products/:shopId', async (req, res) => {
   }
 });
 
+// Get cart items for a user in a shop
+router.get('/cart/:shopId/:userId', requireAuth, async (req, res) => {
+  try {
+    const { shopId, userId } = req.params;
+    const items = Array.from(createdCartItems.values())
+      .filter((item) => item.shopId === shopId && item.userId === userId)
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+
+    res.json(items);
+  } catch (error) {
+    console.error("Error fetching cart:", error);
+    res.status(500).json({ error: "Failed to fetch cart items" });
+  }
+});
+
+// Add an item to cart
+router.post('/cart', requireAuth, async (req, res) => {
+  try {
+    const {
+      shopId,
+      userId,
+      productId,
+      quantity = 1,
+    } = req.body as {
+      shopId?: string;
+      userId?: string;
+      productId?: string;
+      quantity?: number;
+    };
+
+    if (!shopId || !userId || !productId) {
+      return res.status(400).json({ error: "shopId, userId, and productId are required" });
+    }
+
+    const parsedQuantity = Number(quantity);
+    if (!Number.isFinite(parsedQuantity) || parsedQuantity <= 0) {
+      return res.status(400).json({ error: "quantity must be a positive number" });
+    }
+
+    const product = getProductsForShop(shopId).find((item) => item.id === productId);
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    const existingCartItem = Array.from(createdCartItems.values()).find(
+      (item) =>
+        item.shopId === shopId &&
+        item.userId === userId &&
+        item.productId === productId,
+    );
+
+    if (existingCartItem) {
+      const nextQuantity = existingCartItem.quantity + parsedQuantity;
+      const updatedItem: ShopCartItem = {
+        ...existingCartItem,
+        quantity: nextQuantity,
+        total: (parseFloat(existingCartItem.price) * nextQuantity).toFixed(2),
+        updatedAt: new Date(),
+      };
+      createdCartItems.set(existingCartItem.id, updatedItem);
+      return res.json(updatedItem);
+    }
+
+    const cartItem: ShopCartItem = {
+      id: `cart_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      shopId,
+      userId,
+      productId,
+      productName: product.name,
+      sku: product.sku,
+      price: product.price,
+      quantity: parsedQuantity,
+      total: (parseFloat(product.price) * parsedQuantity).toFixed(2),
+      image: product.images?.[0] || null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    createdCartItems.set(cartItem.id, cartItem);
+    res.status(201).json(cartItem);
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+    res.status(500).json({ error: "Failed to add item to cart" });
+  }
+});
+
+// Update cart item quantity
+router.put('/cart/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { quantity } = req.body as { quantity?: number };
+
+    const existing = createdCartItems.get(id);
+    if (!existing) {
+      return res.status(404).json({ error: "Cart item not found" });
+    }
+
+    const parsedQuantity = Number(quantity);
+    if (!Number.isFinite(parsedQuantity) || parsedQuantity <= 0) {
+      return res.status(400).json({ error: "quantity must be a positive number" });
+    }
+
+    const updated: ShopCartItem = {
+      ...existing,
+      quantity: parsedQuantity,
+      total: (parseFloat(existing.price) * parsedQuantity).toFixed(2),
+      updatedAt: new Date(),
+    };
+    createdCartItems.set(id, updated);
+
+    res.json(updated);
+  } catch (error) {
+    console.error("Error updating cart item:", error);
+    res.status(500).json({ error: "Failed to update cart item" });
+  }
+});
+
+// Remove cart item
+router.delete('/cart/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    createdCartItems.delete(id);
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error removing cart item:", error);
+    res.status(500).json({ error: "Failed to remove cart item" });
+  }
+});
+
+// Create an order from selected products or current cart
+router.post('/checkout', requireAuth, async (req, res) => {
+  try {
+    const {
+      shopId,
+      userId,
+      items,
+      customerName,
+      customerEmail,
+      customerPhone,
+      shippingAddress,
+      billingAddress,
+      paymentMethod,
+      paymentStatus,
+      notes,
+    } = req.body as {
+      shopId?: string;
+      userId?: string;
+      items?: Array<{ productId: string; quantity: number }>;
+      customerName?: string;
+      customerEmail?: string;
+      customerPhone?: string;
+      shippingAddress?: {
+        street: string;
+        city: string;
+        province: string;
+        postalCode: string;
+        country: string;
+      };
+      billingAddress?: {
+        street: string;
+        city: string;
+        province: string;
+        postalCode: string;
+        country: string;
+      };
+      paymentMethod?: string;
+      paymentStatus?: ShopOrder["paymentStatus"];
+      notes?: string;
+    };
+
+    if (!shopId || !userId) {
+      return res.status(400).json({ error: "shopId and userId are required" });
+    }
+
+    const inputItems =
+      items && items.length > 0
+        ? items
+        : Array.from(createdCartItems.values())
+            .filter((item) => item.shopId === shopId && item.userId === userId)
+            .map((item) => ({ productId: item.productId, quantity: item.quantity }));
+
+    if (inputItems.length === 0) {
+      return res.status(400).json({ error: "No items provided for checkout" });
+    }
+
+    const normalizedItems: ShopOrder["items"] = [];
+    let subtotal = 0;
+
+    for (const item of inputItems) {
+      const quantity = Number(item.quantity);
+      if (!Number.isFinite(quantity) || quantity <= 0) {
+        return res.status(400).json({ error: "Invalid quantity in checkout items" });
+      }
+
+      const product = getOrTrackProduct(shopId, item.productId);
+      if (!product) {
+        return res.status(404).json({ error: `Product ${item.productId} not found` });
+      }
+
+      const availableStock = product.stock || 0;
+      if (availableStock < quantity) {
+        return res.status(400).json({
+          error: `${product.name} has only ${availableStock} items in stock`,
+        });
+      }
+
+      const unitPrice = parseFloat(product.price);
+      const lineTotal = unitPrice * quantity;
+      subtotal += lineTotal;
+
+      normalizedItems.push({
+        productId: product.id,
+        productName: product.name,
+        sku: product.sku,
+        quantity,
+        unitPrice,
+        totalPrice: lineTotal,
+      });
+    }
+
+    const shippingFee = subtotal > 0 ? 150 : 0;
+    const tax = subtotal * 0.12;
+    const total = subtotal + shippingFee + tax;
+    const now = new Date();
+    const orderId = `ord_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+    const resolvedShippingAddress = shippingAddress || {
+      street: 'N/A',
+      city: 'N/A',
+      province: 'N/A',
+      postalCode: '0000',
+      country: 'Philippines',
+    };
+    const resolvedBillingAddress = billingAddress || resolvedShippingAddress;
+
+    const order: ShopOrder = {
+      id: orderId,
+      orderNumber: `ORD-${now.getFullYear()}-${String(createdOrders.size + 1).padStart(4, '0')}`,
+      customerId: userId,
+      customerName: customerName || 'Guest Customer',
+      customerEmail: customerEmail || `${userId}@guest.local`,
+      customerPhone: customerPhone || null,
+      shippingAddress: resolvedShippingAddress,
+      billingAddress: resolvedBillingAddress,
+      items: normalizedItems,
+      subtotal: subtotal.toFixed(2),
+      shippingFee: shippingFee.toFixed(2),
+      tax: tax.toFixed(2),
+      total: total.toFixed(2),
+      paymentStatus: paymentStatus || 'pending',
+      paymentMethod: paymentMethod || 'cod',
+      paymentId: null,
+      orderStatus: paymentStatus === 'paid' ? 'confirmed' : 'pending',
+      shippingStatus: 'not_shipped',
+      trackingNumber: null,
+      shippingProvider: null,
+      notes: notes || null,
+      shopId,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    createdOrders.set(order.id, order);
+
+    for (const orderItem of normalizedItems) {
+      const product = getOrTrackProduct(shopId, orderItem.productId);
+      if (!product) continue;
+
+      const nextStock = Math.max(0, (product.stock || 0) - orderItem.quantity);
+      createdProducts.set(product.id, {
+        ...product,
+        stock: nextStock,
+        updatedAt: new Date(),
+      });
+
+      const stockMovement: StockMovement = {
+        id: `mov_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+        productId: product.id,
+        type: 'out',
+        quantity: orderItem.quantity,
+        reason: 'sale',
+        referenceId: order.id,
+        notes: `Order ${order.orderNumber}`,
+        performedBy: userId,
+        createdAt: new Date(),
+      };
+      createdStockMovements.set(stockMovement.id, stockMovement);
+    }
+
+    for (const cartItem of Array.from(createdCartItems.values())) {
+      if (
+        cartItem.shopId === shopId &&
+        cartItem.userId === userId &&
+        inputItems.some((item) => item.productId === cartItem.productId)
+      ) {
+        createdCartItems.delete(cartItem.id);
+      }
+    }
+
+    res.status(201).json(order);
+  } catch (error) {
+    console.error("Error creating checkout order:", error);
+    res.status(500).json({ error: "Failed to create order" });
+  }
+});
+
 // Create product
-router.post('/products', async (req, res) => {
+router.post('/products', requireAuth, requireRole('host', 'admin'), async (req, res) => {
   try {
     const validatedData = insertProductSchema.parse(req.body);
     
@@ -377,32 +719,29 @@ router.post('/products', async (req, res) => {
 });
 
 // Update product
-router.put('/products/:id', async (req, res) => {
+router.put('/products/:id', requireAuth, requireRole('host', 'admin'), async (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;
+    const shopId = updates.shopId || 'shop_1';
     
-    // Check if product exists in created products
-    const existingProduct = createdProducts.get(id);
+    const existingProduct = createdProducts.get(id) || getOrTrackProduct(shopId, id);
     if (existingProduct) {
-      const updatedProduct = {
+      const updatedProduct: Product = {
         ...existingProduct,
         ...updates,
+        price: updates.price ? String(updates.price) : existingProduct.price,
+        costPrice: updates.costPrice ? String(updates.costPrice) : existingProduct.costPrice,
+        weight: updates.weight ? String(updates.weight) : existingProduct.weight,
+        stock: Number.isFinite(Number(updates.stock))
+          ? Number(updates.stock)
+          : existingProduct.stock,
+        lowStockThreshold: Number.isFinite(Number(updates.lowStockThreshold))
+          ? Number(updates.lowStockThreshold)
+          : existingProduct.lowStockThreshold,
         updatedAt: new Date(),
       };
       createdProducts.set(id, updatedProduct);
-      return res.json(updatedProduct);
-    }
-    
-    // For base products, just return updated data (in real app, update database)
-    const baseProducts = generateMockProductData(req.body.shopId || 'shop_1');
-    const baseProduct = baseProducts.find(p => p.id === id);
-    if (baseProduct) {
-      const updatedProduct = {
-        ...baseProduct,
-        ...updates,
-        updatedAt: new Date(),
-      };
       return res.json(updatedProduct);
     }
     
@@ -414,35 +753,31 @@ router.put('/products/:id', async (req, res) => {
 });
 
 // Update stock
-router.put('/products/:id/stock', async (req, res) => {
+router.put('/products/:id/stock', requireAuth, requireRole('host', 'admin'), async (req, res) => {
   try {
     const { id } = req.params;
-    const { quantity, type, reason, notes } = req.body;
+    const { quantity, type, reason, notes, shopId = 'shop_1' } = req.body;
     
     // Find the product
-    let product = createdProducts.get(id);
-    if (!product) {
-      const baseProducts = generateMockProductData('shop_1');
-      product = baseProducts.find(p => p.id === id);
-      if (product) {
-        // Move to created products for tracking
-        createdProducts.set(id, { ...product });
-        product = createdProducts.get(id)!;
-      }
-    }
+    let product = createdProducts.get(id) || getOrTrackProduct(shopId, id);
     
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
+    }
+
+    const parsedQuantity = Number(quantity);
+    if (!Number.isFinite(parsedQuantity) || parsedQuantity < 0) {
+      return res.status(400).json({ error: "quantity must be a non-negative number" });
     }
     
     // Calculate new stock
     let newStock = product.stock || 0;
     if (type === 'in') {
-      newStock += quantity;
+      newStock += parsedQuantity;
     } else if (type === 'out') {
-      newStock = Math.max(0, newStock - quantity);
+      newStock = Math.max(0, newStock - parsedQuantity);
     } else if (type === 'adjustment') {
-      newStock = quantity;
+      newStock = parsedQuantity;
     }
     
     // Update product stock
@@ -459,7 +794,7 @@ router.put('/products/:id/stock', async (req, res) => {
       id: movementId,
       productId: id,
       type,
-      quantity,
+      quantity: parsedQuantity,
       reason,
       referenceId: null,
       notes: notes || null,
@@ -479,15 +814,12 @@ router.put('/products/:id/stock', async (req, res) => {
 });
 
 // Get orders
-router.get('/orders/:shopId', async (req, res) => {
+router.get('/orders/:shopId', requireAuth, requireRole('host', 'admin'), async (req, res) => {
   try {
     const { shopId } = req.params;
     const { status, paymentStatus, limit = '50' } = req.query;
     
-    // Get base orders and created orders
-    const baseOrders = generateMockOrders(shopId);
-    const createdOrdersArray = Array.from(createdOrders.values()).filter(o => o.shopId === shopId);
-    const allOrders = [...baseOrders, ...createdOrdersArray];
+    const allOrders = getOrdersForShop(shopId);
     
     // Apply filters
     let filteredOrders = allOrders;
@@ -517,15 +849,21 @@ router.get('/orders/:shopId', async (req, res) => {
 });
 
 // Update order status
-router.put('/orders/:id/status', async (req, res) => {
+router.put('/orders/:id/status', requireAuth, requireRole('host', 'admin'), async (req, res) => {
   try {
     const { id } = req.params;
-    const { orderStatus, shippingStatus, trackingNumber, shippingProvider } = req.body;
+    const {
+      orderStatus,
+      shippingStatus,
+      trackingNumber,
+      shippingProvider,
+      shopId = 'shop_1',
+    } = req.body;
     
     // Find the order
     let order = createdOrders.get(id);
     if (!order) {
-      const baseOrders = generateMockOrders('shop_1');
+      const baseOrders = getOrdersForShop(shopId);
       order = baseOrders.find(o => o.id === id);
       if (order) {
         // Move to created orders for tracking
@@ -559,15 +897,15 @@ router.put('/orders/:id/status', async (req, res) => {
 });
 
 // Ship order
-router.post('/orders/:id/ship', async (req, res) => {
+router.post('/orders/:id/ship', requireAuth, requireRole('host', 'admin'), async (req, res) => {
   try {
     const { id } = req.params;
-    const { trackingNumber, shippingProvider, notes } = req.body;
+    const { trackingNumber, shippingProvider, notes, shopId = 'shop_1' } = req.body;
     
     // Find the order
     let order = createdOrders.get(id);
     if (!order) {
-      const baseOrders = generateMockOrders('shop_1');
+      const baseOrders = getOrdersForShop(shopId);
       order = baseOrders.find(o => o.id === id);
       if (order) {
         createdOrders.set(id, { ...order });
@@ -588,8 +926,8 @@ router.post('/orders/:id/ship', async (req, res) => {
       ...order,
       orderStatus: 'shipped',
       shippingStatus: 'shipped',
-      trackingNumber,
-      shippingProvider,
+      trackingNumber: trackingNumber || order.trackingNumber || null,
+      shippingProvider: shippingProvider || order.shippingProvider || null,
       notes: notes || order.notes,
       updatedAt: new Date(),
     };

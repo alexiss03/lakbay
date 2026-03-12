@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Link, useParams } from "wouter";
 import { ArrowLeft, ShoppingCart, Star, Truck, Shield, RotateCcw, Heart, Share2, Minus, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Product {
   id: string;
@@ -34,31 +36,97 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [isFavorite, setIsFavorite] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
+  const shopId = user?.id ? `shop_${user.id}` : "shop_1";
+  const customerId = user?.id ? String(user.id) : "guest_user";
+  const customerName = user
+    ? `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.username
+    : "Guest Customer";
+  const customerEmail = user?.email || "guest@lakbay.local";
 
   const { data: products = [], isLoading } = useQuery<Product[]>({
-    queryKey: ['/api/shop/products/shop_1'],
+    queryKey: [`/api/shop/products/${shopId}`],
   });
 
   const product = (products as Product[]).find((p: Product) => p.id === id);
 
+  const addToCartMutation = useMutation({
+    mutationFn: async (payload: { productId: string; quantity: number }) => {
+      const response = await apiRequest("POST", "/api/shop/cart", {
+        shopId,
+        userId: customerId,
+        productId: payload.productId,
+        quantity: payload.quantity,
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      if (!product) return;
+      toast({
+        title: "Added to Cart",
+        description: `${quantity} × ${product.name} added to your cart`,
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Unable to add to cart",
+        description: error.message || "Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const buyNowMutation = useMutation({
+    mutationFn: async (payload: { productId: string; quantity: number }) => {
+      const response = await apiRequest("POST", "/api/shop/checkout", {
+        shopId,
+        userId: customerId,
+        customerName,
+        customerEmail,
+        items: [
+          {
+            productId: payload.productId,
+            quantity: payload.quantity,
+          },
+        ],
+        paymentMethod: "cod",
+      });
+      return response.json();
+    },
+    onSuccess: (order: { orderNumber?: string }) => {
+      toast({
+        title: "Order Created",
+        description: `Checkout started for ${order.orderNumber || "your order"}.`,
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Checkout failed",
+        description: error.message || "Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleAddToCart = () => {
     if (!product) return;
-    toast({
-      title: "Added to Cart",
-      description: `${quantity} × ${product.name} added to your cart`,
+    addToCartMutation.mutate({
+      productId: product.id,
+      quantity,
     });
   };
 
   const handleBuyNow = () => {
-    toast({
-      title: "Proceeding to Checkout",
-      description: "Redirecting to checkout page...",
+    if (!product) return;
+    buyNowMutation.mutate({
+      productId: product.id,
+      quantity,
     });
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen view-shell p-6">
         <div className="max-w-6xl mx-auto">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-300 rounded w-32 mb-6"></div>
@@ -86,7 +154,7 @@ export default function ProductDetailPage() {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen view-shell flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Product Not Found</h2>
           <p className="text-gray-600 mb-6">The product you're looking for doesn't exist or has been removed.</p>
@@ -105,7 +173,7 @@ export default function ProductDetailPage() {
   const inStock = product.stock > 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen view-shell">
       <div className="max-w-6xl mx-auto px-6 py-8">
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
@@ -120,7 +188,7 @@ export default function ProductDetailPage() {
           {/* Product Images */}
           <div className="space-y-4">
             <div className="aspect-square bg-white rounded-lg overflow-hidden border">
-              <img
+              <img loading="lazy" decoding="async"
                 src={images[selectedImage]}
                 alt={product.name}
                 className="w-full h-full object-cover"
@@ -139,7 +207,7 @@ export default function ProductDetailPage() {
                       selectedImage === index ? 'border-blue-500' : 'border-gray-200'
                     }`}
                   >
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={image}
                       alt={`${product.name} ${index + 1}`}
                       className="w-full h-full object-cover"
@@ -272,19 +340,19 @@ export default function ProductDetailPage() {
               <div className="flex gap-4">
                 <Button
                   onClick={handleAddToCart}
-                  disabled={!inStock}
+                  disabled={!inStock || addToCartMutation.isPending}
                   variant="outline"
                   className="flex-1"
                 >
                   <ShoppingCart className="w-4 h-4 mr-2" />
-                  Add to Cart
+                  {addToCartMutation.isPending ? "Adding..." : "Add to Cart"}
                 </Button>
                 <Button
                   onClick={handleBuyNow}
-                  disabled={!inStock}
+                  disabled={!inStock || buyNowMutation.isPending}
                   className="flex-1"
                 >
-                  Buy Now
+                  {buyNowMutation.isPending ? "Processing..." : "Buy Now"}
                 </Button>
               </div>
             </div>

@@ -127,7 +127,7 @@ export const SignupPage = (): JSX.Element => {
   );
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+    <div className="min-h-screen view-shell flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Back Button */}
         <div className="mb-8">

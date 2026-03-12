@@ -26,6 +26,11 @@ import { SearchResultsPage } from "@/pages/SearchResultsPage";
 import { ArticleFoodGuidePage } from "@/pages/ArticleFoodGuidePage";
 import { ArticleIslandHoppingPage } from "@/pages/ArticleIslandHoppingPage";
 import { ArticleMountainTribesPage } from "@/pages/ArticleMountainTribesPage";
+import { StoryPage } from "@/pages/StoryPage";
+import { CorporatePage } from "@/pages/CorporatePage";
+import { ForgotPasswordPage } from "@/pages/ForgotPasswordPage";
+import { TermsPage } from "@/pages/TermsPage";
+import { PrivacyPage } from "@/pages/PrivacyPage";
 
 function Router() {
   return (
@@ -34,9 +39,22 @@ function Router() {
       <Route path="/" component={TravelHomePage} />
       <Route path="/login" component={LoginPage} />
       <Route path="/signup" component={SignupPage} />
-      <Route path="/trips" component={TripsPage} />
-      <Route path="/chats" component={ChatPage} />
+      <Route path="/forgot-password" component={ForgotPasswordPage} />
+      <Route path="/terms" component={TermsPage} />
+      <Route path="/privacy" component={PrivacyPage} />
+      <Route path="/trips">
+        <ProtectedRoute>
+          <TripsPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/chats">
+        <ProtectedRoute>
+          <ChatPage />
+        </ProtectedRoute>
+      </Route>
       <Route path="/trails" component={TrailsPage} />
+      <Route path="/story" component={StoryPage} />
+      <Route path="/corporate" component={CorporatePage} />
       <Route path="/search" component={SearchResultsPage} />
       <Route path="/article/food-guide" component={ArticleFoodGuidePage} />
       <Route path="/article/island-hopping" component={ArticleIslandHoppingPage} />
@@ -50,9 +68,21 @@ function Router() {
           <AdminDashboard />
         </ProtectedRoute>
       </Route>
-      <Route path="/host" component={HostDashboard} />
-      <Route path="/accommodation" component={AccommodationDashboard} />
-      <Route path="/shop-manager" component={ShopDashboard} />
+      <Route path="/host">
+        <ProtectedRoute requireHost={true}>
+          <HostDashboard />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/accommodation">
+        <ProtectedRoute requireHost={true}>
+          <AccommodationDashboard />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/shop-manager">
+        <ProtectedRoute requireHost={true}>
+          <ShopDashboard />
+        </ProtectedRoute>
+      </Route>
       <Route path="/audio-studio" component={AudioStudioPage} />
       <Route path="/welcome" component={Box} />
       {/* Fallback to 404 */}
@@ -66,7 +96,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Router />
+        <div className="app-shell page-reveal">
+          <Router />
+        </div>
       </TooltipProvider>
     </QueryClientProvider>
   );

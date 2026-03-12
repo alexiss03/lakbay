@@ -24,19 +24,19 @@ export const NavigationBar = ({ currentPage }: NavigationBarProps): JSX.Element 
   return (
     <div className="flex items-center justify-center w-full relative">
       {/* Search Bar - Positioned on the left */}
-      <form onSubmit={handleSearch} className="flex items-center space-x-2 absolute left-0">
+      <form onSubmit={handleSearch} className="hidden xl:flex items-center space-x-2 absolute left-0">
         <Input
           type="text"
           placeholder="Search tours..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-64 h-9 text-sm border-gray-300 focus:border-black focus:ring-0"
+          className="w-64 h-10 text-sm border-[#ece9e9] rounded-full bg-white/90"
           data-testid="input-search"
         />
         <Button
           type="submit"
           size="sm"
-          className="h-9 px-4 bg-black hover:bg-gray-800 text-white text-sm"
+          className="h-10 px-5 prada-button prada-gold-accent text-sm"
           data-testid="button-search"
         >
           <Search className="w-4 h-4 mr-1" />
@@ -45,12 +45,12 @@ export const NavigationBar = ({ currentPage }: NavigationBarProps): JSX.Element 
       </form>
 
       {/* Navigation Links - Centered */}
-      <nav className="flex items-center justify-center space-x-8">
+      <nav className="flex max-w-full items-center justify-center gap-5 overflow-x-auto whitespace-nowrap px-2 lg:gap-8">
         <Link 
           href="/" 
           className={`prada-nav transition-colors ${
             currentPage === 'home' 
-              ? 'text-black hover:text-gray-600' 
+              ? 'text-[#1f2537] underline decoration-[#ff6c2f] underline-offset-8' 
               : 'text-gray-700 hover:text-black'
           }`}
         >
@@ -60,7 +60,7 @@ export const NavigationBar = ({ currentPage }: NavigationBarProps): JSX.Element 
           href="/trips" 
           className={`prada-nav transition-colors ${
             currentPage === 'trips' 
-              ? 'text-black hover:text-gray-600' 
+              ? 'text-[#1f2537] underline decoration-[#ff6c2f] underline-offset-8' 
               : 'text-gray-700 hover:text-black'
           }`}
         >
@@ -70,7 +70,7 @@ export const NavigationBar = ({ currentPage }: NavigationBarProps): JSX.Element 
           href="/chats" 
           className={`prada-nav transition-colors ${
             currentPage === 'chats' 
-              ? 'text-black hover:text-gray-600' 
+              ? 'text-[#1f2537] underline decoration-[#ff6c2f] underline-offset-8' 
               : 'text-gray-700 hover:text-black'
           }`}
         >
@@ -80,42 +80,42 @@ export const NavigationBar = ({ currentPage }: NavigationBarProps): JSX.Element 
           href="/trails" 
           className={`prada-nav transition-colors ${
             currentPage === 'trails' 
-              ? 'text-black hover:text-gray-600' 
+              ? 'text-[#1f2537] underline decoration-[#ff6c2f] underline-offset-8' 
               : 'text-gray-700 hover:text-black'
           }`}
         >
           Trails
         </Link>
-        <a 
-          href="#" 
+        <Link 
+          href="/story" 
           className={`prada-nav transition-colors ${
             currentPage === 'story' 
-              ? 'text-black hover:text-gray-600' 
+              ? 'text-[#1f2537] underline decoration-[#ff6c2f] underline-offset-8' 
               : 'text-gray-700 hover:text-black'
           }`}
         >
           Story
-        </a>
+        </Link>
         <Link 
           href="/shop" 
           className={`prada-nav transition-colors ${
             currentPage === 'shop' 
-              ? 'text-black hover:text-gray-600' 
+              ? 'text-[#1f2537] underline decoration-[#ff6c2f] underline-offset-8' 
               : 'text-gray-700 hover:text-black'
           }`}
         >
           Shop
         </Link>
-        <a 
-          href="#" 
+        <Link 
+          href="/corporate" 
           className={`prada-nav transition-colors ${
             currentPage === 'corporate' 
-              ? 'text-black hover:text-gray-600' 
+              ? 'text-[#1f2537] underline decoration-[#ff6c2f] underline-offset-8' 
               : 'text-gray-700 hover:text-black'
           }`}
         >
           Corporate
-        </a>
+        </Link>
       </nav>
     </div>
   );

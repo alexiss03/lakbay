@@ -8,11 +8,31 @@ import * as accommodationSchema from "@shared/accommodation-schema";
 
 neonConfig.webSocketConstructor = ws;
 
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
-}
+const dbSchema = {
+  ...schema,
+  ...adminSchema,
+  ...chatSchema,
+  ...accommodationSchema,
+};
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle({ client: pool, schema: { ...schema, ...adminSchema, ...chatSchema, ...accommodationSchema } });
+const missingDatabaseMessage =
+  "DATABASE_URL is not set. Configure a database connection to use database-backed endpoints.";
+
+export const pool = process.env.DATABASE_URL
+  ? new Pool({ connectionString: process.env.DATABASE_URL })
+  : null;
+
+const missingDatabaseProxy = new Proxy(
+  {},
+  {
+    get() {
+      return () => {
+        throw new Error(missingDatabaseMessage);
+      };
+    },
+  },
+) as any;
+
+export const db = pool
+  ? drizzle({ client: pool, schema: dbSchema })
+  : missingDatabaseProxy;

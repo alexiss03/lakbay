@@ -38,10 +38,7 @@ export const AdminStatusActions = ({ tour, userRole }: AdminStatusActionsProps) 
 
   const statusChangeMutation = useMutation({
     mutationFn: async (data: { status: TripStatus; adminNotes: string }) => {
-      return apiRequest(`/api/admin/tours/${tour.id}/status`, {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-      });
+      return apiRequest('PATCH', `/api/admin/tours/${tour.id}/status`, data);
     },
     onSuccess: () => {
       toast({

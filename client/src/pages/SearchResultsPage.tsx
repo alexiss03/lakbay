@@ -27,95 +27,72 @@ export const SearchResultsPage = (): JSX.Element => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [allTours, setAllTours] = useState<Tour[]>([]);
-  const [toursLoaded, setToursLoaded] = useState(false);
 
-  // Fetch all tours from the database on mount
+  // Perform search against backend API when query changes
   useEffect(() => {
-    const fetchTours = async () => {
+    const fetchSearchResults = async () => {
+      const params = new URLSearchParams(searchParams);
+      const query = params.get("q")?.trim() || "";
+      setSearchQuery(query);
+
+      if (!query) {
+        setSearchResults([]);
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
       try {
-        console.log('Fetching tours from /api/trips...');
-        const response = await fetch('/api/trips?limit=100');
-        console.log('Response status:', response.status);
-        if (response.ok) {
-          const tours = await response.json();
-          console.log('Fetched tours:', tours.length);
-          // Transform database tours to match Tour interface
-          const transformedTours = tours.map((tour: any) => {
-            // Handle category - can be array, JSON string, or plain string
-            let categories: string[] = [];
-            if (Array.isArray(tour.category)) {
-              categories = tour.category;
-            } else if (typeof tour.category === 'string') {
-              if (tour.category.startsWith('[')) {
-                // It's a JSON array string
-                try {
-                  categories = JSON.parse(tour.category);
-                } catch (e) {
-                  categories = [tour.category];
-                }
-              } else {
-                // It's a plain string
+        const response = await fetch(`/api/trips?limit=100&search=${encodeURIComponent(query)}`);
+        if (!response.ok) {
+          setSearchResults([]);
+          return;
+        }
+
+        const tours = await response.json();
+        const transformedTours = tours.map((tour: any) => {
+          let categories: string[] = [];
+          if (Array.isArray(tour.category)) {
+            categories = tour.category;
+          } else if (typeof tour.category === 'string') {
+            if (tour.category.startsWith('[')) {
+              try {
+                categories = JSON.parse(tour.category);
+              } catch {
                 categories = [tour.category];
               }
+            } else {
+              categories = [tour.category];
             }
-            
-            return {
-              id: tour.id,
-              title: tour.title,
-              location: tour.location || 'Philippines',
-              destination: tour.location || 'Philippines',
-              price: `₱${parseFloat(tour.price).toLocaleString()}`,
-              image: tour.heroImage || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop',
-              category: categories[0] || 'Adventure',
-              slug: tour.id,
-              duration: tour.duration || 'N/A',
-              participants: tour.maxParticipants || 0,
-              rating: tour.rating ? parseFloat(tour.rating) : undefined,
-              description: tour.description || ''
-            };
-          });
-          console.log('Transformed tours:', transformedTours.length);
-          setAllTours(transformedTours);
-          setToursLoaded(true);
-        } else {
-          console.error('Failed to fetch tours:', response.statusText);
-          setToursLoaded(true);
-        }
+          }
+
+          return {
+            id: tour.id,
+            title: tour.title,
+            location: tour.location || 'Philippines',
+            destination: tour.location || 'Philippines',
+            price: `₱${parseFloat(tour.price).toLocaleString()}`,
+            image: tour.heroImage || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop',
+            category: categories[0] || 'Adventure',
+            slug: tour.id,
+            duration: tour.duration || 'N/A',
+            participants: tour.maxParticipants || 0,
+            rating: tour.rating ? parseFloat(tour.rating) : undefined,
+            description: tour.description || '',
+          } as Tour;
+        });
+
+        setSearchResults(transformedTours);
       } catch (error) {
-        console.error('Error fetching tours:', error);
-        setToursLoaded(true);
+        console.error("Error fetching search results:", error);
+        setSearchResults([]);
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchTours();
-  }, []);
 
-  // Perform search when tours are loaded and query exists
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    const query = params.get('q') || '';
-    
-    if (toursLoaded && query) {
-      console.log('Tours loaded, performing search for:', query);
-      setIsLoading(true);
-      
-      const results = allTours.filter(tour =>
-        tour.title.toLowerCase().includes(query.toLowerCase()) ||
-        tour.location.toLowerCase().includes(query.toLowerCase()) ||
-        tour.category.toLowerCase().includes(query.toLowerCase()) ||
-        tour.description.toLowerCase().includes(query.toLowerCase()) ||
-        tour.destination.toLowerCase().includes(query.toLowerCase())
-      );
-      
-      console.log('Search results found:', results.length);
-      setSearchResults(results);
-      setSearchQuery(query);
-      setIsLoading(false);
-    } else if (toursLoaded && !query) {
-      setSearchResults([]);
-      setIsLoading(false);
-    }
-  }, [toursLoaded, allTours, searchParams]);
+    fetchSearchResults();
+  }, [searchParams]);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -127,9 +104,9 @@ export const SearchResultsPage = (): JSX.Element => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen view-shell">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <header className="view-header">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -195,7 +172,7 @@ export const SearchResultsPage = (): JSX.Element => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="animate-pulse">
-                <div className="bg-gray-200 h-48 rounded-lg mb-4"></div>
+                <div className="bg-gray-200 h-40 rounded-lg mb-4"></div>
                 <div className="h-4 bg-gray-200 rounded mb-2"></div>
                 <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
                 <div className="h-4 bg-gray-200 rounded w-1/2"></div>
@@ -210,10 +187,10 @@ export const SearchResultsPage = (): JSX.Element => {
             {searchResults.map((tour) => (
               <Card key={tour.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200">
                 <div className="relative">
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={tour.image}
                     alt={tour.title}
-                    className="w-full h-48 object-cover"
+                    className="w-full h-40 object-cover"
                   />
                   <Badge className="absolute top-3 left-3 bg-white text-black">
                     {tour.category}

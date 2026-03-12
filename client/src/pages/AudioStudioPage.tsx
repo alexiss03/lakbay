@@ -6,9 +6,9 @@ import { Link } from 'wouter';
 
 const AudioStudioPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen view-shell">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="view-header">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">

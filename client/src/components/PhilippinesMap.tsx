@@ -10,6 +10,7 @@ interface TravelHistory {
 
 interface PhilippinesMapProps {
   visitedProvinces: TravelHistory[];
+  className?: string;
 }
 
 // Province coordinates mapping
@@ -299,23 +300,42 @@ const provincePolygons: Record<string, { lat: number; lng: number }[]> = {
   ]
 };
 
-export const PhilippinesMap: React.FC<PhilippinesMapProps> = ({ visitedProvinces }) => {
+export const PhilippinesMap: React.FC<PhilippinesMapProps> = ({ visitedProvinces, className }) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [showFallback, setShowFallback] = useState(false);
+
+  const fallbackTopVisited = [...visitedProvinces]
+    .sort((a, b) => b.visits - a.visits)
+    .slice(0, 6);
 
   useEffect(() => {
     if (!mapRef.current) return;
+    let isCancelled = false;
 
     const initializeMap = async () => {
       try {
-        // Fetch API key from server endpoint to avoid exposing it in client
-        const response = await fetch('/api/config/google-maps-key');
-        const { apiKey } = await response.json();
-        
+        let apiKey = "";
+
+        // Allow direct client env override for mobile wrappers.
+        const envKey = (import.meta as any)?.env?.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
+        if (envKey) {
+          apiKey = envKey;
+        } else {
+          // Fetch API key from backend if env key is not provided.
+          const response = await fetch('/api/config/google-maps-key');
+          if (response.ok) {
+            const payload = await response.json();
+            apiKey = payload?.apiKey || "";
+          }
+        }
+
         if (!apiKey) {
-          throw new Error('Google Maps API key not available');
+          if (!isCancelled) {
+            setShowFallback(true);
+            setIsLoading(false);
+          }
+          return;
         }
 
         const loader = new Loader({
@@ -325,6 +345,7 @@ export const PhilippinesMap: React.FC<PhilippinesMapProps> = ({ visitedProvinces
         });
 
         const google = await loader.load();
+        if (isCancelled) return;
         
         const mapInstance = new google.maps.Map(mapRef.current!, {
           center: { lat: 12.8797, lng: 121.7740 }, // Center of Philippines
@@ -357,7 +378,7 @@ export const PhilippinesMap: React.FC<PhilippinesMapProps> = ({ visitedProvinces
           gestureHandling: 'cooperative'
         });
 
-        setMap(mapInstance);
+        setShowFallback(false);
         setIsLoading(false);
 
         // Add visited province markers and overlays
@@ -475,27 +496,51 @@ export const PhilippinesMap: React.FC<PhilippinesMapProps> = ({ visitedProvinces
 
       } catch (err) {
         console.error('Error loading Google Maps:', err);
-        setError('Failed to load map. Please check your internet connection.');
-        setIsLoading(false);
+        if (!isCancelled) {
+          setShowFallback(true);
+          setIsLoading(false);
+        }
       }
     };
 
     initializeMap();
+    return () => {
+      isCancelled = true;
+    };
   }, [visitedProvinces]);
 
-  if (error) {
+  if (showFallback) {
     return (
-      <div className="w-full h-64 flex items-center justify-center bg-gray-100 rounded-lg">
-        <div className="text-center">
-          <div className="text-red-500 mb-2">⚠️</div>
-          <p className="text-sm text-gray-600">{error}</p>
+      <div className={`w-full ${className || "h-64"} relative overflow-hidden bg-[#f6f2e9] rounded-lg border border-[#d9c790]`}>
+        <div className="absolute inset-0 opacity-30" style={{
+          background:
+            "radial-gradient(circle at 12% 18%, rgba(212,175,55,0.25), transparent 42%), radial-gradient(circle at 86% 80%, rgba(212,175,55,0.20), transparent 45%)"
+        }} />
+        <div className="relative h-full flex flex-col justify-between p-4">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.18em] text-black/70">Journey Snapshot</p>
+            <h4 className="text-sm font-semibold text-black mt-1">Philippines Travel Progress</h4>
+          </div>
+
+          <div className="space-y-2">
+            {fallbackTopVisited.length > 0 ? (
+              fallbackTopVisited.map((item) => (
+                <div key={`${item.province}-${item.lastVisit}`} className="flex items-center justify-between rounded-md border border-[#d9c790] bg-white/70 px-2.5 py-1.5">
+                  <span className="text-xs font-medium text-black">{item.province}</span>
+                  <span className="text-xs text-black/75">{item.visits} visits</span>
+                </div>
+              ))
+            ) : (
+              <p className="text-xs text-black/70">No travel history yet. Start your first Lakbay to unlock province tracking.</p>
+            )}
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden">
+    <div className={`relative w-full ${className || "h-64"} bg-gray-100 rounded-lg overflow-hidden`}>
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
           <div className="text-center">

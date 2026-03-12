@@ -164,6 +164,16 @@ export function requireAuth(req: any, res: any, next: any) {
   res.status(401).json({ error: 'Authentication required' });
 }
 
+export function requireRole(...roles: Array<'user' | 'host' | 'admin'>) {
+  return (req: any, res: any, next: any) => {
+    const user = req.user;
+    if (!user || !roles.includes(user.role)) {
+      return res.status(403).json({ error: 'Insufficient permissions' });
+    }
+    next();
+  };
+}
+
 // Get current user data
 export function getCurrentUser(req: any) {
   return req.user;
